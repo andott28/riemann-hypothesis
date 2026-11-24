@@ -1,6 +1,4 @@
 import RHLeanFullShard19
-
-
 set_option maxHeartbeats 2000000
 set_option maxHeartbeats 800000
 set_option maxHeartbeats 1000000
@@ -24,53 +22,11 @@ set_option maxHeartbeats 800000
 set_option maxHeartbeats 800000
 set_option maxHeartbeats 800000
 set_option maxHeartbeats 800000
-
 section Inline_ExplicitFormula_RH46
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators ComplexConjugate
-
 namespace RHLean.ExplicitFormula
-
-
-
 theorem spectralTest_eq_normSq {f : ℝ → ℂ} (hf : f ∈ oddCore) (r : ℝ) :
     spectralTest f r = ((‖transf f ((r : ℂ) * I)‖ ^ 2 : ℝ) : ℂ) := by
   rw [spectralTest, transf_autocorr hf.1.continuous hf.2.1]
@@ -78,13 +34,9 @@ theorem spectralTest_eq_normSq {f : ℝ → ℂ} (hf : f ∈ oddCore) (r : ℝ) 
     rw [Complex.star_def, map_mul, Complex.conj_ofReal, Complex.conj_I]
     ring
   rw [hstar, Complex.star_def, Complex.mul_conj, Complex.normSq_eq_norm_sq]
-
 theorem spectralTest_im_eq_zero {f : ℝ → ℂ} (hf : f ∈ oddCore) (r : ℝ) :
     (spectralTest f r).im = 0 := by
   rw [spectralTest_eq_normSq hf r, Complex.ofReal_im]
-
-
-
 theorem integral_cos_mul_spectralTest {f : ℝ → ℂ} (hf : f ∈ oddCore) (x : ℝ) :
     (∫ r : ℝ, Real.cos (x * r) * (spectralTest f r).re)
       = 2 * Real.pi * (autocorr f x).re := by
@@ -124,12 +76,6 @@ theorem integral_cos_mul_spectralTest {f : ℝ → ℂ} (hf : f ∈ oddCore) (x 
     _ = (∫ r : ℝ, spectralTest f r
           * Complex.exp (-(Complex.I * (x : ℂ)) * (r : ℂ))).re := integral_re hint
     _ = 2 * Real.pi * (autocorr f x).re := ghatAt_eq_aux hf x
-
-
-
-
-
-
 theorem integral_autocorr_mul_fourierKernel {f : ℝ → ℂ} (hf : f ∈ oddCore)
     {K : ℝ → ℝ} (hK_cont : Continuous K) (hK_int : Integrable K) :
     (∫ x : ℝ, K x * (autocorr f x).re)
@@ -191,9 +137,6 @@ theorem integral_autocorr_mul_fourierKernel {f : ℝ → ℂ} (hf : f ∈ oddCor
             = ∫ x : ℝ, (K x * Real.cos (x * r)) * (spectralTest f r).re from
               integral_congr_ae (Eventually.of_forall fun x => by ring)]
         rw [integral_mul_const]
-
-
-
 theorem integrable_exp_neg_abs {b : ℝ} (hb : 0 < b) :
     Integrable (fun x : ℝ => Real.exp (-(b * |x|))) volume := by
   have h1 : IntegrableOn (fun x : ℝ => Real.exp (-(b * |x|))) (Set.Ioi 0) volume := by
@@ -210,7 +153,6 @@ theorem integrable_exp_neg_abs {b : ℝ} (hb : 0 < b) :
   have h := h2.union h1
   rw [Set.Iic_union_Ioi] at h
   simpa [IntegrableOn, Measure.restrict_univ] using h
-
 theorem integrable_exp_neg_abs_mul_exp {b r : ℝ} (hb : 0 < b) :
     Integrable (fun x : ℝ =>
       (Real.exp (-(b * |x|)) : ℂ) * Complex.exp (Complex.I * (r : ℂ) * (x : ℂ)))
@@ -223,9 +165,6 @@ theorem integrable_exp_neg_abs_mul_exp {b r : ℝ} (hb : 0 < b) :
   have hre : (Complex.I * (r : ℂ) * (x : ℂ)).re = 0 := by
     simp [Complex.mul_re, Complex.I_re, Complex.I_im]
   rw [Complex.norm_exp, hre, Real.exp_zero]
-
-
-
 theorem integral_exp_neg_abs_mul_exp {b r : ℝ} (hb : 0 < b) :
     (∫ x : ℝ,
       (Real.exp (-(b * |x|)) : ℂ) * Complex.exp (Complex.I * (r : ℂ) * (x : ℂ)))
@@ -297,8 +236,6 @@ theorem integral_exp_neg_abs_mul_exp {b r : ℝ} (hb : 0 < b) :
   rw [← integral_add_compl (s := Set.Ioi (0 : ℝ)) measurableSet_Ioi
     (integrable_exp_neg_abs_mul_exp hb), Set.compl_Ioi, hIoi, hIic]
   exact hsum
-
-
 theorem integral_exp_neg_abs_mul_cos {b r : ℝ} (hb : 0 < b) :
     (∫ x : ℝ, Real.exp (-(b * |x|)) * Real.cos (x * r)) = 2 * b / (b ^ 2 + r ^ 2) := by
   have hint := integrable_exp_neg_abs_mul_exp (b := b) (r := r) hb
@@ -324,12 +261,6 @@ theorem integral_exp_neg_abs_mul_cos {b r : ℝ} (hb : 0 < b) :
       = ∫ x : ℝ, Real.exp (-(b * |x|)) * Real.cos (x * r) from
         integral_congr_ae (Eventually.of_forall hpt)] at h1
   exact h1
-
-
-
-
-
-
 theorem integral_spectralTest_expKernel {f : ℝ → ℂ} (hf : f ∈ oddCore) {b : ℝ}
     (hb : 0 < b) :
     (1 / (2 * Real.pi)) * ∫ r : ℝ,
@@ -348,62 +279,14 @@ theorem integral_spectralTest_expKernel {f : ℝ → ℂ} (hf : f ∈ oddCore) {
               * (spectralTest f r).re
             = (2 * b / (b ^ 2 + r ^ 2)) * (spectralTest f r).re
           rw [integral_exp_neg_abs_mul_cos hb])]
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.spectralTest_im_eq_zero
-#print axioms RHLean.ExplicitFormula.integral_cos_mul_spectralTest
-#print axioms RHLean.ExplicitFormula.integral_autocorr_mul_fourierKernel
-#print axioms RHLean.ExplicitFormula.integrable_exp_neg_abs
-#print axioms RHLean.ExplicitFormula.integral_exp_neg_abs_mul_exp
-#print axioms RHLean.ExplicitFormula.integral_exp_neg_abs_mul_cos
-#print axioms RHLean.ExplicitFormula.integral_spectralTest_expKernel
-
 end
-
 end Inline_ExplicitFormula_RH46
-
 section Inline_ExplicitFormula_RH47
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators ComplexConjugate
-
 namespace RHLean.ExplicitFormula
-
-
-
 theorem digammaDensity_eq_tsum (r : ℝ) :
     digammaDensity r = -Real.eulerMascheroniConstant
       + ∑' n : ℕ, (1 / ((n : ℝ) + 1)
@@ -421,7 +304,7 @@ theorem digammaDensity_eq_tsum (r : ℝ) :
   have h := Complex.digamma_eq_tsum (z := z) hz_ne
   have hre := congrArg Complex.re h
   rw [Complex.add_re, Complex.neg_re, Complex.ofReal_re] at hre
-  rw [show Complex.re (∑'
+  rw [show Complex.re (∑' n : ℕ, (1 / ((n : ℂ) + 1) - 1 / ((n : ℂ) + z)))
       = Complex.reCLM (∑' n : ℕ, (1 / ((n : ℂ) + 1) - 1 / ((n : ℂ) + z))) from rfl,
     ContinuousLinearMap.map_tsum Complex.reCLM hsumm] at hre
   rw [tsum_congr (fun n => ?_)] at hre
@@ -445,12 +328,8 @@ theorem digammaDensity_eq_tsum (r : ℝ) :
       simp only [Complex.ofReal_re, Complex.ofReal_im, Complex.add_re, Complex.add_im,
         Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.normSq_apply]
       ring_nf
-
-
-
-
 theorem tsum_exp_neg_two_mul_add_half {x : ℝ} (hx : x ≠ 0) :
-    (∑'
+    (∑' n : ℕ, Real.exp (-(((2 * n + 1 / 2 : ℝ)) * |x|)))
       = Real.exp (-(|x| / 2)) / (1 - Real.exp (-(2 * |x|))) := by
   have hu : 0 < |x| := abs_pos.mpr hx
   have hr : ‖Real.exp (-(2 * |x|))‖ < 1 := by
@@ -467,87 +346,22 @@ theorem tsum_exp_neg_two_mul_add_half {x : ℝ} (hx : x ≠ 0) :
     ring
   rw [tsum_congr hrew, tsum_mul_left, hg.tsum_eq]
   ring
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.digammaDensity_eq_tsum
-#print axioms RHLean.ExplicitFormula.tsum_exp_neg_two_mul_add_half
-
 end
-
 end Inline_ExplicitFormula_RH47
-
 section Inline_ExplicitFormula_RH48
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators ComplexConjugate Interval
-
 namespace RHLean.ExplicitFormula
-
-
-
-
-
 theorem physicalConstant_add_logPi :
     physicalConstant + Real.log Real.pi
       = -Real.log 2 - Real.eulerMascheroniConstant := by
   unfold physicalConstant
   rw [Real.log_mul (by norm_num : (2 : ℝ) ≠ 0) Real.pi_ne_zero]
   ring
-
-
-
 theorem endpointPotential_eq (a x : ℝ) :
     endpointPotential a x = -(1 / 2) * Real.log (a ^ 2 - x ^ 2) := rfl
-
-
-
-
-
-
-
-
 theorem integral_truncated_inv_sub {a x ε : ℝ} (hx : |x| < a)
     (hε : 0 < ε) :
     (∫ y in (-a)..(x - ε), (x - y)⁻¹)
@@ -579,8 +393,6 @@ theorem integral_truncated_inv_sub {a x ε : ℝ} (hx : |x| < a)
   rw [h1, h2, integral_inv h3, integral_inv h4,
     Real.log_div (ne_of_gt hxpa) hεne, Real.log_div (ne_of_gt hax) hεne]
   linarith [hlog]
-
-
 theorem endpoint_reg_trunc {a x ε : ℝ} (hx : |x| < a) (hε : 0 < ε) :
     endpointPotential a x
       + (1 / 2) * ((∫ y in (-a)..(x - ε), (x - y)⁻¹)
@@ -588,14 +400,6 @@ theorem endpoint_reg_trunc {a x ε : ℝ} (hx : |x| < a) (hε : 0 < ε) :
       = -Real.log ε := by
   rw [integral_truncated_inv_sub hx hε, endpointPotential_eq]
   ring
-
-
-
-
-
-
-
-
 theorem fourth_normSq_sub (u v : ℂ) :
     (1 / 4) * ‖u - v‖ ^ 2
       = (1 / 4) * ‖u‖ ^ 2 + (1 / 4) * ‖v‖ ^ 2 - (1 / 2) * (u * conj v).re := by
@@ -608,47 +412,14 @@ theorem fourth_normSq_sub (u v : ℂ) :
     ring
   rw [h1]
   ring
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.physicalConstant_add_logPi
-#print axioms RHLean.ExplicitFormula.integral_truncated_inv_sub
-#print axioms RHLean.ExplicitFormula.endpoint_reg_trunc
-#print axioms RHLean.ExplicitFormula.fourth_normSq_sub
-
 end
-
 end Inline_ExplicitFormula_RH48
-
 section Inline_ExplicitFormula_RH50
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
-
-
 theorem digamma_partialSum_eq_integral {z : ℂ} (hz : 0 < z.re) (N : ℕ) :
     (∑ n ∈ Finset.range (N + 1), (1 / ((n : ℂ) + 1) - 1 / ((n : ℂ) + z)))
       = ∫ x in (0 : ℝ)..1,
@@ -735,65 +506,28 @@ theorem digamma_partialSum_eq_integral {z : ℂ} (hz : 0 < z.re) (N : ℕ) :
     _ = (1 - (x : ℂ) ^ (z - 1)) * ∑ n ∈ Finset.range (N + 1), (x : ℂ) ^ n := by
         congr 1
         exact Finset.sum_congr rfl fun n _ => Complex.cpow_natCast x n
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.digamma_partialSum_eq_integral
-
 end
-
 end Inline_ExplicitFormula_RH50
-
 section Inline_ExplicitFormula_RH51
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 noncomputable def digammaZ (r : ℝ) : ℂ :=
   (1 / 4 : ℂ) + ((r / 2 : ℝ) : ℂ) * I
-
 theorem digammaZ_re (r : ℝ) : (digammaZ r).re = 1 / 4 := by
   unfold digammaZ
   simp
-
 theorem digammaZ_sub_one_re (r : ℝ) : (digammaZ r - 1).re = -(3 / 4) := by
   unfold digammaZ
   simp
   ring
-
 theorem digammaZ_ne_one (r : ℝ) : digammaZ r ≠ 1 := by
   intro h
   have hre := congrArg Complex.re h
   rw [digammaZ_re] at hre
   norm_num at hre
-
-
 theorem norm_one_sub_digammaZ_le_of_pos {r : ℝ} {x : ℝ} (hx : 0 < x) :
     ‖(1 : ℂ) - (x : ℂ) ^ ((digammaZ r) - 1)‖ ≤ 1 + x ^ (-(3 / 4 : ℝ)) := by
   have hnorm : ‖(x : ℂ) ^ ((digammaZ r) - 1)‖ = x ^ (-(3 / 4 : ℝ)) := by
@@ -801,9 +535,6 @@ theorem norm_one_sub_digammaZ_le_of_pos {r : ℝ} {x : ℝ} (hx : 0 < x) :
   calc ‖(1 : ℂ) - (x : ℂ) ^ ((digammaZ r) - 1)‖
       ≤ ‖(1 : ℂ)‖ + ‖(x : ℂ) ^ ((digammaZ r) - 1)‖ := norm_sub_le _ _
     _ = 1 + x ^ (-(3 / 4 : ℝ)) := by rw [norm_one, hnorm]
-
-
-
 theorem norm_one_sub_digammaZ_le_of_half_le {r : ℝ} {x : ℝ}
     (hx : 1 / 2 ≤ x) (hx1 : x ≤ 1) :
     ‖(1 : ℂ) - (x : ℂ) ^ ((digammaZ r) - 1)‖
@@ -859,53 +590,16 @@ theorem norm_one_sub_digammaZ_le_of_half_le {r : ℝ} {x : ℝ}
       ≤ ‖(digammaZ r) - 1‖ * ((2 : ℝ) ^ (7 / 4 : ℝ) * (1 - x)) :=
         mul_le_mul_of_nonneg_left hInt (norm_nonneg _)
     _ = ‖(digammaZ r) - 1‖ * (2 : ℝ) ^ (7 / 4 : ℝ) * (1 - x) := by ring
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.digammaZ_re
-#print axioms RHLean.ExplicitFormula.norm_one_sub_digammaZ_le_of_pos
-#print axioms RHLean.ExplicitFormula.norm_one_sub_digammaZ_le_of_half_le
-
 end
-
 end Inline_ExplicitFormula_RH51
-
 section Inline_ExplicitFormula_RH52
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 noncomputable def digammaMajorant (r : ℝ) (x : ℝ) : ℝ :=
   max 2 (‖(digammaZ r) - 1‖ * (2 : ℝ) ^ (7 / 4 : ℝ)) * (1 + x ^ (-(3 / 4 : ℝ)))
-
 theorem integrable_digammaMajorant (r : ℝ) :
     Integrable (digammaMajorant r) (volume.restrict (Set.Ioc (0 : ℝ) 1)) := by
   have hbase : IntegrableOn (fun x : ℝ => x ^ (-(3 / 4 : ℝ))) (Set.Ioc (0 : ℝ) 1) volume := by
@@ -918,8 +612,6 @@ theorem integrable_digammaMajorant (r : ℝ) :
     ((integrableOn_const (s := Set.Ioc (0 : ℝ) 1) (C := (1 : ℝ))
       (hs := by rw [Real.volume_Ioc]; norm_num)).add hbase).const_mul _
   exact htarget.congr_fun (fun x _ => rfl) measurableSet_Ioc
-
-
 theorem norm_digamma_integrand_le_majorant (r : ℝ) (N : ℕ) :
     ∀ᵐ x : ℝ ∂(volume.restrict (Set.Ioc (0 : ℝ) 1)),
       ‖(1 - (x : ℂ) ^ ((digammaZ r) - 1))
@@ -939,7 +631,6 @@ theorem norm_digamma_integrand_le_majorant (r : ℝ) (N : ℕ) :
   have hx0 : 0 < x := hxmem.1
   have hxle : x ≤ 1 := hxmem.2
   have hxlt : x < 1 := lt_of_le_of_ne hxle hxne
-
   have hxnormR : ‖x‖ < 1 := by
     rw [Real.norm_eq_abs, abs_of_nonneg hx0.le]
     exact hxlt
@@ -995,49 +686,14 @@ theorem norm_digamma_integrand_le_majorant (r : ℝ) (N : ℕ) :
       _ ≤ max 2 (‖(digammaZ r) - 1‖ * (2 : ℝ) ^ (7 / 4 : ℝ))
             * (1 + x ^ (-(3 / 4 : ℝ))) :=
           le_mul_of_one_le_right (le_trans (by norm_num) hK2) hone_le
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.integrable_digammaMajorant
-#print axioms RHLean.ExplicitFormula.norm_digamma_integrand_le_majorant
-
 end
-
 end Inline_ExplicitFormula_RH52
-
 section Inline_ExplicitFormula_RH53
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem tendsto_partialSum_mul (r : ℝ) :
     ∀ᵐ x : ℝ ∂(volume.restrict (Set.Ioc (0 : ℝ) 1)),
       Tendsto (fun N : ℕ =>
@@ -1082,8 +738,6 @@ theorem tendsto_partialSum_mul (r : ℝ) :
   have hmul := (tendsto_const_nhds (x := (1 - (x : ℂ) ^ ((digammaZ r) - 1)))).mul hgeomtend
   convert hmul using 1
   ring
-
-
 theorem tendsto_integral_partialSum (r : ℝ) :
     Tendsto (fun N : ℕ => ∫ x in (0 : ℝ)..1,
         (1 - (x : ℂ) ^ ((digammaZ r) - 1))
@@ -1114,9 +768,6 @@ theorem tendsto_integral_partialSum (r : ℝ) :
       (fun N => norm_digamma_integrand_le_majorant r N)
       (tendsto_partialSum_mul r)
   simpa only [← intervalIntegral.integral_of_le (by norm_num : (0 : ℝ) ≤ 1)] using hconv
-
-
-
 theorem digamma_digammaZ_eq_integral (r : ℝ) :
     Complex.digamma (digammaZ r) + (Real.eulerMascheroniConstant : ℂ)
       = ∫ x in (0 : ℝ)..1,
@@ -1148,8 +799,6 @@ theorem digamma_digammaZ_eq_integral (r : ℝ) :
     funext fun N => (digamma_partialSum_eq_integral hzr N).symm
   rw [hEq] at hlim_int
   exact (tendsto_nhds_unique hlim_int hlim_sum).symm
-
-
 theorem digammaDensity_eq_integral (r : ℝ) :
     digammaDensity r = -Real.eulerMascheroniConstant
       + (∫ x in (0 : ℝ)..1,
@@ -1159,48 +808,14 @@ theorem digammaDensity_eq_integral (r : ℝ) :
   have hd : (Complex.digamma (digammaZ r)).re = digammaDensity r := rfl
   rw [hd] at h
   linarith
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.tendsto_partialSum_mul
-#print axioms RHLean.ExplicitFormula.tendsto_integral_partialSum
-#print axioms RHLean.ExplicitFormula.digamma_digammaZ_eq_integral
-#print axioms RHLean.ExplicitFormula.digammaDensity_eq_integral
-
 end
-
 end Inline_ExplicitFormula_RH53
-
 section Inline_ExplicitFormula_RH54
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
 theorem norm_digammaZ_sub_one_le (r : ℝ) : ‖(digammaZ r) - 1‖ ≤ 1 + |r| := by
   have h : (digammaZ r) - 1
       = (((-(3 / 4) : ℝ)) : ℂ) + (((r / 2 : ℝ)) : ℂ) * I := by
@@ -1217,13 +832,10 @@ theorem norm_digammaZ_sub_one_le (r : ℝ) : ‖(digammaZ r) - 1‖ ≤ 1 + |r| 
     _ ≤ 1 + |r| := by
         have := abs_nonneg r
         linarith
-
 theorem two_rpow_seven_fourths_le_four : (2 : ℝ) ^ (7 / 4 : ℝ) ≤ 4 := by
   rw [show (4 : ℝ) = (2 : ℝ) ^ (2 : ℕ) by norm_num]
   rw [← Real.rpow_natCast]
   exact Real.rpow_le_rpow_of_exponent_le (by norm_num) (by norm_num)
-
-
 theorem norm_digammaRatio_le {r : ℝ} {t : ℝ} (ht : 0 < t) (ht1 : t < 1) :
     ‖(1 - (t : ℂ) ^ ((digammaZ r) - 1)) / (1 - (t : ℂ))‖
       ≤ 4 * (1 + |r|) * (1 + t ^ (-(3 / 4 : ℝ))) := by
@@ -1274,45 +886,14 @@ theorem norm_digammaRatio_le {r : ℝ} {t : ℝ} (ht : 0 < t) (ht1 : t < 1) :
       _ ≤ 4 * (1 + |r|) * (1 + t ^ (-(3 / 4 : ℝ))) := by
           have := mul_le_mul_of_nonneg_left hone (by positivity : (0 : ℝ) ≤ 4 * (1 + |r|))
           nlinarith
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.norm_digammaZ_sub_one_le
-#print axioms RHLean.ExplicitFormula.norm_digammaRatio_le
-
 end
-
 end Inline_ExplicitFormula_RH54
-
 section Inline_ExplicitFormula_RH55
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem digammaZ_cpow_re {r t : ℝ} (ht : 0 < t) :
     ((t : ℂ) ^ ((digammaZ r) - 1)).re
       = t ^ (-(3 / 4 : ℝ)) * Real.cos ((r / 2) * Real.log t) := by
@@ -1333,8 +914,6 @@ theorem digammaZ_cpow_re {r t : ℝ} (ht : 0 < t) :
   congr 1
   congr 1
   ring
-
-
 theorem re_digammaRatio {r t : ℝ} (ht : 0 < t) (ht1 : t < 1) :
     ((1 - (t : ℂ) ^ ((digammaZ r) - 1)) / (1 - (t : ℂ))).re
       = (1 - t ^ (-(3 / 4 : ℝ)) * Real.cos ((r / 2) * Real.log t)) / (1 - t) := by
@@ -1351,48 +930,15 @@ theorem re_digammaRatio {r t : ℝ} (ht : 0 < t) (ht1 : t < 1) :
   rw [digammaZ_cpow_re ht]
   field_simp [htne]
   ring
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.digammaZ_cpow_re
-#print axioms RHLean.ExplicitFormula.re_digammaRatio
-
 end
-
 end Inline_ExplicitFormula_RH55
-
 section Inline_ExplicitFormula_RH56
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 set_option maxHeartbeats 800000
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem integrable_cos_mul_spectralTest {f : ℝ → ℂ} (hf : f ∈ oddCore) (a : ℝ) :
     Integrable (fun r : ℝ => Real.cos (a * r) * (spectralTest f r).re) volume := by
   have hcont : Continuous (fun r : ℝ => Real.cos (a * r)) :=
@@ -1406,8 +952,6 @@ theorem integrable_cos_mul_spectralTest {f : ℝ → ℂ} (hf : f ∈ oddCore) (
     change (spectralTest f r).re * Real.cos (a * r)
       = Real.cos (a * r) * (spectralTest f r).re
     ring)
-
-
 theorem integral_one_sub_cos_mul_spectralTest {f : ℝ → ℂ} (hf : f ∈ oddCore) (t : ℝ) :
     (∫ r : ℝ, (1 - t ^ (-(3 / 4 : ℝ)) * Real.cos ((r / 2) * Real.log t))
         * (spectralTest f r).re)
@@ -1448,46 +992,14 @@ theorem integral_one_sub_cos_mul_spectralTest {f : ℝ → ℂ} (hf : f ∈ oddC
     exact integral_cos_mul_spectralTest hf (Real.log t / 2)
   rw [harg]
   rw [hg0]
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.integrable_cos_mul_spectralTest
-#print axioms RHLean.ExplicitFormula.integral_one_sub_cos_mul_spectralTest
-
 end
-
 end Inline_ExplicitFormula_RH56
-
 section Inline_ExplicitFormula_RH57
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem integrable_spectralTest_weighted {f : ℝ → ℂ} (hf : f ∈ oddCore) :
     Integrable (fun r : ℝ => (1 + |r|) * ‖spectralTest f r‖) volume := by
   obtain ⟨C, hC0, hC⟩ := exists_spectralTest_norm_pow_mul_le hf 3
@@ -1510,8 +1022,6 @@ theorem integrable_spectralTest_weighted {f : ℝ → ℂ} (hf : f ∈ oddCore) 
         refine mul_le_mul_of_nonneg_left ?_ hC0
         rw [inv_le_inv₀ (by positivity) (by positivity)]
         exact hsq
-
-
 theorem integrable_digammaMajorantT :
     Integrable (fun t : ℝ => 1 + t ^ (-(3 / 4 : ℝ))) (volume.restrict (Set.Ioc (0 : ℝ) 1)) := by
   have hbase : IntegrableOn (fun t : ℝ => t ^ (-(3 / 4 : ℝ))) (Set.Ioc (0 : ℝ) 1) volume := by
@@ -1520,88 +1030,27 @@ theorem integrable_digammaMajorantT :
       (by norm_num : (-1 : ℝ) < -(3 / 4 : ℝ))
   exact (integrableOn_const (s := Set.Ioc (0 : ℝ) 1) (C := (1 : ℝ))
     (hs := by rw [Real.volume_Ioc]; norm_num)).add hbase
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.integrable_spectralTest_weighted
-#print axioms RHLean.ExplicitFormula.integrable_digammaMajorantT
-
 end
-
 end Inline_ExplicitFormula_RH57
-
 section Inline_ExplicitFormula_RH58
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem integrable_fubiniMajorant {f : ℝ → ℂ} (hf : f ∈ oddCore) :
     Integrable (fun p : ℝ × ℝ =>
         ((1 + |p.1|) * ‖spectralTest f p.1‖) * (1 + p.2 ^ (-(3 / 4 : ℝ))))
       (volume.prod (volume.restrict (Set.Ioc (0 : ℝ) 1))) :=
   (integrable_spectralTest_weighted hf).mul_prod integrable_digammaMajorantT
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.integrable_fubiniMajorant
-
 end
-
 end Inline_ExplicitFormula_RH58
-
 section Inline_ExplicitFormula_RH59
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
 theorem norm_digammaDoubleIntegrand_le {f : ℝ → ℂ} (hf : f ∈ oddCore)
     {r t : ℝ} (ht : 0 < t) (ht1 : t < 1) :
     ‖(((1 - (t : ℂ) ^ ((digammaZ r) - 1)) / (1 - (t : ℂ))).re
@@ -1621,43 +1070,17 @@ theorem norm_digammaDoubleIntegrand_le {f : ℝ → ℂ} (hf : f ∈ oddCore)
     _ ≤ (4 * (1 + |r|) * (1 + t ^ (-(3 / 4 : ℝ)))) * ‖spectralTest f r‖ :=
         mul_le_mul_of_nonneg_right hratio (norm_nonneg _)
     _ = 4 * ((1 + |r|) * ‖spectralTest f r‖) * (1 + t ^ (-(3 / 4 : ℝ))) := by ring
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.norm_digammaDoubleIntegrand_le
-
 end
-
 end Inline_ExplicitFormula_RH59
-
 section Inline_ExplicitFormula_RH60
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
 theorem continuous_digammaZ : Continuous digammaZ := by
   unfold digammaZ
   fun_prop
-
 theorem continuousOn_digammaDoubleIntegrand {f : ℝ → ℂ} (hf : f ∈ oddCore) :
     ContinuousOn (fun p : ℝ × ℝ =>
         (((1 - (p.2 : ℂ) ^ ((digammaZ p.1) - 1)) / (1 - (p.2 : ℂ))).re)
@@ -1687,48 +1110,14 @@ theorem continuousOn_digammaDoubleIntegrand {f : ℝ → ℂ} (hf : f ∈ oddCor
   have hspec : ContinuousAt (fun q : ℝ × ℝ => (spectralTest f q.1).re) p :=
     (Complex.continuous_re.comp ((continuous_spectralTest hf).comp continuous_fst)).continuousAt
   exact hre.mul hspec
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.continuous_digammaZ
-#print axioms RHLean.ExplicitFormula.continuousOn_digammaDoubleIntegrand
-
 end
-
 end Inline_ExplicitFormula_RH60
-
 section Inline_ExplicitFormula_RH61
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
-
-
 theorem ae_mem_univ_prod_Ioo :
     ∀ᵐ p : ℝ × ℝ ∂(volume.prod (volume.restrict (Set.Ioc (0 : ℝ) 1))),
       p ∈ (Set.univ : Set ℝ) ×ˢ Set.Ioo (0 : ℝ) 1 := by
@@ -1754,9 +1143,6 @@ theorem ae_mem_univ_prod_Ioo :
       rw [hset, measure_singleton]
     rw [hν, mul_zero]
   exact mem_ae_iff.mpr hcompl
-
-
-
 theorem aestronglyMeasurable_digammaDoubleIntegrand {f : ℝ → ℂ} (hf : f ∈ oddCore) :
     AEStronglyMeasurable (fun p : ℝ × ℝ =>
         (((1 - (p.2 : ℂ) ^ ((digammaZ p.1) - 1)) / (1 - (p.2 : ℂ))).re)
@@ -1784,8 +1170,6 @@ theorem aestronglyMeasurable_digammaDoubleIntegrand {f : ℝ → ℂ} (hf : f �
     filter_upwards [hae] with p hp
     rw [Set.indicator_of_mem hp]
   exact hind.congr heq
-
-
 theorem integrable_digammaRatio (r : ℝ) :
     Integrable (fun t : ℝ => (1 - (t : ℂ) ^ ((digammaZ r) - 1)) / (1 - (t : ℂ)))
       (volume.restrict (Set.Ioc (0 : ℝ) 1)) := by
@@ -1823,9 +1207,6 @@ theorem integrable_digammaRatio (r : ℝ) :
     have ht : 0 < t := htmem.1
     have ht1 : t < 1 := lt_of_le_of_ne htmem.2 htne
     exact norm_digammaRatio_le ht ht1
-
-
-
 theorem integrable_digammaDoubleIntegrand {f : ℝ → ℂ} (hf : f ∈ oddCore) :
     Integrable (fun p : ℝ × ℝ =>
         (((1 - (p.2 : ℂ) ^ ((digammaZ p.1) - 1)) / (1 - (p.2 : ℂ))).re)
@@ -1842,62 +1223,20 @@ theorem integrable_digammaDoubleIntegrand {f : ℝ → ℂ} (hf : f ∈ oddCore)
   refine Integrable.mono' hmaj4 (aestronglyMeasurable_digammaDoubleIntegrand hf) ?_
   filter_upwards [ae_mem_univ_prod_Ioo] with p hp
   simpa only [mul_assoc] using norm_digammaDoubleIntegrand_le hf hp.2.1 hp.2.2
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.ae_mem_univ_prod_Ioo
-#print axioms RHLean.ExplicitFormula.aestronglyMeasurable_digammaDoubleIntegrand
-#print axioms RHLean.ExplicitFormula.integrable_digammaRatio
-#print axioms RHLean.ExplicitFormula.integrable_digammaDoubleIntegrand
-
 end
-
 end Inline_ExplicitFormula_RH61
-
 section Inline_ExplicitFormula_RH62
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem autocorr_zero_re {f : ℝ → ℂ} (hf : f ∈ oddCore) :
     (autocorr f 0).re = ∫ x : ℝ, ‖f x‖ ^ 2 := by
   rw [autocorr_zero hf]
   rw [show (∫ x : ℝ, ((‖f x‖ ^ 2 : ℝ) : ℂ))
       = (((∫ x : ℝ, ‖f x‖ ^ 2 : ℝ)) : ℂ) from _root_.integral_ofReal]
   rw [Complex.ofReal_re]
-
-
 theorem re_integral_digammaRatio (r : ℝ) :
     (∫ x in (0 : ℝ)..1,
         (1 - (x : ℂ) ^ ((digammaZ r) - 1)) / (1 - (x : ℂ))).re
@@ -1906,8 +1245,6 @@ theorem re_integral_digammaRatio (r : ℝ) :
   rw [intervalIntegral.integral_of_le (by norm_num : (0 : ℝ) ≤ 1),
     intervalIntegral.integral_of_le (by norm_num : (0 : ℝ) ≤ 1)]
   exact (integral_re (integrable_digammaRatio r)).symm
-
-
 theorem integral_digammaRatio_re_mul_spectralTest {f : ℝ → ℂ} (hf : f ∈ oddCore) :
     (∫ r : ℝ, ((∫ x in (0 : ℝ)..1,
           (1 - (x : ℂ) ^ ((digammaZ r) - 1)) / (1 - (x : ℂ))).re)
@@ -1923,9 +1260,6 @@ theorem integral_digammaRatio_re_mul_spectralTest {f : ℝ → ℂ} (hf : f ∈ 
   congr 1
   rw [← intervalIntegral.integral_of_le (by norm_num : (0 : ℝ) ≤ 1)]
   exact re_integral_digammaRatio r
-
-
-
 theorem integral_digammaDoubleIntegrand_inner {f : ℝ → ℂ} (hf : f ∈ oddCore)
     {t : ℝ} (ht : 0 < t) (ht1 : t < 1) :
     (∫ r : ℝ,
@@ -1943,8 +1277,6 @@ theorem integral_digammaDoubleIntegrand_inner {f : ℝ → ℂ} (hf : f ∈ oddC
     funext r
     rw [re_digammaRatio ht ht1, div_mul_eq_mul_div]
   rw [hpt, integral_div, integral_one_sub_cos_mul_spectralTest hf t]
-
-
 theorem digammaSpectralBlock_eq_positionSpace {f : ℝ → ℂ} (hf : f ∈ oddCore) :
     digammaSpectralBlock f
       = -Real.eulerMascheroniConstant * (autocorr f 0).re
@@ -2081,54 +1413,17 @@ theorem digammaSpectralBlock_eq_positionSpace {f : ℝ → ℂ} (hf : f ∈ oddC
               ((autocorr f 0).re
                 - t ^ (-(3 / 4 : ℝ)) * (autocorr f (Real.log t / 2)).re) / (1 - t) := by
         field_simp [Real.pi_ne_zero]
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.autocorr_zero_re
-#print axioms RHLean.ExplicitFormula.re_integral_digammaRatio
-#print axioms RHLean.ExplicitFormula.integral_digammaRatio_re_mul_spectralTest
-#print axioms RHLean.ExplicitFormula.integral_digammaDoubleIntegrand_inner
-#print axioms RHLean.ExplicitFormula.digammaSpectralBlock_eq_positionSpace
-
 end
-
 end Inline_ExplicitFormula_RH62
-
 section Inline_ExplicitFormula_RH63
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem autocorr_re_even {f : ℝ → ℂ} (hf : f ∈ oddCore) (u : ℝ) :
     (autocorr f (-u)).re = (autocorr f u).re :=
   congrArg Complex.re (autocorr_neg hf.2.2 u)
-
-
 theorem digammaKernel_eq_uIntegral {f : ℝ → ℂ} (hf : f ∈ oddCore) :
     (∫ t in (0 : ℝ)..1,
         ((autocorr f 0).re
@@ -2160,7 +1455,7 @@ theorem digammaKernel_eq_uIntegral {f : ℝ → ℂ} (hf : f ∈ oddCore) :
     ext t
     constructor
     · rintro ⟨u, hu, rfl⟩
-      have hu'
+      have hu' : (0 : ℝ) < u := hu
       exact ⟨Real.exp_pos _, by rw [Real.exp_lt_one_iff]; linarith⟩
     · intro ht
       refine ⟨-(Real.log t) / 2, ?_, ?_⟩
@@ -2202,8 +1497,6 @@ theorem digammaKernel_eq_uIntegral {f : ℝ → ℂ} (hf : f ∈ oddCore) :
   rw [abs_neg, abs_of_pos (by positivity : (0 : ℝ) < 2 * Real.exp (-(2 * u))),
     hrpow, hlog, autocorr_re_even hf u]
   ring
-
-
 theorem digammaSpectralBlock_eq_positionSpaceU {f : ℝ → ℂ} (hf : f ∈ oddCore) :
     digammaSpectralBlock f
       = -Real.eulerMascheroniConstant * (autocorr f 0).re
@@ -2211,69 +1504,23 @@ theorem digammaSpectralBlock_eq_positionSpaceU {f : ℝ → ℂ} (hf : f ∈ odd
             ((autocorr f 0).re - Real.exp (3 * u / 2) * (autocorr f u).re)
               * (2 * Real.exp (-(2 * u)) / (1 - Real.exp (-(2 * u)))) := by
   rw [digammaSpectralBlock_eq_positionSpace hf, digammaKernel_eq_uIntegral hf]
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.autocorr_re_even
-#print axioms RHLean.ExplicitFormula.digammaKernel_eq_uIntegral
-#print axioms RHLean.ExplicitFormula.digammaSpectralBlock_eq_positionSpaceU
-
 end
-
 end Inline_ExplicitFormula_RH63
-
 section Inline_ExplicitFormula_RH64
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 noncomputable def digammaKernel (f : ℝ → ℂ) (u : ℝ) : ℝ :=
   ((autocorr f 0).re - Real.exp (3 * u / 2) * (autocorr f u).re)
     * (2 * Real.exp (-(2 * u)) / (1 - Real.exp (-(2 * u))))
-
-
 noncomputable def digammaKernelTerm (f : ℝ → ℂ) (n : ℕ) (u : ℝ) : ℝ :=
   ((autocorr f 0).re - Real.exp (3 * u / 2) * (autocorr f u).re)
     * (2 * Real.exp (-(2 * ((n : ℝ) + 1) * u)))
-
-
 noncomputable def digammaKernelTermBound (f : ℝ → ℂ) (n : ℕ) (u : ℝ) : ℝ :=
   |(autocorr f 0).re - Real.exp (3 * u / 2) * (autocorr f u).re|
     * (2 * Real.exp (-(2 * ((n : ℝ) + 1) * u)))
-
-
-
-
 theorem exists_autocorr_re_bound {f : ℝ → ℂ} (hf : f ∈ oddCore) :
     ∃ B : ℝ, 0 ≤ B ∧ ∀ u : ℝ, |(autocorr f u).re| ≤ B := by
   obtain ⟨R, hR0, hR⟩ := exists_support_radius (hasCompactSupport_autocorr hf)
@@ -2293,8 +1540,6 @@ theorem exists_autocorr_re_bound {f : ℝ → ℂ} (hf : f ∈ oddCore) :
       · rw [abs_of_pos (by linarith)]; linarith
     rw [hR u hgt]
     simp
-
-
 theorem exists_autocorr_re_exp_bound {f : ℝ → ℂ} (hf : f ∈ oddCore) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ u ∈ Set.Ioc (0 : ℝ) 1,
       |(autocorr f 0).re - Real.exp (3 * u / 2) * (autocorr f u).re| ≤ C * u := by
@@ -2362,10 +1607,6 @@ theorem exists_autocorr_re_exp_bound {f : ℝ → ℂ} (hf : f ∈ oddCore) :
           mul_le_mul_of_nonneg_right hBu (by positivity)
         exact add_le_add h1 (h3.trans h4)
     _ = (max K 0 + max B 0 * ((3 / 2) * Real.exp (3 / 2))) * u := by ring
-
-
-
-
 theorem digammaKernel_le_inv {u : ℝ} (hu : 0 < u) :
     2 * Real.exp (-(2 * u)) / (1 - Real.exp (-(2 * u))) ≤ 1 / u := by
   have hden : 0 < 1 - Real.exp (-(2 * u)) := by
@@ -2379,9 +1620,6 @@ theorem digammaKernel_le_inv {u : ℝ} (hu : 0 < u) :
     nlinarith [h2, h3]
   rw [div_le_iff₀ hden, div_mul_eq_mul_div, le_div_iff₀ hu]
   nlinarith [hkey]
-
-
-
 theorem digammaKernel_majorant {f : ℝ → ℂ} (hf : f ∈ oddCore) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ u ∈ Set.Ioi (0 : ℝ),
       |(autocorr f 0).re - Real.exp (3 * u / 2) * (autocorr f u).re|
@@ -2471,16 +1709,12 @@ theorem digammaKernel_majorant {f : ℝ → ℂ} (hf : f ∈ oddCore) :
             * (Real.exp (-(u / 2)) + (1 + u ^ 2)⁻¹) := by
           have hinv : 0 ≤ (1 + u ^ 2)⁻¹ := by positivity
           nlinarith [hexp_le, Real.exp_pos (-(u / 2)), hinv, hC₁0, hB0, hD0, mul_nonneg hD0 hB0]
-
-
 theorem integrableOn_exp_neg_mul_form {a b : ℝ} (hb : 0 < b) :
     Integrable (fun u : ℝ => Real.exp (-(b * u))) (volume.restrict (Set.Ioi a)) := by
   have h := exp_neg_integrableOn_Ioi a hb
   refine h.congr (Eventually.of_forall fun u => ?_)
   apply congrArg Real.exp
   ring
-
-
 theorem integrable_exp_neg_half_add_inv (C : ℝ) :
     Integrable (fun u : ℝ => C * (Real.exp (-(u / 2)) + (1 + u ^ 2)⁻¹))
       (volume.restrict (Set.Ioi (0 : ℝ))) := by
@@ -2492,10 +1726,6 @@ theorem integrable_exp_neg_half_add_inv (C : ℝ) :
   have h2 : IntegrableOn (fun u : ℝ => (1 + u ^ 2)⁻¹) (Set.Ioi (0 : ℝ)) volume :=
     integrable_inv_one_add_sq.integrableOn
   exact (h1.add h2).const_mul C
-
-
-
-
 theorem hasSum_exp_geometric {c : ℝ} {u : ℝ} (hu : 0 < u) :
     HasSum (fun n : ℕ => c * (2 * Real.exp (-(2 * ((n : ℝ) + 1) * u))))
       (c * (2 * Real.exp (-(2 * u)) / (1 - Real.exp (-(2 * u))))) := by
@@ -2513,8 +1743,6 @@ theorem hasSum_exp_geometric {c : ℝ} {u : ℝ} (hu : 0 < u) :
   rw [hterm] at hg
   have hg2 := hg.mul_left c
   simpa [div_eq_mul_inv, mul_assoc] using hg2
-
-
 theorem digammaKernelTermBound_hasSum {f : ℝ → ℂ} (hf : f ∈ oddCore) {u : ℝ}
     (hu : 0 < u) :
     HasSum (fun n : ℕ => digammaKernelTermBound f n u)
@@ -2522,18 +1750,14 @@ theorem digammaKernelTermBound_hasSum {f : ℝ → ℂ} (hf : f ∈ oddCore) {u 
         * (2 * Real.exp (-(2 * u)) / (1 - Real.exp (-(2 * u))))) :=
   hasSum_exp_geometric (c := |(autocorr f 0).re
     - Real.exp (3 * u / 2) * (autocorr f u).re|) hu
-
-
 theorem digammaKernelTermBound_tsum {f : ℝ → ℂ} (hf : f ∈ oddCore) {u : ℝ}
     (hu : 0 < u) :
     (∑' n : ℕ, digammaKernelTermBound f n u)
       = |(autocorr f 0).re - Real.exp (3 * u / 2) * (autocorr f u).re|
         * (2 * Real.exp (-(2 * u)) / (1 - Real.exp (-(2 * u)))) :=
   (digammaKernelTermBound_hasSum hf hu).tsum_eq
-
-
 theorem integrable_tsum_digammaKernelTermBound {f : ℝ → ℂ} (hf : f ∈ oddCore) :
-    Integrable (fun u : ℝ => ∑'
+    Integrable (fun u : ℝ => ∑' n : ℕ, digammaKernelTermBound f n u)
       (volume.restrict (Set.Ioi (0 : ℝ))) := by
   obtain ⟨C, hC0, hC⟩ := digammaKernel_majorant hf
   refine Integrable.mono' (integrable_exp_neg_half_add_inv C) ?_ ?_
@@ -2559,7 +1783,7 @@ theorem integrable_tsum_digammaKernelTermBound {f : ℝ → ℂ} (hf : f ∈ odd
         |(autocorr f 0).re - Real.exp (3 * u / 2) * (autocorr f u).re|
           * (2 * Real.exp (-(2 * u)) / (1 - Real.exp (-(2 * u))))) (Set.Ioi (0 : ℝ)) :=
       hbase.continuousOn.mul (hnum.continuousOn.div hden.continuousOn (fun u hu => by
-        have hu'
+        have hu' : (0 : ℝ) < u := hu
         rw [sub_ne_zero]
         exact ne_of_gt (Real.exp_lt_one_iff.mpr (by linarith))))
     exact (hcont.aestronglyMeasurable measurableSet_Ioi).congr heq.symm
@@ -2572,10 +1796,6 @@ theorem integrable_tsum_digammaKernelTermBound {f : ℝ → ℂ} (hf : f ∈ odd
         apply div_nonneg (by positivity)
         rw [sub_nonneg]
         exact Real.exp_le_one_iff.mpr (by linarith))
-
-
-
-
 theorem integral_exp_neg_abs_mul_eq {g : ℝ → ℝ} (hg_even : ∀ u, g (-u) = g u) (b : ℝ) :
     (∫ u : ℝ, Real.exp (-(b * |u|)) * g u)
       = 2 * ∫ u in Set.Ioi (0 : ℝ), Real.exp (-(b * u)) * g u := by
@@ -2587,8 +1807,6 @@ theorem integral_exp_neg_abs_mul_eq {g : ℝ → ℝ} (hg_even : ∀ u, g (-u) =
   · rw [abs_of_neg hx, ← hg_even (-x)]
     ring_nf
   · rw [abs_of_nonneg hx]
-
-
 theorem integral_digammaKernelTerm {f : ℝ → ℂ} (hf : f ∈ oddCore) (n : ℕ) :
     (∫ u : ℝ, digammaKernelTerm f n u ∂(volume.restrict (Set.Ioi (0 : ℝ))))
       = (autocorr f 0).re / ((n : ℝ) + 1)
@@ -2674,10 +1892,6 @@ theorem integral_digammaKernelTerm {f : ℝ → ℂ} (hf : f ∈ oddCore) (n : �
     rw [h1, ← integral_exp_neg_abs_mul_eq (g := fun u => (autocorr f u).re) (b := b)
       (fun u => autocorr_re_even hf u)]
   rw [hval1, hval2, hb_def]
-
-
-
-
 theorem digammaKernel_uIntegral_eq_tsum {f : ℝ → ℂ} (hf : f ∈ oddCore) :
     (∫ u : ℝ, digammaKernel f u ∂(volume.restrict (Set.Ioi (0 : ℝ))))
       = ∑' n : ℕ, ((autocorr f 0).re / ((n : ℝ) + 1)
@@ -2719,253 +1933,86 @@ theorem digammaKernel_uIntegral_eq_tsum {f : ℝ → ℂ} (hf : f ∈ oddCore) :
   apply tsum_congr
   intro n
   exact integral_digammaKernelTerm hf n
-
-
 theorem digammaSpectralBlock_eq_tsum {f : ℝ → ℂ} (hf : f ∈ oddCore) :
     digammaSpectralBlock f
       = -Real.eulerMascheroniConstant * (autocorr f 0).re
-        + ∑'
+        + ∑' n : ℕ, ((autocorr f 0).re / ((n : ℝ) + 1)
             - ∫ u : ℝ, Real.exp (-(((2 : ℝ) * n + 1 / 2) * |u|))
                 * (autocorr f u).re) := by
   rw [digammaSpectralBlock_eq_positionSpaceU hf]
   congr 1
   simpa only [digammaKernel] using digammaKernel_uIntegral_eq_tsum hf
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.exists_autocorr_re_bound
-#print axioms RHLean.ExplicitFormula.exists_autocorr_re_exp_bound
-#print axioms RHLean.ExplicitFormula.digammaKernel_le_inv
-#print axioms RHLean.ExplicitFormula.digammaKernel_majorant
-#print axioms RHLean.ExplicitFormula.integrable_exp_neg_half_add_inv
-#print axioms RHLean.ExplicitFormula.hasSum_exp_geometric
-#print axioms RHLean.ExplicitFormula.digammaKernelTermBound_hasSum
-#print axioms RHLean.ExplicitFormula.digammaKernelTermBound_tsum
-#print axioms RHLean.ExplicitFormula.integrable_tsum_digammaKernelTermBound
-#print axioms RHLean.ExplicitFormula.integral_exp_neg_abs_mul_eq
-#print axioms RHLean.ExplicitFormula.integral_digammaKernelTerm
-#print axioms RHLean.ExplicitFormula.digammaKernel_uIntegral_eq_tsum
-#print axioms RHLean.ExplicitFormula.digammaSpectralBlock_eq_tsum
-
 end
-
 end Inline_ExplicitFormula_RH64
-
 section Inline_ExplicitFormula_RH22
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set
 open scoped Real Topology BigOperators
-
 namespace RHLean.ExplicitFormula
-
-
-
 theorem weilOdd_eq_real : @weilOdd = @RHLean.weilOdd := rfl
-
 theorem localizedForm_eq_real : @localizedForm = @RHLean.localizedForm := rfl
-
 theorem localizedCore_eq_real : @localizedCore = @RHLean.localizedCore := rfl
-
-
 theorem weilExplicitFormulaOddAt_iff_real (a : ℝ) :
     WeilExplicitFormulaOddAt a ↔
       (0 < a → ∀ f : ℝ → ℂ, f ∈ RHLean.localizedCore a →
         RHLean.weilOdd f = RHLean.localizedForm a f) :=
   Iff.rfl
-
-
-
-
-
-
 theorem weilExplicitFormulaOddAt_of_two_obligations {a : ℝ}
     (hGW : EvenGuinandWeilAt a) (hArch : ArchimedeanMatchAt a) :
     WeilExplicitFormulaOddAt a :=
   weilExplicitFormulaOddAt_of_evenGuinandWeil hGW hArch
-
-
 theorem weilExplicitFormulaOddNonnegAt_of_two_obligations {a : ℝ}
     (hGW : EvenGuinandWeilAt a) (hArch : ArchimedeanMatchAt a) :
     WeilExplicitFormulaOddNonnegAt a :=
   nonnegAt_of_explicitFormulaAt (weilExplicitFormulaOddAt_of_two_obligations hGW hArch)
-
-
-
-
-
 theorem riemannXi_zero_tail_le_real (h : RiemannVonMangoldtCountBound) :
     ∃ C : ℝ, 0 < C ∧ ∀ X : ℝ, 2 ≤ X →
       (∑' p : XiZero, (if X < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖
           then (1 : ℝ) / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2 else 0))
         ≤ C * (Real.log X / X) :=
   riemannXi_zero_tail_le h
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.weilExplicitFormulaOddAt_of_two_obligations
-#print axioms RHLean.ExplicitFormula.riemannXi_zero_tail_le_real
-
 end
-
 end Inline_ExplicitFormula_RH22
-
 section Inline_ExplicitFormula_RH49
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators
-
 namespace RHLean.ExplicitFormula
-
-
-
-
 theorem weilExplicitFormulaOdd_of_obligations
     (hGW : ∀ a : ℝ, EvenGuinandWeilAt a) (hArch : ∀ a : ℝ, ArchimedeanMatchAt a) :
     WeilExplicitFormulaOdd :=
   fun a => weilExplicitFormulaOddAt_of_two_obligations (hGW a) (hArch a)
-
-
 theorem weilExplicitFormulaOddNonneg_of_obligations
     (hGW : ∀ a : ℝ, EvenGuinandWeilAt a) (hArch : ∀ a : ℝ, ArchimedeanMatchAt a) :
     WeilExplicitFormulaOddNonneg :=
   fun a => weilExplicitFormulaOddNonnegAt_of_two_obligations (hGW a) (hArch a)
-
-
-
-
-
 theorem weilExplicitFormulaOdd_of_evenGuinandWeil_digammaMatch
     (hGW : ∀ a : ℝ, EvenGuinandWeilAt a) (hDM : ∀ a : ℝ, DigammaArchimedeanMatchAt a) :
     WeilExplicitFormulaOdd :=
   weilExplicitFormulaOdd_of_obligations hGW
     (fun a => archimedeanMatchAt_of_digammaMatch (hDM a))
-
-
 theorem weilExplicitFormulaOddNonneg_of_evenGuinandWeil_digammaMatch
     (hGW : ∀ a : ℝ, EvenGuinandWeilAt a) (hDM : ∀ a : ℝ, DigammaArchimedeanMatchAt a) :
     WeilExplicitFormulaOddNonneg :=
   weilExplicitFormulaOddNonneg_of_obligations hGW
     (fun a => archimedeanMatchAt_of_digammaMatch (hDM a))
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.weilExplicitFormulaOdd_of_obligations
-#print axioms RHLean.ExplicitFormula.weilExplicitFormulaOddNonneg_of_obligations
-#print axioms RHLean.ExplicitFormula.weilExplicitFormulaOdd_of_evenGuinandWeil_digammaMatch
-#print axioms RHLean.ExplicitFormula.weilExplicitFormulaOddNonneg_of_evenGuinandWeil_digammaMatch
-
 end
-
 end Inline_ExplicitFormula_RH49
-
 section Inline_ExplicitFormula_RH65
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
-
-
-
-
-
-
-
-
 def MehlerDirichletKernelAt (a : ℝ) : Prop :=
   0 < a → ∀ f : ℝ → ℂ, f ∈ localizedCore a →
-    (∑'
+    (∑' n : ℕ, ((autocorr f 0).re / ((n : ℝ) + 1)
         - ∫ u : ℝ, Real.exp (-(((2 : ℝ) * n + 1 / 2) * |u|))
             * (autocorr f u).re))
       = archForm a f + (-Real.log 2) * (autocorr f 0).re
         + potentialForm a f - gammaForm a f
-
-
-
 theorem digammaMatchAt_of_mehlerDirichlet {a : ℝ} (h : MehlerDirichletKernelAt a) :
     DigammaArchimedeanMatchAt a := by
   intro ha f hf
@@ -2973,66 +2020,27 @@ theorem digammaMatchAt_of_mehlerDirichlet {a : ℝ} (h : MehlerDirichletKernelAt
   rw [digammaSpectralBlock_eq_tsum hodd, h ha f hf, physicalConstant_add_logPi,
     ← integral_normSq_eq_setIntegral hf, ← autocorr_zero_re hodd]
   ring
-
-
 theorem archimedeanMatchAt_of_mehlerDirichlet {a : ℝ} (h : MehlerDirichletKernelAt a) :
     ArchimedeanMatchAt a :=
   archimedeanMatchAt_of_digammaMatch (digammaMatchAt_of_mehlerDirichlet h)
-
-
-
 theorem weilExplicitFormulaOdd_of_evenGuinandWeil_mehler
     (hGW : ∀ a : ℝ, EvenGuinandWeilAt a) (hMD : ∀ a : ℝ, MehlerDirichletKernelAt a) :
     WeilExplicitFormulaOdd :=
   weilExplicitFormulaOdd_of_evenGuinandWeil_digammaMatch hGW
     (fun a => digammaMatchAt_of_mehlerDirichlet (hMD a))
-
-
 theorem weilExplicitFormulaOddNonneg_of_evenGuinandWeil_mehler
     (hGW : ∀ a : ℝ, EvenGuinandWeilAt a) (hMD : ∀ a : ℝ, MehlerDirichletKernelAt a) :
     WeilExplicitFormulaOddNonneg :=
   weilExplicitFormulaOddNonneg_of_evenGuinandWeil_digammaMatch hGW
     (fun a => digammaMatchAt_of_mehlerDirichlet (hMD a))
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.digammaMatchAt_of_mehlerDirichlet
-#print axioms RHLean.ExplicitFormula.archimedeanMatchAt_of_mehlerDirichlet
-#print axioms RHLean.ExplicitFormula.weilExplicitFormulaOdd_of_evenGuinandWeil_mehler
-#print axioms RHLean.ExplicitFormula.weilExplicitFormulaOddNonneg_of_evenGuinandWeil_mehler
-
 end
-
 end Inline_ExplicitFormula_RH65
-
 section Inline_ExplicitFormula_RH66
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
-
-
 theorem exp_sub_one_sub_id_le_mul (s : ℝ) (hs : 0 ≤ s) :
     Real.exp s - 1 - s ≤ s * (Real.exp s - 1) := by
   by_cases hs1 : s ≤ 1
@@ -3053,23 +2061,15 @@ theorem exp_sub_one_sub_id_le_mul (s : ℝ) (hs : 0 ≤ s) :
     have h1 : Real.exp s - 1 - s ≤ Real.exp s - 1 := by linarith
     have h2 : Real.exp s - 1 ≤ s * (Real.exp s - 1) := by nlinarith [hs1.le, h3]
     linarith
-
-
 theorem one_lt_exp_two_mul {u : ℝ} (hu : 0 < u) : 1 < Real.exp (2 * u) :=
   Real.one_lt_exp_iff.mpr (by linarith)
-
-
 theorem continuous_exp_two_mul : Continuous (fun u : ℝ => Real.exp (2 * u)) := by
   have h : Continuous fun u : ℝ => (2 : ℝ) * u := continuous_const.mul continuous_id
   exact Real.continuous_exp.comp h
-
-
 theorem continuous_exp_neg_two_mul : Continuous (fun u : ℝ => Real.exp (-(2 * u))) := by
   have h : Continuous fun u : ℝ => -((2 : ℝ) * u) :=
     (continuous_const.mul continuous_id).neg
   exact Real.continuous_exp.comp h
-
-
 theorem abs_two_div_exp_sub_one_sub_inv_le {u : ℝ} (hu : 0 < u) :
     |2 / (Real.exp (2 * u) - 1) - 1 / u| ≤ 2 := by
   have hpos : 0 < Real.exp (2 * u) - 1 := by
@@ -3086,8 +2086,6 @@ theorem abs_two_div_exp_sub_one_sub_inv_le {u : ℝ} (hu : 0 < u) :
   rw [hrewrite, abs_neg, abs_of_nonneg (div_nonneg hnum (mul_nonneg hu.le hpos.le))]
   rw [div_le_iff₀ (mul_pos hu hpos)]
   nlinarith [hkey]
-
-
 theorem hasDerivAt_log_one_sub_exp {u : ℝ} (hu : 0 < u) :
     HasDerivAt (fun u : ℝ => Real.log (1 - Real.exp (-(2 * u))))
       (2 / (Real.exp (2 * u) - 1)) u := by
@@ -3112,10 +2110,6 @@ theorem hasDerivAt_log_one_sub_exp {u : ℝ} (hu : 0 < u) :
     rw [← Real.exp_add, neg_add_cancel, Real.exp_zero]
   rw [div_eq_div_iff (ne_of_gt hpos) hne]
   nlinarith [hmul]
-
-
-
-
 theorem integral_two_div_exp_sub_one_Ioi {R : ℝ} (hR : 0 < R) :
     (∫ u in Set.Ioi R, 2 / (Real.exp (2 * u) - 1))
       = -Real.log (1 - Real.exp (-(2 * R))) := by
@@ -3184,8 +2178,6 @@ theorem integral_two_div_exp_sub_one_Ioi {R : ℝ} (hR : 0 < R) :
   have h := integral_Ioi_of_hasDerivAt_of_tendsto (a := R) hcont hderiv hint hlim
   rw [h]
   ring
-
-
 theorem integral_two_div_exp_sub_one_sub_inv {R : ℝ} (hR : 0 < R) :
     (∫ u in (0 : ℝ)..R, (2 / (Real.exp (2 * u) - 1) - 1 / u))
       = Real.log (1 - Real.exp (-(2 * R))) - Real.log R - Real.log 2 := by
@@ -3264,56 +2256,19 @@ theorem integral_two_div_exp_sub_one_sub_inv {R : ℝ} (hR : 0 < R) :
   have h := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_tendsto (a := (0 : ℝ))
     (b := R) hR hderiv hint ha hb
   rw [h]
-
-
 theorem digammaKernel_constant {R : ℝ} (hR : 0 < R) :
     Real.log R + (∫ u in (0 : ℝ)..R, (2 / (Real.exp (2 * u) - 1) - 1 / u))
       + (∫ u in Set.Ioi R, 2 / (Real.exp (2 * u) - 1)) = -Real.log 2 := by
   rw [integral_two_div_exp_sub_one_Ioi hR, integral_two_div_exp_sub_one_sub_inv hR]
   ring
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.exp_sub_one_sub_id_le_mul
-#print axioms RHLean.ExplicitFormula.abs_two_div_exp_sub_one_sub_inv_le
-#print axioms RHLean.ExplicitFormula.hasDerivAt_log_one_sub_exp
-#print axioms RHLean.ExplicitFormula.integral_two_div_exp_sub_one_Ioi
-#print axioms RHLean.ExplicitFormula.integral_two_div_exp_sub_one_sub_inv
-#print axioms RHLean.ExplicitFormula.digammaKernel_constant
-
 end
-
 end Inline_ExplicitFormula_RH66
-
 section Inline_ExplicitFormula_RH67
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem integrable_autocorr_integrand {f : ℝ → ℂ} (hf : f ∈ oddCore) (u : ℝ) :
     Integrable (fun x : ℝ => f (x + u) * star (f x)) volume := by
   obtain ⟨R, hR0, hR⟩ := exists_support_radius hf.2.1
@@ -3334,14 +2289,10 @@ theorem integrable_autocorr_integrand {f : ℝ → ℂ} (hf : f ∈ oddCore) (u 
   rw [Metric.mem_closedBall, Real.dist_eq, sub_zero]
   calc |x| ≤ R := h2
     _ ≤ 2 * R + 1 := by linarith
-
-
 theorem autocorr_re_eq_integral {f : ℝ → ℂ} (hf : f ∈ oddCore) (u : ℝ) :
     (autocorr f u).re = ∫ x : ℝ, (f (x + u) * star (f x)).re := by
   rw [autocorr]
   exact (integral_re (integrable_autocorr_integrand hf u)).symm
-
-
 theorem integral_kernel_mul_autocorr_eq {f : ℝ → ℂ} (hf : f ∈ oddCore) {K : ℝ → ℝ}
     (hK_meas : Measurable K) (hK_bound : ∃ M : ℝ, ∀ u : ℝ, |K u| ≤ M) :
     (∫ u : ℝ, K u * (autocorr f u).re)
@@ -3500,8 +2451,6 @@ theorem integral_kernel_mul_autocorr_eq {f : ℝ → ℂ} (hf : f ∈ oddCore) {
           ∂(volume.prod volume) :=
         integral_integral (μ := volume) (ν := volume)
           (f := fun x y => K (y - x) * (f y * star (f x)).re) hprod_int2
-
-
 theorem integral_kernel_mul_autocorr_eq' {f : ℝ → ℂ} (hf : f ∈ oddCore) {K : ℝ → ℝ}
     (hK_meas : Measurable K) (hK_bound : ∃ M : ℝ, ∀ u : ℝ, |K u| ≤ M) :
     (∫ u : ℝ, K u * (autocorr f u).re)
@@ -3513,47 +2462,14 @@ theorem integral_kernel_mul_autocorr_eq' {f : ℝ → ℂ} (hf : f ∈ oddCore) 
   congr 1
   simp only [Complex.mul_re, Complex.star_def, Complex.conj_re, Complex.conj_im]
   ring
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.integrable_autocorr_integrand
-#print axioms RHLean.ExplicitFormula.autocorr_re_eq_integral
-#print axioms RHLean.ExplicitFormula.integral_kernel_mul_autocorr_eq
-#print axioms RHLean.ExplicitFormula.integral_kernel_mul_autocorr_eq'
-
 end
-
 end Inline_ExplicitFormula_RH67
-
 section Inline_ExplicitFormula_RH68
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
-
-
 theorem abs_exp_neg_sub_le {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) :
     |Real.exp (-a) - Real.exp (-b)| ≤ |a - b| := by
   have hderiv : ∀ t : ℝ,
@@ -3584,8 +2500,6 @@ theorem abs_exp_neg_sub_le {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) :
     rw [Real.norm_eq_abs] at h2
     rw [abs_of_nonneg (by linarith : 0 ≤ a - b)]
     simpa using h2
-
-
 theorem gammaKernel_abs_le :
     ∃ M : ℝ, 0 ≤ M ∧ ∀ z : ℝ, 0 ≤ z → |gammaKernel z| ≤ M := by
   have hden2 : 0 < 1 - Real.exp (-(2 : ℝ)) := by
@@ -3745,8 +2659,6 @@ theorem gammaKernel_abs_le :
         _ ≤ 1 / (1 - Real.exp (-(2 : ℝ))) + 1 / 2 := add_le_add hfirst hsecond
         _ ≤ max (1 / 4) (max 5 (1 / (1 - Real.exp (-(2 : ℝ))) + 1 / 2)) :=
             le_trans (le_max_right _ _) (le_max_right _ _)
-
-
 theorem measurable_gammaKernel : Measurable gammaKernel := by
   rw [show gammaKernel = fun z : ℝ =>
       if z = 0 then 1 / 4
@@ -3760,10 +2672,6 @@ theorem measurable_gammaKernel : Measurable gammaKernel := by
     refine Measurable.div measurable_const ?_
     fun_prop
   exact h1.sub h2
-
-
-
-
 theorem integral_truncKernel_mul_autocorr_eq {f : ℝ → ℂ} (hf : f ∈ oddCore)
     {ε : ℝ} (hε : 0 < ε) :
     (∫ u : ℝ, (if ε < |u| then (|u|)⁻¹ else 0) * (autocorr f u).re)
@@ -3781,8 +2689,6 @@ theorem integral_truncKernel_mul_autocorr_eq {f : ℝ → ℂ} (hf : f ∈ oddCo
       exact (inv_le_inv₀ hu hε).mpr h.le
     · rw [if_neg h, abs_zero]
       positivity
-
-
 theorem integral_gammaKernel_mul_autocorr_eq {f : ℝ → ℂ} (hf : f ∈ oddCore) :
     (∫ u : ℝ, gammaKernel |u| * (autocorr f u).re)
       = ∫ p : ℝ × ℝ, gammaKernel |p.2 - p.1| * (f p.2 * star (f p.1)).re
@@ -3790,47 +2696,14 @@ theorem integral_gammaKernel_mul_autocorr_eq {f : ℝ → ℂ} (hf : f ∈ oddCo
   obtain ⟨M, hM0, hM⟩ := gammaKernel_abs_le
   refine integral_kernel_mul_autocorr_eq hf ?_ ⟨M, fun u => hM |u| (abs_nonneg u)⟩
   exact measurable_gammaKernel.comp continuous_abs.measurable
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.abs_exp_neg_sub_le
-#print axioms RHLean.ExplicitFormula.gammaKernel_abs_le
-#print axioms RHLean.ExplicitFormula.measurable_gammaKernel
-#print axioms RHLean.ExplicitFormula.integral_truncKernel_mul_autocorr_eq
-#print axioms RHLean.ExplicitFormula.integral_gammaKernel_mul_autocorr_eq
-
 end
-
 end Inline_ExplicitFormula_RH68
-
 section Inline_ExplicitFormula_RH69
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem integral_eq_setIntegral_of_forall_eq_zero_of_notMem {f : ℝ → ℝ} {s : Set ℝ}
     (hs : MeasurableSet s) (h : ∀ x ∉ s, f x = 0) :
     (∫ x : ℝ, f x) = ∫ x in s, f x := by
@@ -3842,15 +2715,11 @@ theorem integral_eq_setIntegral_of_forall_eq_zero_of_notMem {f : ℝ → ℝ} {s
   calc (∫ x : ℝ, f x) = ∫ x : ℝ, s.indicator f x := by
         conv_lhs => rw [hfun]
     _ = ∫ x in s, f x := integral_indicator hs
-
-
 noncomputable def truncKernel (ε u : ℝ) : ℝ := if ε < |u| then (|u|)⁻¹ else 0
-
 theorem measurable_truncKernel (ε : ℝ) : Measurable (truncKernel ε) := by
   unfold truncKernel
   exact Measurable.ite (measurableSet_lt measurable_const continuous_abs.measurable)
     continuous_abs.measurable.inv measurable_const
-
 theorem abs_truncKernel_le {ε : ℝ} (hε : 0 < ε) (u : ℝ) :
     |truncKernel ε u| ≤ 1 / ε := by
   unfold truncKernel
@@ -3859,8 +2728,6 @@ theorem abs_truncKernel_le {ε : ℝ} (hε : 0 < ε) (u : ℝ) :
     exact (inv_le_inv₀ (lt_trans hε h) hε).mpr h.le
   · rw [if_neg h, abs_zero]
     positivity
-
-
 theorem intervalIntegrable_truncKernel {ε : ℝ} (hε : 0 < ε) {a b : ℝ} (hab : a ≤ b) :
     IntervalIntegrable (truncKernel ε) volume a b := by
   rw [intervalIntegrable_iff_integrableOn_Ioc_of_le hab]
@@ -3871,8 +2738,6 @@ theorem intervalIntegrable_truncKernel {ε : ℝ} (hε : 0 < ε) {a b : ℝ} (ha
   · filter_upwards with u
     rw [Real.norm_eq_abs]
     exact abs_truncKernel_le hε u
-
-
 theorem integral_truncKernel_Icc {R ε : ℝ} (hε : 0 < ε) (hεR : ε < R) :
     (∫ u in Set.Icc (-R) R, truncKernel ε u) = 2 * Real.log (R / ε) := by
   have hneR : ∀ᵐ x : ℝ ∂volume, x ≠ -R := by
@@ -3928,8 +2793,6 @@ theorem integral_truncKernel_Icc {R ε : ℝ} (hε : 0 < ε) (hεR : ε < R) :
     rw [Set.mem_uIcc]
     rintro (⟨h1, _⟩ | ⟨h1, _⟩) <;> linarith)]
   ring
-
-
 theorem trunc_kernel_algebra {f : ℝ → ℂ} (hf : f ∈ oddCore) {R ε : ℝ}
     (hR : ∀ y : ℝ, R < |y| → (autocorr f y).re = 0) (hε : 0 < ε) (hεR : ε < R) :
     -Real.log ε * (autocorr f 0).re
@@ -3998,43 +2861,14 @@ theorem trunc_kernel_algebra {f : ℝ → ℂ} (hf : f ∈ oddCore) {R ε : ℝ}
   rw [hA, hB', hC]
   rw [Real.log_div (ne_of_gt (lt_trans hε hεR)) (ne_of_gt hε)]
   ring
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.integral_eq_setIntegral_of_forall_eq_zero_of_notMem
-#print axioms RHLean.ExplicitFormula.abs_truncKernel_le
-#print axioms RHLean.ExplicitFormula.intervalIntegrable_truncKernel
-#print axioms RHLean.ExplicitFormula.integral_truncKernel_Icc
-#print axioms RHLean.ExplicitFormula.trunc_kernel_algebra
-
 end
-
 end Inline_ExplicitFormula_RH69
-
 section Inline_ExplicitFormula_RH70
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem exists_lipschitzOn_localizedCore {a : ℝ} {f : ℝ → ℂ} (hf : f ∈ localizedCore a) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ x ∈ Set.Icc (-a) a, ∀ y ∈ Set.Icc (-a) a,
       ‖f x - f y‖ ≤ C * |x - y| := by
@@ -4064,8 +2898,6 @@ theorem exists_lipschitzOn_localizedCore {a : ℝ} {f : ℝ → ℂ} (hf : f ∈
     have h2 := h x ⟨hyx, le_rfl⟩
     rw [abs_of_nonneg (sub_nonneg.mpr hyx)]
     exact h2
-
-
 theorem normSq_div_le_lipschitz {a : ℝ} {f : ℝ → ℂ} (hf : f ∈ localizedCore a) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ x ∈ Set.Icc (-a) a, ∀ y ∈ Set.Icc (-a) a,
       ‖f x - f y‖ ^ 2 / |x - y| ≤ C ^ 2 * |x - y| := by
@@ -4083,44 +2915,14 @@ theorem normSq_div_le_lipschitz {a : ℝ} {f : ℝ → ℂ} (hf : f ∈ localize
     calc ‖f x - f y‖ ^ 2 ≤ (C * |x - y|) ^ 2 := h2
       _ = C ^ 2 * |x - y| ^ 2 := by ring
       _ = C ^ 2 * |x - y| * |x - y| := by ring
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.exists_lipschitzOn_localizedCore
-#print axioms RHLean.ExplicitFormula.normSq_div_le_lipschitz
-
 end
-
 end Inline_ExplicitFormula_RH70
-
 section Inline_ExplicitFormula_RH71
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem nearDiagonal_integral_le {a : ℝ} (ha : 0 < a) {f : ℝ → ℂ}
     (hf : f ∈ localizedCore a) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ ε ∈ Set.Ioc (0 : ℝ) 1,
@@ -4204,8 +3006,6 @@ theorem nearDiagonal_integral_le {a : ℝ} (ha : 0 < a) {f : ℝ → ℂ}
     _ = C₁ ^ 2 * a ^ 2 * ε := by
         rw [hvol]
         ring
-
-
 theorem tendsto_nearDiagonal {a : ℝ} (ha : 0 < a) {f : ℝ → ℂ}
     (hf : f ∈ localizedCore a) :
     Tendsto (fun ε : ℝ => (1 / 4) * (∫ p in (Set.Ioo (-a) a ×ˢ Set.Ioo (-a) a),
@@ -4232,42 +3032,14 @@ theorem tendsto_nearDiagonal {a : ℝ} (ha : 0 < a) {f : ℝ → ℂ}
   · filter_upwards [self_mem_nhdsWithin, Ioo_mem_nhdsGT (by norm_num : (0 : ℝ) < 1)]
       with ε hε hε1
     exact hC ε ⟨hε, hε1.2.le⟩
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.nearDiagonal_integral_le
-#print axioms RHLean.ExplicitFormula.tendsto_nearDiagonal
-
 end
-
 end Inline_ExplicitFormula_RH71
-
 section Inline_ExplicitFormula_RH72
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem integral_log_div {ε : ℝ} (hε : 0 < ε) :
     (∫ u in (0 : ℝ)..ε, Real.log (ε / u)) = ε := by
   have h2 : (∫ s in (0 : ℝ)..1, Real.log (1 / s)) = 1 := by
@@ -4294,46 +3066,18 @@ theorem integral_log_div {ε : ℝ} (hε : 0 < ε) :
   calc (∫ u in (0 : ℝ)..ε, Real.log (ε / u))
       = ε * (∫ s in (0 : ℝ)..1, Real.log (ε / (ε * s))) := hmain.symm
     _ = ε := by rw [h3]; ring
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.integral_log_div
-
 end
-
 end Inline_ExplicitFormula_RH72
-
 section Inline_ExplicitFormula_RH73
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem truncKernel_bound {ε : ℝ} (hε : 0 < ε) (u : ℝ) :
     ‖truncKernel ε u‖ ≤ 1 / ε := by
   rw [Real.norm_eq_abs]
   exact abs_truncKernel_le hε u
-
-
 theorem integrableOn_sq_of_bound {a C : ℝ} {g : ℝ × ℝ → ℝ} (hC : 0 ≤ C)
     (hg : Measurable g)
     (h : ∀ z ∈ Set.Ioo (-a) a ×ˢ Set.Ioo (-a) a, ‖g z‖ ≤ C) :
@@ -4351,41 +3095,14 @@ theorem integrableOn_sq_of_bound {a C : ℝ} {g : ℝ × ℝ → ℝ} (hC : 0 �
       filter_upwards [self_mem_ae_restrict (measurableSet_Ioo.prod measurableSet_Ioo)]
         with z hz
       exact h z hz)
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.truncKernel_bound
-#print axioms RHLean.ExplicitFormula.integrableOn_sq_of_bound
-
 end
-
 end Inline_ExplicitFormula_RH73
-
 section Inline_ExplicitFormula_RH74
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem exists_norm_le_of_localizedCore {a : ℝ} {f : ℝ → ℂ} (hf : f ∈ localizedCore a) :
     ∃ B : ℝ, 0 ≤ B ∧ ∀ x : ℝ, ‖f x‖ ≤ B := by
   obtain ⟨B, hB⟩ := hf.1.2.1.isCompact.exists_bound_of_continuousOn
@@ -4398,8 +3115,6 @@ theorem exists_norm_le_of_localizedCore {a : ℝ} {f : ℝ → ℂ} (hf : f ∈ 
       exact hx (subset_tsupport f (Function.mem_support.mpr h))
     rw [hzero]
     simp
-
-
 theorem trunc_symm {a ε : ℝ} {f : ℝ → ℂ} (hf : f ∈ localizedCore a) (hε : 0 < ε) :
     (1 / 4) * (∫ z in Set.Ioo (-a) a ×ˢ Set.Ioo (-a) a,
         truncKernel ε (z.1 - z.2) * (‖f z.1‖ ^ 2 + ‖f z.2‖ ^ 2))
@@ -4474,44 +3189,14 @@ theorem trunc_symm {a ε : ℝ} {f : ℝ → ℂ} (hf : f ∈ localizedCore a) (
         setIntegral_congr_fun hD (fun z _ => hpt z)]
   rw [integral_add hIntA hIntB, hswap]
   ring
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.exists_norm_le_of_localizedCore
-#print axioms RHLean.ExplicitFormula.trunc_symm
-
 end
-
 end Inline_ExplicitFormula_RH74
-
 section Inline_ExplicitFormula_RH75
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem archForm_trunc_split {a ε : ℝ} {f : ℝ → ℂ} (ha : 0 < a)
     (hf : f ∈ localizedCore a) :
     archForm a f
@@ -4601,8 +3286,6 @@ theorem archForm_trunc_split {a ε : ℝ} {f : ℝ → ℂ} (ha : 0 < a)
       rw [if_pos (le_of_not_gt h)]
   rw [hleft, hright]
   ring
-
-
 theorem trunc_normSq_split {a ε : ℝ} {f : ℝ → ℂ} (ha : 0 < a)
     (hf : f ∈ localizedCore a) (hε : 0 < ε) :
     (1 / 4) * (∫ z in Set.Ioo (-a) a ×ˢ Set.Ioo (-a) a,
@@ -4676,44 +3359,14 @@ theorem trunc_normSq_split {a ε : ℝ} {f : ℝ → ℂ} (ha : 0 < a)
   rw [hpoint_int, integral_sub (μ := (volume.prod volume).restrict (D ×ˢ D))
     hInt1 (hInt2.const_mul 2), integral_const_mul]
   ring
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.archForm_trunc_split
-#print axioms RHLean.ExplicitFormula.trunc_normSq_split
-
 end
-
 end Inline_ExplicitFormula_RH75
-
 section Inline_ExplicitFormula_RH76
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem exists_autocorr_re_sub_bound {f : ℝ → ℂ} (hf : f ∈ oddCore) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ u : ℝ, |u| ≤ 1 →
       |(autocorr f u).re - (autocorr f 0).re| ≤ C * |u| := by
@@ -4747,10 +3400,6 @@ theorem exists_autocorr_re_sub_bound {f : ℝ → ℂ} (hf : f ∈ oddCore) :
       _ ≤ ‖autocorr f 0 - autocorr f u‖ := Complex.abs_re_le_norm _
       _ ≤ max K 0 * (0 - u) := h1
       _ = max K 0 * |u| := by rw [h2]
-
-
-
-
 theorem tendsto_truncKernel_mul_autocorr_sub {f : ℝ → ℂ} (hf : f ∈ oddCore) (R : ℝ) :
     Tendsto (fun ε : ℝ => ∫ u in Set.Icc (-R) R,
         truncKernel ε u * ((autocorr f u).re - (autocorr f 0).re))
@@ -4847,47 +3496,14 @@ theorem tendsto_truncKernel_mul_autocorr_sub {f : ℝ → ℂ} (hf : f ∈ oddCo
       refine Tendsto.congr' ?_ tendsto_const_nhds
       filter_upwards [hev] with ε hε
       simp only [truncKernel, hε, if_pos]
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.exists_autocorr_re_sub_bound
-#print axioms RHLean.ExplicitFormula.tendsto_truncKernel_mul_autocorr_sub
-
 end
-
 end Inline_ExplicitFormula_RH76
-
 section Inline_ExplicitFormula_RH77
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
-
 theorem exp_three_halves_mul_two_div_exp {u : ℝ} (hu : 0 < u) :
     Real.exp (3 * u / 2) * (2 / (Real.exp (2 * u) - 1)) = 1 / u + 2 * gammaKernel u := by
   have hden : Real.exp (2 * u) - 1 ≠ 0 := by
@@ -4913,8 +3529,6 @@ theorem exp_three_halves_mul_two_div_exp {u : ℝ} (hu : 0 < u) :
     linarith
   field_simp
   all_goals first | linear_combination huu | ring
-
-
 theorem integrableOn_two_div_exp_sub_one_Ioi {R : ℝ} (hR : 0 < R) :
     IntegrableOn (fun u : ℝ => 2 / (Real.exp (2 * u) - 1)) (Set.Ioi R) volume := by
   have hden : 0 < 1 - Real.exp (-(2 * R)) := by
@@ -4952,8 +3566,6 @@ theorem integrableOn_two_div_exp_sub_one_Ioi {R : ℝ} (hR : 0 < R) :
     have h2 : Real.exp (-(2 * u)) ≤ Real.exp (-(2 * R)) :=
       Real.exp_le_exp.mpr (by linarith)
     nlinarith
-
-
 theorem mehler_u_split {f : ℝ → ℂ} (hf : f ∈ oddCore) {R : ℝ} (hR : 0 < R)
     (hsupp : ∀ u : ℝ, R < |u| → (autocorr f u).re = 0) :
     (∑' n : ℕ, ((autocorr f 0).re / ((n : ℝ) + 1)
@@ -4974,8 +3586,7 @@ theorem mehler_u_split {f : ℝ → ℂ} (hf : f ∈ oddCore) {R : ℝ} (hR : 0 
     * (2 * Real.exp (-(2 * u)) / (1 - Real.exp (-(2 * u)))) with hf0
   set f1 : ℝ → ℝ := fun u => (g 0 - Real.exp (3 * u / 2) * g u)
     * (2 / (Real.exp (2 * u) - 1)) with hf1
-
-  have hS : (∑'
+  have hS : (∑' n : ℕ, (g 0 / ((n : ℝ) + 1)
       - ∫ u : ℝ, Real.exp (-(((2 : ℝ) * n + 1 / 2) * |u|)) * g u))
       = ∫ u in Set.Ioi (0 : ℝ), f0 u := by
     have h1 : digammaSpectralBlock f = -Real.eulerMascheroniConstant * g 0
@@ -4986,7 +3597,6 @@ theorem mehler_u_split {f : ℝ → ℂ} (hf : f ∈ oddCore) {R : ℝ} (hR : 0 
         + ∫ u in Set.Ioi (0 : ℝ), f0 u :=
       digammaSpectralBlock_eq_positionSpaceU hf
     linarith [h1, h2]
-
   have hKpt : ∀ u : ℝ, 0 < u → f0 u = f1 u := by
     intro u hu
     simp only [hf0, hf1]
@@ -5008,9 +3618,8 @@ theorem mehler_u_split {f : ℝ → ℂ} (hf : f ∈ oddCore) {R : ℝ} (hR : 0 
         rw [← Real.exp_add, ← Real.exp_add, show u + u + -(2 * u) = 0 by ring, Real.exp_zero]
       linear_combination (2 : ℝ) * heu
     rw [hK]
-
   have hInt0 : Integrable f0 (volume.restrict (Set.Ioi (0 : ℝ))) := by
-    refine (integrable_exp_neg_half_add_inv Cmaj).mono'
+    refine (integrable_exp_neg_half_add_inv Cmaj).mono' ?_ ?_
     · have hA : Measurable (fun u : ℝ => Real.exp (3 * u / 2) * g u) :=
         (Real.continuous_exp.measurable.comp ((measurable_id.const_mul 3).div_const 2)).mul hg_meas
       have hB : Measurable (fun u : ℝ => 2 * Real.exp (-(2 * u)) / (1 - Real.exp (-(2 * u)))) :=
@@ -5027,7 +3636,6 @@ theorem mehler_u_split {f : ℝ → ℂ} (hf : f ∈ oddCore) {R : ℝ} (hR : 0 
         exact Real.exp_le_one_iff.mpr (by linarith)
       rw [abs_of_nonneg hKpos]
       exact hCmaj u hu
-
   have hdisj : Disjoint (Set.Ioc (0 : ℝ) R) (Set.Ioi R) := by
     rw [Set.disjoint_left]
     intro u hu hu'
@@ -5047,7 +3655,6 @@ theorem mehler_u_split {f : ℝ → ℂ} (hf : f ∈ oddCore) {R : ℝ} (hR : 0 
     rw [← setIntegral_union hdisj measurableSet_Ioi
       (hInt0.mono_measure (Measure.restrict_mono Set.Ioc_subset_Ioi_self le_rfl))
       (hInt0.mono_measure (Measure.restrict_mono (Set.Ioi_subset_Ioi hR.le) le_rfl)), hunion]
-
   have hfin : volume (Set.Ioc (0 : ℝ) R) ≠ ⊤ := by
     rw [Real.volume_Ioc]
     exact ENNReal.ofReal_ne_top
@@ -5099,7 +3706,6 @@ theorem mehler_u_split {f : ℝ → ℂ} (hf : f ∈ oddCore) {R : ℝ} (hR : 0 
       _ ≤ 2 * (Mρ * B) := by
           nlinarith [h1, h2, hMρ0, hB0, abs_nonneg (gammaKernel u), abs_nonneg (g u)]
       _ = 2 * Mρ * B := by ring
-
   have hleft : (∫ u in Set.Ioc (0 : ℝ) R, f0 u) = ∫ u in Set.Ioc (0 : ℝ) R, f1 u :=
     setIntegral_congr_fun measurableSet_Ioc (fun u hu => hKpt u hu.1)
   have hleft2 : (∫ u in Set.Ioc (0 : ℝ) R, f1 u)
@@ -5152,7 +3758,6 @@ theorem mehler_u_split {f : ℝ → ℂ} (hf : f ∈ oddCore) {R : ℝ} (hR : 0 
                 (f := fun u : ℝ => 2 / (Real.exp (2 * u) - 1) - 1 / u) hR.le,
               ← intervalIntegral.integral_of_le (f := fun u : ℝ => (g u - g 0) / u) hR.le,
               ← intervalIntegral.integral_of_le (f := fun u : ℝ => gammaKernel u * g u) hR.le]
-
   have hright : (∫ u in Set.Ioi R, f0 u) = ∫ u in Set.Ioi R, f1 u :=
     setIntegral_congr_fun measurableSet_Ioi (fun u hu => hKpt u (lt_trans hR hu))
   have hright2 : (∫ u in Set.Ioi R, f1 u)
@@ -5164,7 +3769,6 @@ theorem mehler_u_split {f : ℝ → ℂ} (hf : f ∈ oddCore) {R : ℝ} (hR : 0 
       rw [show g u = 0 from hsupp u huR]
       ring
     rw [setIntegral_congr_fun measurableSet_Ioi hpt, integral_const_mul]
-
   have hgoal : (∑' n : ℕ, (g 0 / ((n : ℝ) + 1)
       - ∫ u : ℝ, Real.exp (-(((2 : ℝ) * n + 1 / 2) * |u|)) * g u))
       = (-Real.log 2 - Real.log R) * g 0
@@ -5174,44 +3778,14 @@ theorem mehler_u_split {f : ℝ → ℂ} (hf : f ∈ oddCore) {R : ℝ} (hR : 0 
     have hc := digammaKernel_constant hR
     linear_combination (g 0) * hc
   simpa only [hg] using hgoal
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.exp_three_halves_mul_two_div_exp
-#print axioms RHLean.ExplicitFormula.integrableOn_two_div_exp_sub_one_Ioi
-#print axioms RHLean.ExplicitFormula.mehler_u_split
-
 end
-
 end Inline_ExplicitFormula_RH77
-
 section Inline_ExplicitFormula_RH78
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
-
 theorem integral_inv_abs_mul_even {h : ℝ → ℝ} (he : ∀ u, h (-u) = h u) {R : ℝ}
     (hR : 0 ≤ R)
     (hint1 : IntervalIntegrable (fun u : ℝ => (|u|)⁻¹ * h u) volume (-R) 0)
@@ -5244,9 +3818,6 @@ theorem integral_inv_abs_mul_even {h : ℝ → ℝ} (he : ∀ u, h (-u) = h u) {
       rw [abs_of_pos hpos, inv_mul_eq_div]
   rw [h2, h3]
   ring
-
-
-
 theorem integral_gammaKernel_even {h : ℝ → ℝ} (he : ∀ u, h (-u) = h u) {R : ℝ}
     (hR : 0 ≤ R)
     (hint1 : IntervalIntegrable (fun u : ℝ => gammaKernel |u| * h u) volume (-R) 0)
@@ -5278,46 +3849,14 @@ theorem integral_gammaKernel_even {h : ℝ → ℝ} (he : ∀ u, h (-u) = h u) {
     rw [abs_of_nonneg hu0]
   rw [h2, h3]
   ring
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.integral_inv_abs_mul_even
-#print axioms RHLean.ExplicitFormula.integral_gammaKernel_even
-
 end
-
 end Inline_ExplicitFormula_RH78
-
 section Inline_ExplicitFormula_RH79
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem truncKernel_self_integral_eq {a x ε : ℝ} (hx : |x| < a) (hε : 0 < ε) :
     (∫ y in Set.Ioo (-a) a, truncKernel ε (x - y))
       = (∫ y in (-a)..(x - ε), (x - y)⁻¹) + (∫ y in (x + ε)..a, (y - x)⁻¹)
@@ -5327,7 +3866,6 @@ theorem truncKernel_self_integral_eq {a x ε : ℝ} (hx : |x| < a) (hε : 0 < ε
   have hxa2 : x < a := (abs_lt.mp hx).2
   have hxpa : 0 < x + a := by linarith
   have hax : 0 < a - x := by linarith
-
   have hpt : ∀ y ∈ Set.Ioo (-a) a, truncKernel ε (x - y)
       = (x - y)⁻¹ * (if y < x - ε then (1 : ℝ) else 0)
         + (y - x)⁻¹ * (if x + ε < y then (1 : ℝ) else 0) := by
@@ -5348,7 +3886,6 @@ theorem truncKernel_self_integral_eq {a x ε : ℝ} (hx : |x| < a) (hε : 0 < ε
         rw [if_neg]
         rw [not_lt, abs_le]
         constructor <;> linarith
-
   have hIntA : IntegrableOn
       (fun y : ℝ => (x - y)⁻¹ * (if y < x - ε then (1 : ℝ) else 0))
       (Set.Ioo (-a) a) volume := by
@@ -5385,7 +3922,6 @@ theorem truncKernel_self_integral_eq {a x ε : ℝ} (hx : |x| < a) (hε : 0 < ε
         exact (inv_le_inv₀ (by linarith : (0 : ℝ) < y - x) hε).mpr (by linarith)
       · rw [if_neg h, mul_zero, norm_zero]
         positivity
-
   have hfirst : (∫ y in Set.Ioo (-a) a,
         (x - y)⁻¹ * (if y < x - ε then (1 : ℝ) else 0))
       = ∫ y in Set.Ioo (-a) (x - ε), (x - y)⁻¹ := by
@@ -5422,7 +3958,6 @@ theorem truncKernel_self_integral_eq {a x ε : ℝ} (hx : |x| < a) (hε : 0 < ε
     rw [hind, ← hset, ← setIntegral_indicator (μ := volume)
       (t := {z : ℝ | x + ε < z}) (f := fun z => (z - x)⁻¹)
       (measurableSet_lt measurable_const measurable_id)]
-
   have hAset : (∫ y in Set.Ioo (-a) (x - ε), (x - y)⁻¹)
       = (∫ y in (-a)..(x - ε), (x - y)⁻¹)
         + Real.log (ε / (x + a)) * (if x + a < ε then 1 else 0) := by
@@ -5465,48 +4000,17 @@ theorem truncKernel_self_integral_eq {a x ε : ℝ} (hx : |x| < a) (hε : 0 < ε
     · rw [if_neg (not_lt.mpr (by linarith : ε ≤ a - x)), mul_zero, add_zero]
       rw [← integral_Ioc_eq_integral_Ioo,
         ← intervalIntegral.integral_of_le (by linarith : x + ε ≤ a)]
-
   rw [setIntegral_congr_fun measurableSet_Ioo hpt,
     integral_add hIntA hIntB, hfirst, hsecond, hAset, hBset]
   ring
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.truncKernel_self_integral_eq
-
 end
-
 end Inline_ExplicitFormula_RH79
-
 section Inline_ExplicitFormula_RH80
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
-
 theorem truncKernel_self_integral_eq_single {a x ε : ℝ} (hx : |x| < a)
     (hε : 0 < ε) (hεa : ε < a) :
     (∫ y in Set.Ioo (-a) a, truncKernel ε (x - y))
@@ -5520,16 +4024,6 @@ theorem truncKernel_self_integral_eq_single {a x ε : ℝ} (hx : |x| < a)
   · have h2 : ¬ a - x < ε := by linarith
     simp only [if_neg h2, mul_zero, add_zero, abs_of_nonpos hx0, sub_neg_eq_add]
     rw [add_comm x a]
-
-
-
-
-
-
-
-
-
-
 def PositionFormEqAt (a : ℝ) : Prop :=
   ∀ f : ℝ → ℂ, f ∈ localizedCore a → ∀ R : ℝ, 0 < R →
     (∀ u : ℝ, R < |u| → (autocorr f u).re = 0) →
@@ -5537,10 +4031,6 @@ def PositionFormEqAt (a : ℝ) : Prop :=
       = -Real.log R * (autocorr f 0).re
         - (∫ u in (0 : ℝ)..R, ((autocorr f u).re - (autocorr f 0).re) / u)
         - 2 * (∫ u in (0 : ℝ)..R, gammaKernel u * (autocorr f u).re)
-
-
-
-
 theorem mehlerDirichletKernelAt_of_positionForm {a : ℝ}
     (h : PositionFormEqAt a) : MehlerDirichletKernelAt a := by
   intro ha f hf
@@ -5552,107 +4042,40 @@ theorem mehlerDirichletKernelAt_of_positionForm {a : ℝ}
   have h1 := mehler_u_split hf.1 hR1 hsupp
   have h2 := h f hf (R + 1) hR1 hsupp
   linarith [h1, h2]
-
-
 theorem digammaMatchAt_of_positionForm {a : ℝ} (h : PositionFormEqAt a) :
     DigammaArchimedeanMatchAt a :=
   digammaMatchAt_of_mehlerDirichlet (mehlerDirichletKernelAt_of_positionForm h)
-
-
 theorem archimedeanMatchAt_of_positionForm {a : ℝ} (h : PositionFormEqAt a) :
     ArchimedeanMatchAt a :=
   archimedeanMatchAt_of_digammaMatch (digammaMatchAt_of_positionForm h)
-
-
-
-
 theorem weilExplicitFormulaOdd_of_evenGuinandWeil_positionForm
     (hGW : ∀ a : ℝ, EvenGuinandWeilAt a) (hP : ∀ a : ℝ, PositionFormEqAt a) :
     WeilExplicitFormulaOdd :=
   weilExplicitFormulaOdd_of_evenGuinandWeil_digammaMatch hGW
     (fun a => digammaMatchAt_of_positionForm (hP a))
-
-
 theorem weilExplicitFormulaOddNonneg_of_evenGuinandWeil_positionForm
     (hGW : ∀ a : ℝ, EvenGuinandWeilAt a) (hP : ∀ a : ℝ, PositionFormEqAt a) :
     WeilExplicitFormulaOddNonneg :=
   weilExplicitFormulaOddNonneg_of_evenGuinandWeil_digammaMatch hGW
     (fun a => digammaMatchAt_of_positionForm (hP a))
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.truncKernel_self_integral_eq_single
-#print axioms RHLean.ExplicitFormula.mehlerDirichletKernelAt_of_positionForm
-#print axioms RHLean.ExplicitFormula.digammaMatchAt_of_positionForm
-#print axioms RHLean.ExplicitFormula.archimedeanMatchAt_of_positionForm
-#print axioms RHLean.ExplicitFormula.weilExplicitFormulaOdd_of_evenGuinandWeil_positionForm
-
 end
-
 end Inline_ExplicitFormula_RH80
-
 section Inline_ExplicitFormula_RH83
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
-
 def AdmissibleT (T : ℕ → ℝ) : Prop :=
   Tendsto T atTop atTop ∧ (∀ n, 0 < T n) ∧
     (∀ n, ∀ p : XiZero,
       centeredZero p ∈ rectClosed (stripLeft (T n)) (stripRight (T n)) →
         centeredZero p ∈ rectOpen (stripLeft (T n)) (stripRight (T n)))
-
-
-
-
-
-
-
-
-
 def VerticalIntegralEvalAt (a : ℝ) : Prop :=
   ∀ f : ℝ → ℂ, f ∈ localizedCore a → ∀ T : ℕ → ℝ, AdmissibleT T →
     Tendsto (fun n => (stripRightIntegral (transf (autocorr f)) (T n)).re) atTop
       (𝓝 (Real.pi * (archimedeanBlock f + poleBlock f
             - (1 / Real.pi) * ∑ q ∈ arithSupport a, arithCoeff q * ghatAt f q)))
-
-
 theorem evenGuinandWeilAt_of_growth_verticalEval {a : ℝ} (hgrowth : LogDerivStripGrowth)
     (h : VerticalIntegralEvalAt a)
     (hex : ∀ f : ℝ → ℂ, f ∈ localizedCore a → ∃ T : ℕ → ℝ, AdmissibleT T) :
@@ -5661,20 +4084,16 @@ theorem evenGuinandWeilAt_of_growth_verticalEval {a : ℝ} (hgrowth : LogDerivSt
   obtain ⟨T, hTtop, hTpos, hbd⟩ := hex f hf
   have h1 := tendsto_right_vertical_autocorr hgrowth hf.1 hTtop hTpos hbd
   have h1re : Tendsto (fun n => (stripRightIntegral (transf (autocorr f)) (T n)).re) atTop
-      (𝓝 (((Real.pi : ℂ) * ∑'
+      (𝓝 (((Real.pi : ℂ) * ∑' p : XiZero, transf (autocorr f) (centeredZero p)).re)) :=
     Complex.continuous_re.continuousAt.tendsto.comp h1
   have h3 : ((Real.pi : ℂ) * ∑' p : XiZero, transf (autocorr f) (centeredZero p)).re
-      = Real.pi * (∑'
+      = Real.pi * (∑' p : XiZero, transf (autocorr f) (centeredZero p)).re := by
     rw [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im]
     ring
   rw [h3] at h1re
   have h2 := h f hf T ⟨hTtop, hTpos, hbd⟩
   have hEq := tendsto_nhds_unique h1re h2
   exact mul_left_cancel₀ Real.pi_ne_zero hEq
-
-
-
-
 theorem weilExplicitFormulaOdd_of_growth_verticalEval_positionForm
     (hgrowth : LogDerivStripGrowth) (hv : ∀ a : ℝ, VerticalIntegralEvalAt a)
     (hex : ∀ a : ℝ, ∀ f : ℝ → ℂ, f ∈ localizedCore a → ∃ T : ℕ → ℝ, AdmissibleT T)
@@ -5682,8 +4101,6 @@ theorem weilExplicitFormulaOdd_of_growth_verticalEval_positionForm
     WeilExplicitFormulaOdd :=
   weilExplicitFormulaOdd_of_evenGuinandWeil_positionForm
     (fun a => evenGuinandWeilAt_of_growth_verticalEval hgrowth (hv a) (hex a)) hP
-
-
 theorem weilExplicitFormulaOddNonneg_of_growth_verticalEval_positionForm
     (hgrowth : LogDerivStripGrowth) (hv : ∀ a : ℝ, VerticalIntegralEvalAt a)
     (hex : ∀ a : ℝ, ∀ f : ℝ → ℂ, f ∈ localizedCore a → ∃ T : ℕ → ℝ, AdmissibleT T)
@@ -5691,43 +4108,14 @@ theorem weilExplicitFormulaOddNonneg_of_growth_verticalEval_positionForm
     WeilExplicitFormulaOddNonneg :=
   weilExplicitFormulaOddNonneg_of_evenGuinandWeil_positionForm
     (fun a => evenGuinandWeilAt_of_growth_verticalEval hgrowth (hv a) (hex a)) hP
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.evenGuinandWeilAt_of_growth_verticalEval
-#print axioms RHLean.ExplicitFormula.weilExplicitFormulaOdd_of_growth_verticalEval_positionForm
-
 end
-
 end Inline_ExplicitFormula_RH83
-
 section Inline_ExplicitFormula_RH84
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem exists_admissibleT : ∃ T : ℕ → ℝ, AdmissibleT T := by
   have hsup : (MeromorphicOn.divisor riemannXi (Set.univ : Set ℂ)).support.Countable :=
     MeromorphicOn.divisor_support_countable riemannXi (Set.univ : Set ℂ)
@@ -5778,96 +4166,38 @@ theorem exists_admissibleT : ∃ T : ℕ → ℝ, AdmissibleT T := by
       norm_num
     rw [rectOpen]
     simp only [stripLeft_re, stripLeft_im, stripRight_re, stripRight_im]
-    have hmin'
+    have hmin' : min (-1 / 2 : ℝ) (1 / 2) = -1 / 2 := min_eq_left (by norm_num)
     have hmax' : max (-1 / 2 : ℝ) (1 / 2) = 1 / 2 := max_eq_right (by norm_num)
     rw [hmin', hmax', hmin, hmax]
     rw [abs_lt] at him_lt
     exact ⟨by rw [hc_re]; linarith [hre.1], by rw [hc_re]; linarith [hre.2],
       him_lt.1, him_lt.2⟩
-
-
 theorem weilExplicitFormulaOdd_of_growth_verticalEval_positionForm'
     (hgrowth : LogDerivStripGrowth) (hv : ∀ a : ℝ, VerticalIntegralEvalAt a)
     (hP : ∀ a : ℝ, PositionFormEqAt a) :
     WeilExplicitFormulaOdd :=
   weilExplicitFormulaOdd_of_growth_verticalEval_positionForm hgrowth hv
     (fun _ _ _ => exists_admissibleT) hP
-
-
 theorem weilExplicitFormulaOddNonneg_of_growth_verticalEval_positionForm'
     (hgrowth : LogDerivStripGrowth) (hv : ∀ a : ℝ, VerticalIntegralEvalAt a)
     (hP : ∀ a : ℝ, PositionFormEqAt a) :
     WeilExplicitFormulaOddNonneg :=
   weilExplicitFormulaOddNonneg_of_growth_verticalEval_positionForm hgrowth hv
     (fun _ _ _ => exists_admissibleT) hP
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.exists_admissibleT
-#print axioms RHLean.ExplicitFormula.weilExplicitFormulaOdd_of_growth_verticalEval_positionForm'
-
 end
-
 end Inline_ExplicitFormula_RH84
-
 section Inline_ExplicitFormula_RH99
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators
-
 namespace RHLean.ExplicitFormula
-
-
-
-
-
-
 def LogDerivStripGrowthAvoiding : Prop :=
   ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 2 ≤ T →
     (∀ p : XiZero, T ≠ |(centeredZero p).im|) → ∀ x : ℝ,
       x ∈ Set.Icc (-(1 / 2)) (1 / 2) →
         ‖logDeriv riemannXi ((1 / 2 : ℂ) + ((x : ℂ) + (T : ℂ) * I))‖ ≤
           C * (Real.log (1 + T)) ^ 2
-
-
-
-
 def IntegratedStripPolyGrowthAvoiding : Prop :=
   ∃ C : ℝ, 0 ≤ C ∧ ∃ k : ℕ, ∀ T : ℝ, 2 ≤ T →
     (∀ p : XiZero, T ≠ |(centeredZero p).im|) →
@@ -5877,19 +4207,10 @@ def IntegratedStripPolyGrowthAvoiding : Prop :=
       (∫ x : ℝ in (-(1 / 2 : ℝ))..(1 / 2),
         ‖logDeriv riemannXi ((1 / 2 : ℂ) + ((x : ℂ) + (T : ℂ) * I))‖)
         ≤ C * (1 + T) ^ k
-
-
 theorem logDerivStripGrowthAvoiding_of_logDerivStripGrowth
     (h : LogDerivStripGrowth) : LogDerivStripGrowthAvoiding := by
   obtain ⟨C, hC0, hC⟩ := h
   exact ⟨C, hC0, fun T hT _ => hC T hT⟩
-
-
-
-
-
-
-
 theorem admissibleT_ne_abs_im {T : ℕ → ℝ} (hT : AdmissibleT T) (n : ℕ) (p : XiZero) :
     T n ≠ |(centeredZero p).im| := by
   intro hEq
@@ -5921,10 +4242,6 @@ theorem admissibleT_ne_abs_im {T : ℕ → ℝ} (hT : AdmissibleT T) (n : ℕ) (
     exact ⟨h3, h4⟩
   rw [hEq] at hlt
   exact lt_irrefl _ hlt
-
-
-
-
 theorem measurable_logDeriv_vertical (T : ℝ) :
     Measurable (fun x : ℝ =>
       logDeriv riemannXi ((1 / 2 : ℂ) + ((x : ℂ) + (T : ℂ) * I))) := by
@@ -5940,9 +4257,6 @@ theorem measurable_logDeriv_vertical (T : ℝ) :
   rw [hlog]
   exact (hcont.measurable.comp (by fun_prop)).div
     (differentiable_riemannXi.continuous.measurable.comp (by fun_prop))
-
-
-
 theorem intervalIntegrable_logDeriv_norm_of_bound {T M : ℝ}
     (h : ∀ x : ℝ, x ∈ Set.Icc (-(1 / 2)) (1 / 2) →
       ‖logDeriv riemannXi ((1 / 2 : ℂ) + ((x : ℂ) + (T : ℂ) * I))‖ ≤ M) :
@@ -5958,11 +4272,6 @@ theorem intervalIntegrable_logDeriv_norm_of_bound {T M : ℝ}
   · filter_upwards [self_mem_ae_restrict measurableSet_Ioc] with x hx
     rw [Real.norm_of_nonneg (norm_nonneg _)]
     exact h x ⟨(Set.mem_Ioc.mp hx).1.le, (Set.mem_Ioc.mp hx).2⟩
-
-
-
-
-
 theorem integratedStripPolyGrowthAvoiding_of_logDerivStripGrowthAvoiding
     (h : LogDerivStripGrowthAvoiding) : IntegratedStripPolyGrowthAvoiding := by
   obtain ⟨C, hC0, hC⟩ := h
@@ -5998,57 +4307,20 @@ theorem integratedStripPolyGrowthAvoiding_of_logDerivStripGrowthAvoiding
         have hlog0 : 0 ≤ Real.log (1 + T) := Real.log_nonneg (by linarith)
         have hsq : (Real.log (1 + T)) ^ 2 ≤ (1 + T) ^ 2 := by nlinarith
         exact mul_le_mul_of_nonneg_left hsq hC0
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.logDerivStripGrowthAvoiding_of_logDerivStripGrowth
-#print axioms RHLean.ExplicitFormula.admissibleT_ne_abs_im
-#print axioms RHLean.ExplicitFormula.measurable_logDeriv_vertical
-#print axioms RHLean.ExplicitFormula.intervalIntegrable_logDeriv_norm_of_bound
-#print axioms RHLean.ExplicitFormula.integratedStripPolyGrowthAvoiding_of_logDerivStripGrowthAvoiding
-
 end
-
 end Inline_ExplicitFormula_RH99
-
 section Inline_ExplicitFormula_RH85
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
-
 theorem truncDiagonal_rhs_potential {a x ε : ℝ} (hx : |x| < a) (hε : 0 < ε) :
     (1 / 2) * ((∫ y in (-a)..(x - ε), (x - y)⁻¹)
         + (∫ y in (x + ε)..a, (y - x)⁻¹))
       = -Real.log ε - endpointPotential a x := by
   have h := endpoint_reg_trunc hx hε
   linarith
-
-
-
 theorem boundaryKernel_nonneg {a x ε : ℝ} (hx : |x| < a) (hε : 0 < ε) :
     0 ≤ Real.log (ε / (a - |x|)) * (if a - |x| < ε then 1 else 0) := by
   have hpos : 0 < a - |x| := by linarith [hx]
@@ -6058,44 +4330,14 @@ theorem boundaryKernel_nonneg {a x ε : ℝ} (hx : |x| < a) (hε : 0 < ε) :
     rw [le_div_iff₀ hpos]
     linarith
   · rw [if_neg h, mul_zero]
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.truncDiagonal_rhs_potential
-#print axioms RHLean.ExplicitFormula.boundaryKernel_nonneg
-
 end
-
 end Inline_ExplicitFormula_RH85
-
 section Inline_ExplicitFormula_RH86
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
-
-
 theorem integral_truncKernel_mul_autocorr_eq' {a ε : ℝ} {f : ℝ → ℂ}
     (hf : f ∈ localizedCore a) (hε : 0 < ε) :
     (∫ u : ℝ, truncKernel ε u * (autocorr f u).re)
@@ -6135,42 +4377,14 @@ theorem integral_truncKernel_mul_autocorr_eq' {a ε : ℝ} {f : ℝ → ℂ}
   apply setIntegral_congr_fun hD
   intro p _
   simp only [truncKernel]
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.integral_truncKernel_mul_autocorr_eq'
-
 end
-
 end Inline_ExplicitFormula_RH86
-
 section Inline_ExplicitFormula_RH87
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem gammaForm_eq_integral_gammaKernel {a : ℝ} {f : ℝ → ℂ}
     (hf : f ∈ localizedCore a) :
     gammaForm a f = ∫ u : ℝ, gammaKernel |u| * (autocorr f u).re := by
@@ -6203,7 +4417,6 @@ theorem gammaForm_eq_integral_gammaKernel {a : ℝ} {f : ℝ → ℂ}
   rw [← setIntegral_prod _ hInt]
   rw [← setIntegral_prod_swap (μ := volume) (ν := volume) (s := D) (t := D)
     (f := fun z : ℝ × ℝ => gammaKernel ‖z.1 - z.2‖ * (f z.1 * star (f z.2)).re)]
-
   have hfzero : ∀ x ∉ D, f x = 0 := by
     intro x hx
     by_contra h
@@ -6231,40 +4444,14 @@ theorem gammaForm_eq_integral_gammaKernel {a : ℝ} {f : ℝ → ℂ}
   change gammaKernel ‖z.2 - z.1‖ * (f z.2 * star (f z.1)).re
     = gammaKernel |z.2 - z.1| * (f z.2 * star (f z.1)).re
   rw [Real.norm_eq_abs]
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.gammaForm_eq_integral_gammaKernel
-
 end
-
 end Inline_ExplicitFormula_RH87
-
 section Inline_ExplicitFormula_RH88
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem gammaForm_eq_two_integral {a R : ℝ} {f : ℝ → ℂ} (hf : f ∈ localizedCore a)
     (hR : 0 < R) (hsupp : ∀ u : ℝ, R < |u| → (autocorr f u).re = 0) :
     gammaForm a f = 2 * ∫ u in (0 : ℝ)..R, gammaKernel u * (autocorr f u).re := by
@@ -6299,42 +4486,14 @@ theorem gammaForm_eq_two_integral {a R : ℝ} {f : ℝ → ℂ} (hf : f ∈ loca
       exact mul_le_mul (hM |u| (abs_nonneg u)) (hB u) (abs_nonneg _) hM0
   rw [integral_gammaKernel_even (autocorr_re_even hf.1) hR.le
     (hint (by linarith : -R ≤ 0)) (hint hR.le)]
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.gammaForm_eq_two_integral
-
 end
-
 end Inline_ExplicitFormula_RH88
-
 section Inline_ExplicitFormula_RH89
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem integral_log_div_sub (a ε : ℝ) :
     (∫ x in (a - ε)..a, Real.log (ε / (a - x)))
       = ∫ u in (0 : ℝ)..ε, Real.log (ε / u) := by
@@ -6342,8 +4501,6 @@ theorem integral_log_div_sub (a ε : ℝ) :
     (d := a) (a := a - ε) (b := a)
   rw [show a - (a - ε) = ε by ring, show a - a = 0 by ring] at h
   exact h
-
-
 theorem integral_log_div_add (a ε : ℝ) :
     (∫ x in (-a)..(-a + ε), Real.log (ε / (a + x)))
       = ∫ u in (0 : ℝ)..ε, Real.log (ε / u) := by
@@ -6351,59 +4508,20 @@ theorem integral_log_div_add (a ε : ℝ) :
     (d := -a) (a := -a) (b := -a + ε)
   rw [show -a - -a = 0 by ring, show -a + ε - -a = ε by ring] at h
   simpa only [sub_neg_eq_add, add_comm] using h
-
-
 theorem integral_log_div_sub_eq (a ε : ℝ) (hε : 0 < ε) :
     (∫ x in (a - ε)..a, Real.log (ε / (a - x))) = ε := by
   rw [integral_log_div_sub, integral_log_div hε]
-
 theorem integral_log_div_add_eq (a ε : ℝ) (hε : 0 < ε) :
     (∫ x in (-a)..(-a + ε), Real.log (ε / (a + x))) = ε := by
   rw [integral_log_div_add, integral_log_div hε]
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.integral_log_div_sub
-#print axioms RHLean.ExplicitFormula.integral_log_div_add
-#print axioms RHLean.ExplicitFormula.integral_log_div_sub_eq
-#print axioms RHLean.ExplicitFormula.integral_log_div_add_eq
-
 end
-
 end Inline_ExplicitFormula_RH89
-
 section Inline_ExplicitFormula_RH90
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem intervalIntegrable_log_div_sub {a ε : ℝ} (hε : 0 < ε) :
     IntervalIntegrable (fun x : ℝ => Real.log (ε / (a - x))) volume (a - ε) a := by
   have h1 : IntervalIntegrable (fun x : ℝ => Real.log (a - x)) volume (a - ε) a := by
@@ -6416,8 +4534,6 @@ theorem intervalIntegrable_log_div_sub {a ε : ℝ} (hε : 0 < ε) :
   rw [Set.uIoo_of_le (by linarith : a - ε ≤ a), Set.mem_Ioo] at hx
   have hx' : 0 < a - x := by linarith [hx.2]
   rw [Real.log_div (ne_of_gt hε) (ne_of_gt hx')]
-
-
 theorem intervalIntegrable_log_div_add {a ε : ℝ} (hε : 0 < ε) :
     IntervalIntegrable (fun x : ℝ => Real.log (ε / (a + x))) volume (-a) (-a + ε) := by
   have h1 : IntervalIntegrable (fun x : ℝ => Real.log (a + x)) volume (-a) (-a + ε) := by
@@ -6430,46 +4546,14 @@ theorem intervalIntegrable_log_div_add {a ε : ℝ} (hε : 0 < ε) :
   rw [Set.uIoo_of_le (by linarith : -a ≤ -a + ε), Set.mem_Ioo] at hx
   have hx' : 0 < a + x := by linarith [hx.1]
   rw [Real.log_div (ne_of_gt hε) (ne_of_gt hx')]
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.intervalIntegrable_log_div_sub
-#print axioms RHLean.ExplicitFormula.intervalIntegrable_log_div_add
-
 end
-
 end Inline_ExplicitFormula_RH90
-
 section Inline_ExplicitFormula_RH91
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem integral_boundaryKernel {a ε : ℝ} (hε : 0 < ε) (hεa : ε < a) :
     (∫ x in Set.Ioo (-a) a,
         Real.log (ε / (a - |x|)) * (if a - |x| < ε then 1 else 0)) = 2 * ε := by
@@ -6477,7 +4561,6 @@ theorem integral_boundaryKernel {a ε : ℝ} (hε : 0 < ε) (hεa : ε < a) :
     with hB
   have hset : (∫ x in Set.Ioo (-a) a, B x) = ∫ x in (-a)..a, B x := by
     rw [← integral_Ioc_eq_integral_Ioo, ← intervalIntegral.integral_of_le (by linarith : -a ≤ a)]
-
   have hpt_sub : ∀ x ∈ Set.uIcc (a - ε) a, B x = Real.log (ε / (a - x)) := by
     intro x hx
     rw [Set.uIcc_of_le (by linarith : a - ε ≤ a), Set.mem_Icc] at hx
@@ -6513,7 +4596,6 @@ theorem integral_boundaryKernel {a ε : ℝ} (hε : 0 < ε) (hεa : ε < a) :
       linarith [hx.2]
     · rw [abs_of_nonpos hx0]
       linarith [hx.1]
-
   have hB1 : IntervalIntegrable B volume (a - ε) a :=
     (intervalIntegrable_log_div_sub hε).congr_uIoo (fun x hx => by
       rw [Set.uIoo_of_le (by linarith : a - ε ≤ a), Set.mem_Ioo] at hx
@@ -6535,7 +4617,6 @@ theorem integral_boundaryKernel {a ε : ℝ} (hε : 0 < ε) (hεa : ε < a) :
         rw [Set.uIcc_of_le (by linarith : -a + ε ≤ a - ε)]
         exact ⟨le_of_lt hx.1, le_of_lt hx.2⟩
       exact (hpt_zero x hmem).symm)
-
   have hsplit1 := intervalIntegral.integral_add_adjacent_intervals hB2 (hB0.trans hB1)
   have hsplit2 := intervalIntegral.integral_add_adjacent_intervals hB0 hB1
   have e1 : (∫ x in (-a)..(-a + ε), B x) = ε := by
@@ -6556,82 +4637,32 @@ theorem integral_boundaryKernel {a ε : ℝ} (hε : 0 < ε) (hεa : ε < a) :
   rw [← hsplit2]
   rw [e1, e2, e3]
   ring
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.integral_boundaryKernel
-
 end
-
 end Inline_ExplicitFormula_RH91
-
 section Inline_ExplicitFormula_RH92
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem integrableOn_log_div_sub {a ε : ℝ} (hε : 0 < ε) :
     IntegrableOn (fun x : ℝ => Real.log (ε / (a - x))) (Set.Ioo (a - ε) a) volume :=
   ((intervalIntegrable_iff_integrableOn_Ioc_of_le
       (by linarith : a - ε ≤ a)).mp (intervalIntegrable_log_div_sub hε)).mono_set
     Set.Ioo_subset_Ioc_self
-
-
 theorem integrableOn_log_div_add {a ε : ℝ} (hε : 0 < ε) :
     IntegrableOn (fun x : ℝ => Real.log (ε / (a + x))) (Set.Ioo (-a) (-a + ε)) volume :=
   ((intervalIntegrable_iff_integrableOn_Ioc_of_le
       (by linarith : -a ≤ -a + ε)).mp (intervalIntegrable_log_div_add hε)).mono_set
     Set.Ioo_subset_Ioc_self
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.integrableOn_log_div_sub
-#print axioms RHLean.ExplicitFormula.integrableOn_log_div_add
-
 end
-
 end Inline_ExplicitFormula_RH92
-
 section Inline_ExplicitFormula_RH93
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem integrableOn_boundaryKernel {a ε : ℝ} (hε : 0 < ε) (hεa : ε < a) :
     IntegrableOn (fun x : ℝ => Real.log (ε / (a - |x|)) * (if a - |x| < ε then 1 else 0))
       (Set.Ioo (-a) a) volume := by
@@ -6686,53 +4717,17 @@ theorem integrableOn_boundaryKernel {a ε : ℝ} (hε : 0 < ε) (hεa : ε < a) 
       · exact ⟨by linarith [h1'], h2'⟩
   rw [hD]
   exact (h2.union (h0.union h1))
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.integrableOn_boundaryKernel
-
 end
-
 end Inline_ExplicitFormula_RH93
-
 section Inline_ExplicitFormula_RH94
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 set_option maxHeartbeats 800000
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
-
 noncomputable def boundaryKernel (a ε : ℝ) : ℝ → ℝ :=
   fun x => Real.log (ε / (a - |x|)) * (if a - |x| < ε then 1 else 0)
-
-
 theorem boundaryKernel_measurable (a ε : ℝ) : Measurable (boundaryKernel a ε) := by
   unfold boundaryKernel
   have hsub : Measurable (fun x : ℝ => a - |x|) :=
@@ -6741,13 +4736,9 @@ theorem boundaryKernel_measurable (a ε : ℝ) : Measurable (boundaryKernel a ε
     measurableSet_lt hsub (measurable_const : Measurable fun _ : ℝ => ε)
   exact ((measurable_const : Measurable fun _ : ℝ => ε).div hsub).log.mul
     ((measurable_const : Measurable fun _ : ℝ => (1 : ℝ)).indicator hset)
-
-
 theorem boundaryKernel_nonneg_of_abs_lt {a x ε : ℝ} (hx : |x| < a) (hε : 0 < ε) :
     0 ≤ boundaryKernel a ε x := by
   simpa only [boundaryKernel] using boundaryKernel_nonneg hx hε
-
-
 theorem integrableOn_boundaryKernel_mul_sq {a ε : ℝ} {f : ℝ → ℂ}
     (hf : f ∈ localizedCore a) (hε : 0 < ε) (hεa : ε < a) :
     IntegrableOn (fun x : ℝ => ‖f x‖ ^ 2 * boundaryKernel a ε x)
@@ -6778,11 +4769,6 @@ theorem integrableOn_boundaryKernel_mul_sq {a ε : ℝ} {f : ℝ → ℂ}
     simpa only [boundaryKernel] using
       (integrableOn_boundaryKernel hε hεa).const_mul (B ^ 2)
   exact hBint.mono' hmeas hbound
-
-
-
-
-
 theorem abs_boundaryError_le {a ε B : ℝ} {f : ℝ → ℂ}
     (hf : f ∈ localizedCore a) (hε : 0 < ε) (hεa : ε < a)
     (hB0 : 0 ≤ B) (hB : ∀ x : ℝ, ‖f x‖ ≤ B) :
@@ -6844,9 +4830,6 @@ theorem abs_boundaryError_le {a ε B : ℝ} {f : ℝ → ℂ}
         mul_le_mul_of_nonneg_left h3 (by norm_num)
     _ = (1 / 2) * (B ^ 2 * (2 * ε)) := by rw [h4]
     _ = B ^ 2 * ε := by ring
-
-
-
 theorem tendsto_boundaryError {a : ℝ} {f : ℝ → ℂ} (hf : f ∈ localizedCore a)
     (ha : 0 < a) :
     Tendsto (fun ε : ℝ => (1 / 2) * (∫ x in Set.Ioo (-a) a,
@@ -6867,44 +4850,14 @@ theorem tendsto_boundaryError {a : ℝ} {f : ℝ → ℂ} (hf : f ∈ localizedC
     exact ⟨(Set.mem_Ioo.mp hx).1, (Set.mem_Ioo.mp hx).2⟩
   · filter_upwards [self_mem_nhdsWithin, Ioo_mem_nhdsGT ha] with ε hε hεa
     exact le_trans (le_abs_self _) (abs_boundaryError_le hf hε hεa.2 hB0 hB)
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.boundaryKernel_measurable
-#print axioms RHLean.ExplicitFormula.boundaryKernel_nonneg_of_abs_lt
-#print axioms RHLean.ExplicitFormula.integrableOn_boundaryKernel_mul_sq
-#print axioms RHLean.ExplicitFormula.abs_boundaryError_le
-#print axioms RHLean.ExplicitFormula.tendsto_boundaryError
-
 end
-
 end Inline_ExplicitFormula_RH94
-
 section Inline_ExplicitFormula_RH81
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 theorem truncKernel_fubini {a ε : ℝ} {f : ℝ → ℂ} (hf : f ∈ localizedCore a)
     (hε : 0 < ε) :
     (∫ z in Set.Ioo (-a) a ×ˢ Set.Ioo (-a) a,
@@ -6935,53 +4888,15 @@ theorem truncKernel_fubini {a ε : ℝ} {f : ℝ → ℂ} (hf : f ∈ localizedC
       = ‖f x‖ ^ 2 * ∫ y in Set.Ioo (-a) a, truncKernel ε (x - y)
   rw [integral_mul_const]
   ring
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.truncKernel_fubini
-
 end
-
 end Inline_ExplicitFormula_RH81
-
 section Inline_ExplicitFormula_RH95
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 set_option maxHeartbeats 800000
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
-
-
 theorem intervalIntegrable_log_sub {a : ℝ} :
     IntervalIntegrable (fun x : ℝ => Real.log (a - x)) volume (-a) a := by
   have h := ((intervalIntegral.intervalIntegrable_log' (a := (0 : ℝ)) (b := 2 * a)).comp_sub_left
@@ -6990,8 +4905,6 @@ theorem intervalIntegrable_log_sub {a : ℝ} :
   have h2 : a - 0 = a := by ring
   rw [h1, h2] at h
   exact h
-
-
 theorem intervalIntegrable_log_add {a : ℝ} :
     IntervalIntegrable (fun x : ℝ => Real.log (a + x)) volume (-a) a := by
   have h := (intervalIntegral.intervalIntegrable_log' (a := (0 : ℝ)) (b := 2 * a)).comp_sub_right (-a)
@@ -7002,10 +4915,6 @@ theorem intervalIntegrable_log_add {a : ℝ} :
   have h3 : 2 * a + -a = a := by ring
   rw [h1, h2, h3] at h
   exact h
-
-
-
-
 theorem integrableOn_log_sub_mul_sq {a : ℝ} {f : ℝ → ℂ} (hf : f ∈ localizedCore a)
     (ha : 0 < a) :
     IntegrableOn (fun x : ℝ => Real.log (a - x) * ‖f x‖ ^ 2)
@@ -7034,8 +4943,6 @@ theorem integrableOn_log_sub_mul_sq {a : ℝ} {f : ℝ → ℂ} (hf : f ∈ loca
           mul_le_mul_of_nonneg_left (hsq x) (abs_nonneg _)
       _ = B ^ 2 * |Real.log (a - x)| := by ring
   exact hmaj.mono' hmeas hbound
-
-
 theorem integrableOn_log_add_mul_sq {a : ℝ} {f : ℝ → ℂ} (hf : f ∈ localizedCore a)
     (ha : 0 < a) :
     IntegrableOn (fun x : ℝ => Real.log (a + x) * ‖f x‖ ^ 2)
@@ -7064,8 +4971,6 @@ theorem integrableOn_log_add_mul_sq {a : ℝ} {f : ℝ → ℂ} (hf : f ∈ loca
           mul_le_mul_of_nonneg_left (hsq x) (abs_nonneg _)
       _ = B ^ 2 * |Real.log (a + x)| := by ring
   exact hmaj.mono' hmeas hbound
-
-
 theorem integrableOn_endpointPotential_mul_sq {a : ℝ} {f : ℝ → ℂ}
     (hf : f ∈ localizedCore a) (ha : 0 < a) :
     IntegrableOn (fun x : ℝ => endpointPotential a x * ‖f x‖ ^ 2)
@@ -7087,8 +4992,6 @@ theorem integrableOn_endpointPotential_mul_sq {a : ℝ} {f : ℝ → ℂ}
     show a ^ 2 - x ^ 2 = (a - x) * (a + x) by ring,
     Real.log_mul (ne_of_gt hx1) (ne_of_gt hx2)]
   ring
-
-
 theorem endpointPotential_neg_eq_logSum {a x : ℝ} (hx : |x| < a) :
     -endpointPotential a x = (1 / 2) * (Real.log (a - x) + Real.log (a + x)) := by
   have hx1 : 0 < a - x := by linarith [(abs_lt.mp hx).2]
@@ -7097,8 +5000,6 @@ theorem endpointPotential_neg_eq_logSum {a x : ℝ} (hx : |x| < a) :
     show a ^ 2 - x ^ 2 = (a - x) * (a + x) by ring,
     Real.log_mul (ne_of_gt hx1) (ne_of_gt hx2)]
   ring
-
-
 theorem autocorr_zero_re_eq_integral_sq {a : ℝ} {f : ℝ → ℂ}
     (hf : f ∈ localizedCore a) :
     (autocorr f 0).re = ∫ x in Set.Ioo (-a) a, ‖f x‖ ^ 2 := by
@@ -7110,14 +5011,6 @@ theorem autocorr_zero_re_eq_integral_sq {a : ℝ} {f : ℝ → ℂ}
     exact hx (hf.2 (Function.mem_support.mpr h))
   rw [hx0]
   simp
-
-
-
-
-
-
-
-
 theorem truncDiagonal_eq {a ε : ℝ} {f : ℝ → ℂ} (hf : f ∈ localizedCore a)
     (hε : 0 < ε) (hεa : ε < a) :
     (1 / 2) * (∫ z in Set.Ioo (-a) a ×ˢ Set.Ioo (-a) a,
@@ -7245,63 +5138,15 @@ theorem truncDiagonal_eq {a ε : ℝ} {f : ℝ → ℂ} (hf : f ∈ localizedCor
         rw [hWeval, hBeval]
     _ = -potentialForm a f - Real.log ε * (autocorr f 0).re
           + (1 / 2) * (∫ x in D, ‖f x‖ ^ 2 * boundaryKernel a ε x) := by ring
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.intervalIntegrable_log_sub
-#print axioms RHLean.ExplicitFormula.intervalIntegrable_log_add
-#print axioms RHLean.ExplicitFormula.integrableOn_log_sub_mul_sq
-#print axioms RHLean.ExplicitFormula.integrableOn_log_add_mul_sq
-#print axioms RHLean.ExplicitFormula.integrableOn_endpointPotential_mul_sq
-#print axioms RHLean.ExplicitFormula.endpointPotential_neg_eq_logSum
-#print axioms RHLean.ExplicitFormula.autocorr_zero_re_eq_integral_sq
-#print axioms RHLean.ExplicitFormula.truncDiagonal_eq
-
 end
-
 end Inline_ExplicitFormula_RH95
-
 section Inline_ExplicitFormula_RH96
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 set_option maxHeartbeats 800000
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
-
-
-
 theorem truncKernel_autocorr_swap {a ε : ℝ} {f : ℝ → ℂ} (hf : f ∈ localizedCore a)
     (hε : 0 < ε) :
     (∫ u : ℝ, truncKernel ε u * (autocorr f u).re)
@@ -7312,11 +5157,6 @@ theorem truncKernel_autocorr_swap {a ε : ℝ} {f : ℝ → ℂ} (hf : f ∈ loc
     (s := Set.Ioo (-a) a) (t := Set.Ioo (-a) a)
     (f := fun z : ℝ × ℝ =>
       truncKernel ε (z.2 - z.1) * (f z.2 * star (f z.1)).re)).symm
-
-
-
-
-
 theorem integrableOn_nearDiagonal_le {a ε : ℝ} (ha : 0 < a) {f : ℝ → ℂ}
     (hf : f ∈ localizedCore a) (hε : 0 < ε) :
     IntegrableOn (fun p : ℝ × ℝ =>
@@ -7349,9 +5189,6 @@ theorem integrableOn_nearDiagonal_le {a ε : ℝ} (ha : 0 < a) {f : ℝ → ℂ}
       _ ≤ C₁ ^ 2 * ε := mul_le_mul_of_nonneg_left h (by positivity)
   · rw [if_neg h, norm_zero]
     positivity
-
-
-
 theorem integrableOn_nearDiagonal_lt {a ε : ℝ} (ha : 0 < a) {f : ℝ → ℂ}
     (hf : f ∈ localizedCore a) (hε : 0 < ε) :
     IntegrableOn (fun p : ℝ × ℝ =>
@@ -7377,9 +5214,6 @@ theorem integrableOn_nearDiagonal_lt {a ε : ℝ} (ha : 0 < a) {f : ℝ → ℂ}
     · rw [if_pos h2]
       exact div_nonneg (sq_nonneg _) (abs_nonneg _)
     · rw [if_neg h2]
-
-
-
 theorem tendsto_nearDiagonal_le {a : ℝ} (ha : 0 < a) {f : ℝ → ℂ}
     (hf : f ∈ localizedCore a) :
     Tendsto (fun ε : ℝ => (1 / 4) * (∫ z in Set.Ioo (-a) a ×ˢ Set.Ioo (-a) a,
@@ -7419,19 +5253,13 @@ theorem tendsto_nearDiagonal_le {a : ℝ} (ha : 0 < a) {f : ℝ → ℂ}
       · rw [if_pos h2]
         exact div_nonneg (sq_nonneg _) (abs_nonneg _)
       · rw [if_neg h2]
-
-
-
-
 theorem positionFormEqAt_of_pos {a : ℝ} (ha : 0 < a) : PositionFormEqAt a := by
   intro f hf R hR hsupp
-
   have h76 : Tendsto (fun ε : ℝ => ∫ u in Set.Icc (-R) R,
         truncKernel ε u * ((autocorr f u).re - (autocorr f 0).re)) (𝓝[>] (0 : ℝ))
       (𝓝 (∫ u in Set.Icc (-R) R,
         (|u|)⁻¹ * ((autocorr f u).re - (autocorr f 0).re))) :=
     tendsto_truncKernel_mul_autocorr_sub hf.1 R
-
   obtain ⟨C, hC0, hC⟩ := exists_autocorr_re_sub_bound hf.1
   obtain ⟨B', hB'0, hB'⟩ := exists_autocorr_re_bound hf.1
   have hint : ∀ {c d : ℝ}, c ≤ d → IntervalIntegrable
@@ -7476,7 +5304,6 @@ theorem positionFormEqAt_of_pos {a : ℝ} (ha : 0 < a) : PositionFormEqAt a := b
         (|u|)⁻¹ * ((autocorr f u).re - (autocorr f 0).re))
       = 2 * ∫ u in (0 : ℝ)..R, ((autocorr f u).re - (autocorr f 0).re) / u :=
     integral_inv_abs_mul_even heven hR.le (hint (by linarith : -R ≤ 0)) (hint hR.le)
-
   have hT1 : Tendsto (fun ε : ℝ => -Real.log R * (autocorr f 0).re
         - (1 / 2) * (∫ u in Set.Icc (-R) R,
             truncKernel ε u * ((autocorr f u).re - (autocorr f 0).re)))
@@ -7489,16 +5316,13 @@ theorem positionFormEqAt_of_pos {a : ℝ} (ha : 0 < a) : PositionFormEqAt a := b
     rw [h78] at h
     convert h using 1
     ring
-
   have hE : Tendsto (fun ε : ℝ => (1 / 2) * (∫ x in Set.Ioo (-a) a,
         ‖f x‖ ^ 2 * boundaryKernel a ε x)) (𝓝[>] (0 : ℝ)) (𝓝 0) :=
     tendsto_boundaryError hf ha
-
   have hN : Tendsto (fun ε : ℝ => (1 / 4) * (∫ z in Set.Ioo (-a) a ×ˢ Set.Ioo (-a) a,
         (if |z.1 - z.2| ≤ ε then ‖f z.1 - f z.2‖ ^ 2 / |z.1 - z.2| else 0)))
       (𝓝[>] (0 : ℝ)) (𝓝 0) :=
     tendsto_nearDiagonal_le ha hf
-
   have hRHSlim : Tendsto (fun ε : ℝ =>
         (-Real.log R * (autocorr f 0).re
           - (1 / 2) * (∫ u in Set.Icc (-R) R,
@@ -7520,7 +5344,6 @@ theorem positionFormEqAt_of_pos {a : ℝ} (ha : 0 < a) : PositionFormEqAt a := b
     have h := ((hT1.add hE).add hN).sub hG
     rw [Measure.volume_eq_prod] at h
     simpa only [add_zero, zero_add] using h
-
   have hQ_eq : ∀ᶠ ε in 𝓝[>] (0 : ℝ),
       archForm a f + potentialForm a f - gammaForm a f
         = (-Real.log R * (autocorr f 0).re
@@ -7568,8 +5391,6 @@ theorem positionFormEqAt_of_pos {a : ℝ} (ha : 0 < a) : PositionFormEqAt a := b
       (𝓝 (archForm a f + potentialForm a f - gammaForm a f)) := by
     exact hconst.congr' hQ_eq
   exact tendsto_nhds_unique hRHSconst hRHSlim
-
-
 theorem positionFormEqAt (a : ℝ) : PositionFormEqAt a := by
   intro f hf R hR hsupp
   by_cases ha : 0 < a
@@ -7585,83 +5406,25 @@ theorem positionFormEqAt (a : ℝ) : PositionFormEqAt a := by
       exact hx
     rw [hf0]
     simp [archForm, potentialForm, gammaForm, autocorr]
-
-
-
-
-
-
-
 theorem weilExplicitFormulaOdd_of_growth_verticalEval
     (hgrowth : LogDerivStripGrowth) (hv : ∀ a : ℝ, VerticalIntegralEvalAt a) :
     WeilExplicitFormulaOdd :=
   weilExplicitFormulaOdd_of_growth_verticalEval_positionForm' hgrowth hv
     positionFormEqAt
-
-
 theorem weilExplicitFormulaOddNonneg_of_growth_verticalEval
     (hgrowth : LogDerivStripGrowth) (hv : ∀ a : ℝ, VerticalIntegralEvalAt a) :
     WeilExplicitFormulaOddNonneg :=
   weilExplicitFormulaOddNonneg_of_growth_verticalEval_positionForm' hgrowth hv
     positionFormEqAt
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.truncKernel_autocorr_swap
-#print axioms RHLean.ExplicitFormula.integrableOn_nearDiagonal_le
-#print axioms RHLean.ExplicitFormula.integrableOn_nearDiagonal_lt
-#print axioms RHLean.ExplicitFormula.tendsto_nearDiagonal_le
-#print axioms RHLean.ExplicitFormula.positionFormEqAt_of_pos
-#print axioms RHLean.ExplicitFormula.positionFormEqAt
-#print axioms RHLean.ExplicitFormula.weilExplicitFormulaOdd_of_growth_verticalEval
-
 end
-
 end Inline_ExplicitFormula_RH96
-
 section Inline_ExplicitFormula_RH104
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 set_option maxHeartbeats 800000
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators
-
 namespace RHLean.ExplicitFormula
-
-
-
-
-
-
 theorem tendsto_horizontal_integral_zero_quad_avoiding
     (hgrowth : LogDerivStripGrowthAvoiding) {h : ℂ → ℂ} (hdecay : StripQuadDecay h)
     {T : ℕ → ℝ} (hT : Tendsto T atTop atTop)
@@ -7734,9 +5497,6 @@ theorem tendsto_horizontal_integral_zero_quad_avoiding
     rw [show |(1 / 2 : ℝ) - (-(1 / 2))| = 1 by norm_num, mul_one] at h
     exact h
   exact hInt'
-
-
-
 theorem tendsto_horizontal_integral_autocorr_avoiding
     (hgrowth : LogDerivStripGrowthAvoiding) {f : ℝ → ℂ} (hf : f ∈ oddCore)
     {T : ℕ → ℝ} (hT : Tendsto T atTop atTop)
@@ -7744,12 +5504,6 @@ theorem tendsto_horizontal_integral_autocorr_avoiding
     Tendsto (fun n : ℕ => stripTopIntegral (transf (autocorr f)) (T n)) atTop (𝓝 0) :=
   tendsto_horizontal_integral_zero_quad_avoiding hgrowth (transf_autocorr_StripQuadDecay hf)
     hT havoid
-
-
-
-
-
-
 theorem tendsto_right_vertical_autocorr_avoiding
     (hgrowth : LogDerivStripGrowthAvoiding) {f : ℝ → ℂ} (hf : f ∈ oddCore)
     {T : ℕ → ℝ} (hT : Tendsto T atTop atTop) (hTpos : ∀ n, 0 < T n)
@@ -7760,7 +5514,7 @@ theorem tendsto_right_vertical_autocorr_avoiding
       (𝓝 ((Real.pi : ℂ) * ∑' p : XiZero, transf (autocorr f) (centeredZero p))) := by
   have havoid : ∀ n : ℕ, ∀ p : XiZero, T n ≠ |(centeredZero p).im| :=
     fun n p => admissibleT_ne_abs_im ⟨hT, hTpos, hbd⟩ n p
-  set S : ℂ := ∑'
+  set S : ℂ := ∑' p : XiZero, transf (autocorr f) (centeredZero p) with hS
   have hlim := rectangleResidueLimit_autocorr hf hT hTpos hbd
   have htop : Tendsto (fun n => stripTopIntegral (transf (autocorr f)) (T n)) atTop (𝓝 0) :=
     (tendsto_horizontal_integral_autocorr_avoiding hgrowth hf hT havoid)
@@ -7790,10 +5544,6 @@ theorem tendsto_right_vertical_autocorr_avoiding
   refine hR.congr' ?_
   filter_upwards with n
   field_simp
-
-
-
-
 theorem evenGuinandWeilAt_of_growthAvoiding_verticalEval {a : ℝ}
     (hgrowth : LogDerivStripGrowthAvoiding) (h : VerticalIntegralEvalAt a)
     (hex : ∀ f : ℝ → ℂ, f ∈ localizedCore a → ∃ T : ℕ → ℝ, AdmissibleT T) :
@@ -7804,7 +5554,7 @@ theorem evenGuinandWeilAt_of_growthAvoiding_verticalEval {a : ℝ}
   have h1re : Tendsto (fun n => (stripRightIntegral (transf (autocorr f)) (T n)).re) atTop
       (𝓝 (((Real.pi : ℂ) * ∑' p : XiZero, transf (autocorr f) (centeredZero p)).re)) :=
     Complex.continuous_re.continuousAt.tendsto.comp h1
-  have h3 : ((Real.pi : ℂ) * ∑'
+  have h3 : ((Real.pi : ℂ) * ∑' p : XiZero, transf (autocorr f) (centeredZero p)).re
       = Real.pi * (∑' p : XiZero, transf (autocorr f) (centeredZero p)).re := by
     rw [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im]
     ring
@@ -7812,12 +5562,6 @@ theorem evenGuinandWeilAt_of_growthAvoiding_verticalEval {a : ℝ}
   have h2 := h f hf T ⟨hTtop, hTpos, hbd⟩
   have hEq := tendsto_nhds_unique h1re h2
   exact mul_left_cancel₀ Real.pi_ne_zero hEq
-
-
-
-
-
-
 theorem weilExplicitFormulaOdd_of_growthAvoiding_verticalEval
     (hgrowth : LogDerivStripGrowthAvoiding) (hv : ∀ a : ℝ, VerticalIntegralEvalAt a) :
     WeilExplicitFormulaOdd :=
@@ -7825,8 +5569,6 @@ theorem weilExplicitFormulaOdd_of_growthAvoiding_verticalEval
     (fun a => evenGuinandWeilAt_of_growthAvoiding_verticalEval hgrowth (hv a)
       (fun _ _ => exists_admissibleT))
     positionFormEqAt
-
-
 theorem weilExplicitFormulaOddNonneg_of_growthAvoiding_verticalEval
     (hgrowth : LogDerivStripGrowthAvoiding) (hv : ∀ a : ℝ, VerticalIntegralEvalAt a) :
     WeilExplicitFormulaOddNonneg :=
@@ -7834,66 +5576,14 @@ theorem weilExplicitFormulaOddNonneg_of_growthAvoiding_verticalEval
     (fun a => evenGuinandWeilAt_of_growthAvoiding_verticalEval hgrowth (hv a)
       (fun _ _ => exists_admissibleT))
     positionFormEqAt
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.tendsto_horizontal_integral_zero_quad_avoiding
-#print axioms RHLean.ExplicitFormula.tendsto_right_vertical_autocorr_avoiding
-#print axioms RHLean.ExplicitFormula.evenGuinandWeilAt_of_growthAvoiding_verticalEval
-#print axioms RHLean.ExplicitFormula.weilExplicitFormulaOdd_of_growthAvoiding_verticalEval
-#print axioms RHLean.ExplicitFormula.weilExplicitFormulaOddNonneg_of_growthAvoiding_verticalEval
-
 end
-
 end Inline_ExplicitFormula_RH104
-
 section Inline_ExplicitFormula_RH108
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators ContDiff
-
 namespace RHLean.ExplicitFormula
-
-
-
-
 theorem iteratedDeriv_iteratedDeriv (g : ℝ → ℂ) (m N : ℕ) :
     iteratedDeriv m (iteratedDeriv N g) = iteratedDeriv (m + N) g := by
   induction m with
@@ -7902,8 +5592,6 @@ theorem iteratedDeriv_iteratedDeriv (g : ℝ → ℂ) (m N : ℕ) :
       rw [iteratedDeriv_succ, ih]
       rw [show k + 1 + N = k + N + 1 by omega]
       rw [iteratedDeriv_succ]
-
-
 theorem contDiff_iteratedDeriv_of {g : ℝ → ℂ} (hg : ContDiff ℝ ∞ g) (N : ℕ) :
     ContDiff ℝ ∞ (iteratedDeriv N g) := by
   refine contDiff_iff_iteratedDeriv.mpr ⟨fun m _ => ?_, fun m _ => ?_⟩
@@ -7913,8 +5601,6 @@ theorem contDiff_iteratedDeriv_of {g : ℝ → ℂ} (hg : ContDiff ℝ ∞ g) (N
   · rw [iteratedDeriv_iteratedDeriv]
     exact hg.differentiable_iteratedDeriv (m + N)
       (WithTop.coe_lt_coe.mpr (ENat.natCast_lt_top (m + N)))
-
-
 theorem hasCompactSupport_iteratedDeriv_of {g : ℝ → ℂ} (hs : HasCompactSupport g)
     (N : ℕ) : HasCompactSupport (iteratedDeriv N g) :=
   HasCompactSupport.of_support_subset_isCompact (hs.iteratedFDeriv N).isCompact
@@ -7923,9 +5609,6 @@ theorem hasCompactSupport_iteratedDeriv_of {g : ℝ → ℂ} (hs : HasCompactSup
       have hFx : iteratedFDeriv ℝ N g x = 0 :=
         not_not.mp fun h => hnot (subset_tsupport _ h)
       exact hx (by rw [iteratedDeriv_eq_iteratedFDeriv, hFx]; simp)
-
-
-
 theorem z_pow_mul_transf_eq_iteratedDeriv {g : ℝ → ℂ} (hg : ContDiff ℝ ∞ g)
     (hs : HasCompactSupport g) (N : ℕ) (z : ℂ) :
     z ^ N * transf g z = (-1 : ℂ) ^ N * transf (iteratedDeriv N g) z := by
@@ -7947,14 +5630,6 @@ theorem z_pow_mul_transf_eq_iteratedDeriv {g : ℝ → ℂ} (hg : ContDiff ℝ �
         _ = (-1 : ℂ) ^ (n + 1) * transf (iteratedDeriv (n + 1) g) z := by
               rw [iteratedDeriv_succ, pow_succ]
               ring
-
-
-
-
-
-
-
-
 theorem exists_transf_autocorr_superPolyDecay {f : ℝ → ℂ} (hf : f ∈ oddCore)
     (N : ℕ) :
     ∃ D : ℝ, 0 ≤ D ∧ ∀ z : ℂ, |z.re| ≤ 1 / 2 →
@@ -8028,15 +5703,6 @@ theorem exists_transf_autocorr_superPolyDecay {f : ℝ → ℂ} (hf : f ∈ oddC
               le_mul_of_one_le_left (by positivity) h10
             exact mul_le_mul_of_nonneg_left h11 (by positivity)
     exact h3.trans h5
-
-
-
-
-
-
-
-
-
 def HorizontalControl (T : ℕ → ℝ) : Prop :=
   ∃ C : ℝ, 0 ≤ C ∧ ∃ k : ℕ, ∀ n : ℕ,
     IntervalIntegrable (fun x : ℝ =>
@@ -8045,11 +5711,6 @@ def HorizontalControl (T : ℕ → ℝ) : Prop :=
     (∫ x : ℝ in (-(1 / 2 : ℝ))..(1 / 2),
       ‖logDeriv riemannXi ((1 / 2 : ℂ) + ((x : ℂ) + (T n : ℂ) * I))‖)
       ≤ C * (1 + T n) ^ k
-
-
-
-
-
 theorem tendsto_horizontal_integral_zero_of_control {h : ℂ → ℂ}
     (hdec : ∀ N : ℕ, ∃ D : ℝ, 0 ≤ D ∧ ∀ z : ℂ, |z.re| ≤ 1 / 2 →
       ‖h z‖ ≤ D / (1 + ‖z‖) ^ N)
@@ -8060,11 +5721,10 @@ theorem tendsto_horizontal_integral_zero_of_control {h : ℂ → ℂ}
       atTop (𝓝 0) := by
   obtain ⟨C, hC0, k, hC⟩ := hctrl
   obtain ⟨D, hD0, hD⟩ := hdec (k + 1)
-
   have hlim : Tendsto (fun n : ℕ => D * C / (1 + T n)) atTop (𝓝 0) := by
     have hden : Tendsto (fun n : ℕ => (1 : ℝ) + T n) atTop atTop :=
       tendsto_atTop_add_const_left atTop (1 : ℝ) hT
-    have hden'
+    have hden' : Tendsto (fun n : ℕ => (1 + T n)⁻¹) atTop (𝓝 0) :=
       hden.inv_tendsto_atTop
     have h2 : Tendsto (fun n : ℕ => D * C * (1 + T n)⁻¹) atTop (𝓝 (D * C * 0)) :=
       (tendsto_const_nhds (x := D * C)).mul hden'
@@ -8121,8 +5781,6 @@ theorem tendsto_horizontal_integral_zero_of_control {h : ℂ → ℂ}
         have h1 : (1 + T n) ≠ 0 := by positivity
         field_simp
         ring
-
-
 theorem tendsto_horizontal_integral_autocorr_of_control {f : ℝ → ℂ} (hf : f ∈ oddCore)
     {T : ℕ → ℝ} (hT : Tendsto T atTop atTop) (hctrl : HorizontalControl T) :
     Tendsto (fun n : ℕ => stripTopIntegral (transf (autocorr f)) (T n))
@@ -8130,12 +5788,6 @@ theorem tendsto_horizontal_integral_autocorr_of_control {f : ℝ → ℂ} (hf : 
   have h := tendsto_horizontal_integral_zero_of_control
     (fun N => exists_transf_autocorr_superPolyDecay hf N) hT hctrl
   simpa only [stripTopIntegral, xiLogIntegrand] using h
-
-
-
-
-
-
 theorem tendsto_right_vertical_autocorr_of_control {f : ℝ → ℂ} (hf : f ∈ oddCore)
     {T : ℕ → ℝ} (hT : Tendsto T atTop atTop) (hTpos : ∀ n, 0 < T n)
     (hbd : ∀ n, ∀ p : XiZero,
@@ -8144,7 +5796,7 @@ theorem tendsto_right_vertical_autocorr_of_control {f : ℝ → ℂ} (hf : f ∈
     (hctrl : HorizontalControl T) :
     Tendsto (fun n => stripRightIntegral (transf (autocorr f)) (T n)) atTop
       (𝓝 ((Real.pi : ℂ) * ∑' p : XiZero, transf (autocorr f) (centeredZero p))) := by
-  set S : ℂ := ∑'
+  set S : ℂ := ∑' p : XiZero, transf (autocorr f) (centeredZero p) with hS
   have hlim := rectangleResidueLimit_autocorr hf hT hTpos hbd
   have htop : Tendsto (fun n => stripTopIntegral (transf (autocorr f)) (T n)) atTop (𝓝 0) :=
     tendsto_horizontal_integral_autocorr_of_control hf hT hctrl
@@ -8174,8 +5826,6 @@ theorem tendsto_right_vertical_autocorr_of_control {f : ℝ → ℂ} (hf : f ∈
   refine hR.congr' ?_
   filter_upwards with n
   field_simp
-
-
 theorem evenGuinandWeilAt_of_control_verticalEval {a : ℝ}
     (h : VerticalIntegralEvalAt a)
     (hex : ∀ f : ℝ → ℂ, f ∈ localizedCore a →
@@ -8188,7 +5838,7 @@ theorem evenGuinandWeilAt_of_control_verticalEval {a : ℝ}
   have h1re : Tendsto (fun n => (stripRightIntegral (transf (autocorr f)) (T n)).re) atTop
       (𝓝 (((Real.pi : ℂ) * ∑' p : XiZero, transf (autocorr f) (centeredZero p)).re)) :=
     Complex.continuous_re.continuousAt.tendsto.comp h1
-  have h3 : ((Real.pi : ℂ) * ∑'
+  have h3 : ((Real.pi : ℂ) * ∑' p : XiZero, transf (autocorr f) (centeredZero p)).re
       = Real.pi * (∑' p : XiZero, transf (autocorr f) (centeredZero p)).re := by
     rw [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im]
     ring
@@ -8196,10 +5846,6 @@ theorem evenGuinandWeilAt_of_control_verticalEval {a : ℝ}
   have h2 := h f hf T ⟨hTtop, hTpos, hbd⟩
   have hEq := tendsto_nhds_unique h1re h2
   exact mul_left_cancel₀ Real.pi_ne_zero hEq
-
-
-
-
 theorem weilExplicitFormulaOdd_of_control_verticalEval
     (hex : ∀ a : ℝ, ∀ f : ℝ → ℂ, f ∈ localizedCore a →
       ∃ T : ℕ → ℝ, AdmissibleT T ∧ HorizontalControl T)
@@ -8208,8 +5854,6 @@ theorem weilExplicitFormulaOdd_of_control_verticalEval
   weilExplicitFormulaOdd_of_evenGuinandWeil_positionForm
     (fun a => evenGuinandWeilAt_of_control_verticalEval (hv a) (hex a))
     positionFormEqAt
-
-
 theorem weilExplicitFormulaOddNonneg_of_control_verticalEval
     (hex : ∀ a : ℝ, ∀ f : ℝ → ℂ, f ∈ localizedCore a →
       ∃ T : ℕ → ℝ, AdmissibleT T ∧ HorizontalControl T)
@@ -8218,60 +5862,25 @@ theorem weilExplicitFormulaOddNonneg_of_control_verticalEval
   weilExplicitFormulaOddNonneg_of_evenGuinandWeil_positionForm
     (fun a => evenGuinandWeilAt_of_control_verticalEval (hv a) (hex a))
     positionFormEqAt
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.exists_transf_autocorr_superPolyDecay
-#print axioms RHLean.ExplicitFormula.tendsto_horizontal_integral_zero_of_control
-#print axioms RHLean.ExplicitFormula.tendsto_horizontal_integral_autocorr_of_control
-#print axioms RHLean.ExplicitFormula.tendsto_right_vertical_autocorr_of_control
-#print axioms RHLean.ExplicitFormula.evenGuinandWeilAt_of_control_verticalEval
-#print axioms RHLean.ExplicitFormula.weilExplicitFormulaOdd_of_control_verticalEval
-
 end
-
 end Inline_ExplicitFormula_RH108
-
 section Inline_wp_WP_A1
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory Set Filter
 open scoped Real Topology BigOperators ENNReal
-
 namespace RHLean.WP
-
-
-
-
 theorem log_one_div_eq_neg_log {u : ℝ} (_hu : 0 < u) :
     Real.log (1 / u) = -Real.log u := by
   rw [one_div, Real.log_inv]
-
-
 theorem log_one_div_abs_eq_neg {u : ℝ} (hu : u ≠ 0) :
     Real.log (1 / |u|) = -Real.log |u| :=
   log_one_div_eq_neg_log (abs_pos.mpr hu)
-
-
 theorem integral_log_abs_zero_one : ∫ u in (0 : ℝ)..1, Real.log |u| = -1 := by
   have hcongr : ∫ u in (0 : ℝ)..1, Real.log |u| = ∫ u in (0 : ℝ)..1, Real.log u :=
     intervalIntegral.integral_congr_Ioo_of_le (by norm_num)
       (fun u hu => by rw [abs_of_pos hu.1])
   rw [hcongr, integral_log]
   norm_num
-
-
 theorem integral_log_abs_neg_one_zero : ∫ u in (-1 : ℝ)..0, Real.log |u| = -1 := by
   have hcomp := intervalIntegral.integral_comp_neg (a := (0 : ℝ)) (b := 1)
     (f := fun u : ℝ => Real.log |u|)
@@ -8282,12 +5891,10 @@ theorem integral_log_abs_neg_one_zero : ∫ u in (-1 : ℝ)..0, Real.log |u| = -
     intro x _
     simp only [abs_neg]
   rw [this, integral_log_abs_zero_one]
-
-
 theorem integral_log_abs_neg_one_one : ∫ u in (-1 : ℝ)..1, Real.log |u| = -2 := by
   have hleft : IntervalIntegrable (fun u : ℝ => Real.log |u|) volume (-1) 0 :=
     IntervalIntegrable.congr_uIoo (f := Real.log) (g := fun u : ℝ => Real.log |u|)
-      intervalIntegral.intervalIntegrable_log'
+      intervalIntegral.intervalIntegrable_log' (fun u hu => by
         have hu0 : u < 0 := by simpa using hu.2
         show Real.log u = Real.log |u|
         rw [abs_of_neg hu0, Real.log_neg_eq_log])
@@ -8300,12 +5907,8 @@ theorem integral_log_abs_neg_one_one : ∫ u in (-1 : ℝ)..1, Real.log |u| = -2
   rw [← intervalIntegral.integral_add_adjacent_intervals hleft hright,
     integral_log_abs_neg_one_zero, integral_log_abs_zero_one]
   norm_num
-
-
-
 theorem window_integral_log_inv_abs (a : ℝ) :
     ∫ t in (a - 1)..(a + 1), Real.log (1 / |t - a|) = 2 := by
-
   have hshift : ∫ t in (a - 1)..(a + 1), Real.log (1 / |t - a|)
       = ∫ u in (-1 : ℝ)..1, Real.log (1 / |u|) := by
     have h := intervalIntegral.integral_comp_sub_right (a := a - 1) (b := a + 1) (d := a)
@@ -8313,7 +5916,6 @@ theorem window_integral_log_inv_abs (a : ℝ) :
     rw [show (a - 1) - a = -1 by ring, show (a + 1) - a = 1 by ring] at h
     exact h
   rw [hshift]
-
   have hcongr : ∫ u in (-1 : ℝ)..1, Real.log (1 / |u|)
       = ∫ u in (-1 : ℝ)..1, -Real.log |u| := by
     refine intervalIntegral.integral_congr_Ioo_of_le (by norm_num) ?_
@@ -8323,12 +5925,6 @@ theorem window_integral_log_inv_abs (a : ℝ) :
     · exact log_one_div_abs_eq_neg h
   rw [hcongr, intervalIntegral.integral_neg, integral_log_abs_neg_one_one]
   norm_num
-
-
-
-
-
-
 theorem exists_notMem_and_le_two_mul_average {I : ℝ → ℝ} {N : Set ℝ} {a b : ℝ}
     (hab : a < b) (hI0 : ∀ x, 0 ≤ I x) (hint : IntervalIntegrable I volume a b)
     (hN : volume N = 0) :
@@ -8340,9 +5936,7 @@ theorem exists_notMem_and_le_two_mul_average {I : ℝ → ℝ} {N : Set ℝ} {a 
   have hcon' : ∀ t ∈ Ioo a b, t ∉ N → lam < I t := hcon
   have hba : (0 : ℝ) < b - a := sub_pos.mpr hab
   have hM0 : 0 ≤ M := intervalIntegral.integral_nonneg hab.le (fun x _ => hI0 x)
-
   have hN' : ∀ᵐ x : ℝ, x ∉ N := compl_mem_ae_iff.mpr hN
-
   have hae : (fun _ : ℝ => lam) ≤ᵐ[volume.restrict (Ioo a b)] I := by
     change ∀ᵐ x ∂(volume.restrict (Ioo a b)), (fun _ : ℝ => lam) x ≤ I x
     simp only
@@ -8360,7 +5954,6 @@ theorem exists_notMem_and_le_two_mul_average {I : ℝ → ℝ} {N : Set ℝ} {a 
   have hIoc : ∫ x in Ioo a b, I x = M := by
     rw [← integral_Ioc_eq_integral_Ioo, ← intervalIntegral.integral_of_le hab.le]
   rw [hIoc] at hmono
-
   have hlam2 : (b - a) * lam = 2 * M := by
     rw [hlam]
     field_simp
@@ -8369,7 +5962,6 @@ theorem exists_notMem_and_le_two_mul_average {I : ℝ → ℝ} {N : Set ℝ} {a 
   have hlam0 : lam = 0 := by
     rw [hlam, hMzero]
     simp
-
   have hpos : ∀ᵐ x ∂(volume.restrict (Ioc a b)), 0 < I x := by
     have hb : ∀ᵐ x : ℝ, x ≠ b := by
       filter_upwards [show ({b}ᶜ : Set ℝ) ∈ ae (volume : Measure ℝ) from
@@ -8395,49 +5987,12 @@ theorem exists_notMem_and_le_two_mul_average {I : ℝ → ℝ} {N : Set ℝ} {a 
     simpa using hfalse
   rw [Real.volume_Ioc, ENNReal.ofReal_eq_zero] at hnull
   linarith
-
-
-
-#print axioms RHLean.WP.window_integral_log_inv_abs
-#print axioms RHLean.WP.exists_notMem_and_le_two_mul_average
-
 end RHLean.WP
-
-
-
 end Inline_wp_WP_A1
-
 section Inline_wp_WP_A2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory Set Filter
 open scoped Real Topology BigOperators ENNReal
-
 namespace RHLean.WP
-
-
-
-
-
 theorem exists_sequence_of_window_bound {I : ℝ → ℝ} {Bad : Set ℝ}
     (hI0 : ∀ t, 0 ≤ I t) (hBad : volume Bad = 0)
     (hint : ∀ n : ℕ, IntervalIntegrable I volume (n : ℝ) ((n : ℝ) + 1))
@@ -8447,13 +6002,11 @@ theorem exists_sequence_of_window_bound {I : ℝ → ℝ} {Bad : Set ℝ}
       (∀ n : ℕ, T n ∉ Bad) ∧ Tendsto T atTop atTop ∧
       ∃ C : ℝ, 0 ≤ C ∧ ∃ k : ℕ, ∀ n : ℕ, I (T n) ≤ C * (1 + T n) ^ k := by
   classical
-
   have hsel : ∀ n : ℕ, ∃ t ∈ Ioo (n : ℝ) ((n : ℝ) + 1), t ∉ Bad ∧
       I t ≤ 2 * (∫ x in (n : ℝ)..((n : ℝ) + 1), I x) / (((n : ℝ) + 1) - n) :=
     fun n => exists_notMem_and_le_two_mul_average (I := I) (N := Bad)
       (by linarith : (n : ℝ) < (n : ℝ) + 1) hI0 (hint n) hBad
   choose T hTmem hTbad hTle using hsel
-
   have hTtop : Tendsto (T : ℕ → ℝ) atTop atTop :=
     tendsto_atTop_mono (fun n : ℕ => (hTmem n).1.le)
       (tendsto_natCast_atTop_atTop (R := ℝ))
@@ -8485,62 +6038,24 @@ theorem exists_sequence_of_window_bound {I : ℝ → ℝ} {Bad : Set ℝ}
             exact mul_le_mul_of_nonneg_left hmono (by positivity)
         _ ≤ max (2 * K) (I (T 0) / (1 + T 0) ^ k) * (1 + T n) ^ k :=
             mul_le_mul_of_nonneg_right h2K hnn
-
 end RHLean.WP
-
-
-
-#print axioms RHLean.WP.exists_sequence_of_window_bound
-
-
-
 end Inline_wp_WP_A2
-
 section Inline_wp_WP_A3
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory Set Filter
 open scoped Real Topology BigOperators
 open RHLean.ExplicitFormula Complex
-
 namespace RHLean.WP
-
-
-
 noncomputable def sectionInt (t : ℝ) : ℝ :=
   ∫ x in (-(1 / 2) : ℝ)..(1 / 2),
     ‖logDeriv riemannXi ((1 / 2 : ℂ) + ((x : ℂ) + (t : ℂ) * I))‖
-
-
 noncomputable def sectionFun (t : ℝ) (x : ℝ) : ℝ :=
   ‖logDeriv riemannXi ((1 / 2 : ℂ) + ((x : ℂ) + (t : ℂ) * I))‖
-
 theorem sectionInt_eq (t : ℝ) : sectionInt t = ∫ x in (-(1 / 2) : ℝ)..(1 / 2), sectionFun t x := by
   unfold sectionInt sectionFun
   rfl
-
 theorem sectionInt_nonneg (t : ℝ) : 0 ≤ sectionInt t := by
   unfold sectionInt
   exact intervalIntegral.integral_nonneg (by norm_num) (fun x _ => norm_nonneg _)
-
-
-
-
-
 theorem horizontalControl_of_window_bound {Bad : Set ℝ}
     (hBad : volume Bad = 0)
     (hintWin : ∀ n : ℕ, IntervalIntegrable sectionInt volume (n : ℝ) ((n : ℝ) + 1))
@@ -8556,47 +6071,14 @@ theorem horizontalControl_of_window_bound {Bad : Set ℝ}
   · have h : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
     linarith [(hTmem n).1]
   · exact ⟨hsec (T n) (hTbad n), hCk n⟩
-
 end RHLean.WP
-
-
-
-#print axioms RHLean.WP.sectionInt_nonneg
-#print axioms RHLean.WP.horizontalControl_of_window_bound
-
-
-
 end Inline_wp_WP_A3
-
 section Inline_wp_WP_B3_nearband
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory Complex Set
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
 noncomputable def hadamardSec (μ : ℂ) (T : ℝ) (x : ℝ) : ℝ :=
   ‖((x : ℂ) + (T : ℂ) * I) / (((x : ℂ) + (T : ℂ) * I) ^ 2 - μ ^ 2)‖
-
-
 private theorem hadamard_den_ne__wp_WP_B3_nearband {T : ℝ} {μ : ℂ} (hsep1 : T ≠ μ.im) (hsep2 : T ≠ -μ.im)
     (x : ℝ) : ((x : ℂ) + (T : ℂ) * I) ^ 2 - μ ^ 2 ≠ 0 := by
   have hne1 : ((x : ℂ) + (T : ℂ) * I) - μ ≠ 0 := by
@@ -8612,13 +6094,10 @@ private theorem hadamard_den_ne__wp_WP_B3_nearband {T : ℝ} {μ : ℂ} (hsep1 :
   rw [show ((x : ℂ) + (T : ℂ) * I) ^ 2 - μ ^ 2
       = (((x : ℂ) + (T : ℂ) * I) - μ) * (((x : ℂ) + (T : ℂ) * I) + μ) by ring]
   exact mul_ne_zero hne1 hne2
-
-
 theorem integral_norm_hadamardTerm_le_log {T : ℝ} {μ : ℂ} (hre : |μ.re| ≤ 1 / 2)
     (hsep1 : T ≠ μ.im) (hsep2 : T ≠ -μ.im) :
     (∫ x in (-(1 / 2) : ℝ)..(1 / 2), hadamardSec μ T x)
       ≤ 2 + |Real.log (|T - μ.im|)| + |Real.log (|T + μ.im|)| := by
-
   have hcont1 : Continuous fun x : ℝ => 1 / ‖((x : ℂ) + (T : ℂ) * I) - μ‖ := by
     have hne : ∀ x : ℝ, ((x : ℂ) + (T : ℂ) * I) - μ ≠ 0 := by
       intro x hzero
@@ -8646,7 +6125,6 @@ theorem integral_norm_hadamardTerm_le_log {T : ℝ} {μ : ℂ} (hre : |μ.re| �
       (1 / ‖((x : ℂ) + (T : ℂ) * I) - μ‖ + 1 / ‖((x : ℂ) + (T : ℂ) * I) + μ‖))
       volume (-(1 / 2) : ℝ) (1 / 2) :=
     ((hcont1.add hcont2).const_mul (1 / 2)).intervalIntegrable _ _
-
   have hpt : ∀ᵐ x ∂(volume.restrict (Set.Icc (-(1 / 2) : ℝ) (1 / 2))),
       hadamardSec μ T x
         ≤ (1 / 2) * (1 / ‖((x : ℂ) + (T : ℂ) * I) - μ‖
@@ -8657,7 +6135,6 @@ theorem integral_norm_hadamardTerm_le_log {T : ℝ} {μ : ℂ} (hre : |μ.re| �
       ≤ ∫ x in (-(1 / 2) : ℝ)..(1 / 2), (1 / 2) *
           (1 / ‖((x : ℂ) + (T : ℂ) * I) - μ‖ + 1 / ‖((x : ℂ) + (T : ℂ) * I) + μ‖) :=
     intervalIntegral.integral_mono_ae_restrict (by norm_num) hIntL hInt hpt
-
   have hsplit : (∫ x in (-(1 / 2) : ℝ)..(1 / 2), (1 / 2) *
         (1 / ‖((x : ℂ) + (T : ℂ) * I) - μ‖ + 1 / ‖((x : ℂ) + (T : ℂ) * I) + μ‖))
       = (1 / 2) * ((∫ x in (-(1 / 2) : ℝ)..(1 / 2), 1 / ‖((x : ℂ) + (T : ℂ) * I) - μ‖)
@@ -8665,7 +6142,6 @@ theorem integral_norm_hadamardTerm_le_log {T : ℝ} {μ : ℂ} (hre : |μ.re| �
     rw [intervalIntegral.integral_const_mul,
       intervalIntegral.integral_add (hcont1.intervalIntegrable _ _)
         (hcont2.intervalIntegrable _ _)]
-
   have hb1 := integral_inv_norm_le (T := T) (μ := μ) hre hsep1
   have hre' : |(-μ).re| ≤ 1 / 2 := by simpa using hre
   have him' : T ≠ (-μ).im := by simpa using hsep2
@@ -8687,38 +6163,16 @@ theorem integral_norm_hadamardTerm_le_log {T : ℝ} {μ : ℂ} (hre : |μ.re| �
         = 2 + |Real.log (|T - μ.im|)| + |Real.log (|T + μ.im|)| := by ring
     linarith
   exact hmono.trans hstep
-
 end RHLean.ExplicitFormula
-
-#print axioms RHLean.ExplicitFormula.integral_norm_hadamardTerm_le_log
-
-
-
 end Inline_wp_WP_B3_nearband
-
 section Inline_wp_WP_A4
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory Set
 open scoped Real Topology BigOperators
-
 namespace RHLean.WP
-
 theorem intervalIntegrable_log_abs (a b : ℝ) :
     IntervalIntegrable (fun u : ℝ => |Real.log u|) volume a b := by
   simpa only [Real.norm_eq_abs] using
     (intervalIntegral.intervalIntegrable_log' (a := a) (b := b)).abs
-
-
 theorem integral_log_abs_le (M : ℝ) (hM : 0 ≤ M) :
     ∫ u in (0 : ℝ)..M, |Real.log u| ≤ M * (|Real.log M| + 1) := by
   by_cases h1 : M ≤ 1
@@ -8752,9 +6206,6 @@ theorem integral_log_abs_le (M : ℝ) (hM : 0 ≤ M) :
       ring
     rw [hsplit, hfirst, hsecond, abs_of_pos (Real.log_pos h1)]
     nlinarith
-
-
-
 theorem integral_log_abs_abs_symm (M : ℝ) (hM : 0 ≤ M) :
     ∫ t in (-M)..M, |Real.log (|t|)| ≤ 2 * (M * (|Real.log M| + 1)) := by
   have hIntL : IntervalIntegrable (fun t : ℝ => |Real.log (|t|)|) volume (-M) 0 :=
@@ -8789,9 +6240,6 @@ theorem integral_log_abs_abs_symm (M : ℝ) (hM : 0 ≤ M) :
   rw [← intervalIntegral.integral_add_adjacent_intervals hIntL hIntR, hleft, hright]
   have h := integral_log_abs_le M hM
   linarith
-
-
-
 theorem integral_log_abs_abs_window_le {n b M : ℝ}
     (hM : 1 ≤ M) (hb : |n - b| + 1 ≤ M) :
     ∫ t in n..(n + 1), |Real.log (|t - b|)| ≤ 2 * (M * (|Real.log M| + 1)) := by
@@ -8818,17 +6266,10 @@ theorem integral_log_abs_abs_window_le {n b M : ℝ}
     (a := n - b) (b := n + 1 - b) (c := -M) (d := M) hleft hmid hright
     (by filter_upwards with u using abs_nonneg (Real.log (|u|))) hint
   exact hmono.trans (integral_log_abs_abs_symm M hM0)
-
-
-
 theorem intervalIntegrable_log_abs_sub (b n n' : ℝ) :
     IntervalIntegrable (fun t : ℝ => |Real.log (|t - b|)|) volume n n' := by
   have h := (intervalIntegrable_log_abs (n - b) (n' - b)).comp_sub_right b
   simpa using h
-
-
-
-
 theorem integral_two_add_log_window_le {n b M : ℝ}
     (hM : 1 ≤ M) (hb : |n - b| + 1 ≤ M) :
     ∫ t in n..(n + 1), (2 + 2 * |Real.log (|t - b|)|)
@@ -8843,51 +6284,14 @@ theorem integral_two_add_log_window_le {n b M : ℝ}
   rw [hconst]
   rw [intervalIntegral.integral_const_mul]
   linarith
-
 end RHLean.WP
-
-#print axioms RHLean.WP.integral_log_abs_le
-#print axioms RHLean.WP.integral_log_abs_abs_symm
-#print axioms RHLean.WP.integral_log_abs_abs_window_le
-#print axioms RHLean.WP.intervalIntegrable_log_abs_sub
-#print axioms RHLean.WP.integral_two_add_log_window_le
-
-
-
 end Inline_wp_WP_A4
-
 section Inline_wp_WP_B3_section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory Complex Set
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.ExplicitFormula
-
-
-
-
 private noncomputable def hadamardJoint__wp_WP_B3_section (μ : ℂ) (p : ℝ × ℝ) : ℝ :=
   ‖((p.2 : ℂ) + (p.1 : ℂ) * I) / (((p.2 : ℂ) + (p.1 : ℂ) * I) ^ 2 - μ ^ 2)‖
-
-
 private theorem measurable_hadamardJoint__wp_WP_B3_section (μ : ℂ) : Measurable (hadamardJoint__wp_WP_B3_section μ) := by
   have hW : Continuous fun p : ℝ × ℝ => ((p.2 : ℂ) + (p.1 : ℂ) * I) := by fun_prop
   have hD : Continuous fun p : ℝ × ℝ => ((p.2 : ℂ) + (p.1 : ℂ) * I) ^ 2 - μ ^ 2 := by fun_prop
@@ -8901,9 +6305,6 @@ private theorem measurable_hadamardJoint__wp_WP_B3_section (μ : ℂ) : Measurab
     exact norm_div _ _
   rw [hEq]
   exact hAn.div hBn
-
-
-
 theorem aestronglyMeasurable_hadamardSection (μ : ℂ) :
     AEStronglyMeasurable (fun t : ℝ => ∫ x, hadamardJoint__wp_WP_B3_section μ (t, x)
       ∂(volume.restrict (Ι (-(1 / 2) : ℝ) (1 / 2)))) volume := by
@@ -8912,10 +6313,6 @@ theorem aestronglyMeasurable_hadamardSection (μ : ℂ) :
     (measurable_hadamardJoint__wp_WP_B3_section μ).aestronglyMeasurable.mono_measure
       (Measure.prod_mono le_rfl Measure.restrict_le_self)
   exact hjoint.integral_prod_right' (μ := volume)
-
-
-
-
 theorem intervalIntegrable_hadamardMajorant (b n n' : ℝ) :
     IntervalIntegrable (fun t : ℝ => 2 + |Real.log (|t - b|)| + |Real.log (|t + b|)|)
       volume n n' := by
@@ -8927,10 +6324,6 @@ theorem intervalIntegrable_hadamardMajorant (b n n' : ℝ) :
   have h3 : IntervalIntegrable (fun t : ℝ => (2 : ℝ)) volume n n' :=
     intervalIntegrable_const
   simpa [add_assoc] using h3.add (h1.add h2)
-
-
-
-
 theorem integral_norm_hadamardTerm_window_le {n : ℝ} {μ : ℂ} {M : ℝ}
     (hre : |μ.re| ≤ 1 / 2) (hM : 1 ≤ M)
     (hb : |n - μ.im| + 1 ≤ M) (hb' : |n + μ.im| + 1 ≤ M) :
@@ -8943,7 +6336,6 @@ theorem integral_norm_hadamardTerm_window_le {n : ℝ} {μ : ℂ} {M : ℝ}
     intro t
     unfold hadamardSec hadamardJoint__wp_WP_B3_section
     rw [intervalIntegral.integral_of_le hnn1, uIoc_of_le hnn1]
-
   have hnn : ∀ t : ℝ, 0 ≤ ∫ x, hadamardJoint__wp_WP_B3_section μ (t, x)
       ∂(volume.restrict (Ι (-(1 / 2) : ℝ) (1 / 2))) := by
     intro t
@@ -8951,7 +6343,6 @@ theorem integral_norm_hadamardTerm_window_le {n : ℝ} {μ : ℂ} {M : ℝ}
     refine integral_nonneg_of_ae ?_
     filter_upwards with x
     exact norm_nonneg _
-
   have hpt : ∀ᵐ t ∂(volume : Measure ℝ),
       (∫ x, hadamardJoint__wp_WP_B3_section μ (t, x) ∂(volume.restrict (Ι (-(1 / 2) : ℝ) (1 / 2))))
         ≤ 2 + |Real.log (|t - μ.im|)| + |Real.log (|t + μ.im|)| := by
@@ -8964,11 +6355,9 @@ theorem integral_norm_hadamardTerm_window_le {n : ℝ} {μ : ℂ} {M : ℝ}
     filter_upwards [h1, h2] with t ht1 ht2
     rw [← hsec_eq t]
     exact integral_norm_hadamardTerm_le_log hre ht1 ht2
-
   have hmaj : IntervalIntegrable
       (fun t : ℝ => 2 + |Real.log (|t - μ.im|)| + |Real.log (|t + μ.im|)|) volume n (n + 1) :=
     intervalIntegrable_hadamardMajorant μ.im n (n + 1)
-
   have hmajI : Integrable
       (fun t : ℝ => 2 + |Real.log (|t - μ.im|)| + |Real.log (|t + μ.im|)|)
       (volume.restrict (Ioc n (n + 1))) := hmaj.1
@@ -8978,9 +6367,7 @@ theorem integral_norm_hadamardTerm_window_le {n : ℝ} {μ : ℂ} {M : ℝ}
     filter_upwards [ae_restrict_of_ae hpt] with t ht
     rw [Real.norm_eq_abs, abs_of_nonneg (hnn t), Real.norm_eq_abs, abs_of_nonneg (by positivity)]
     exact ht
-
   have hle := MeasureTheory.integral_mono_ae hf hmajI (ae_restrict_of_ae hpt)
-
   have hval : (∫ t in Ioc n (n + 1),
       (2 + |Real.log (|t - μ.im|)| + |Real.log (|t + μ.im|)|))
       ≤ 2 + 4 * (M * (|Real.log M| + 1)) := by
@@ -9003,7 +6390,6 @@ theorem integral_norm_hadamardTerm_window_le {n : ℝ} {μ : ℂ} {M : ℝ}
     have hconst : (n + 1 - n) • (2 : ℝ) = 2 := by ring
     rw [hconst]
     linarith
-
   have hEqint : (∫ t in Ioc n (n + 1), (∫ x, hadamardJoint__wp_WP_B3_section μ (t, x)
       ∂(volume.restrict (Ι (-(1 / 2) : ℝ) (1 / 2)))))
       = ∫ t in Ioc n (n + 1), (∫ x in (-(1 / 2) : ℝ)..(1 / 2), hadamardSec μ t x) := by
@@ -9011,44 +6397,11 @@ theorem integral_norm_hadamardTerm_window_le {n : ℝ} {μ : ℂ} {M : ℝ}
     exact (hsec_eq t).symm
   rw [hEqint] at hle
   exact hle.trans hval
-
 end RHLean.ExplicitFormula
-
-#print axioms RHLean.ExplicitFormula.aestronglyMeasurable_hadamardSection
-#print axioms RHLean.ExplicitFormula.integral_norm_hadamardTerm_window_le
-
-
-
 end Inline_wp_WP_B3_section
-
 section Inline_wp_WP_B3_nearfar
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open scoped Real BigOperators
-
 namespace RHLean.WP
-
-
 theorem log_le_two_sqrt {x : ℝ} (hx : 1 ≤ x) : Real.log x ≤ 2 * Real.sqrt x := by
   have hx0 : 0 < x := by linarith
   have hs0 : 0 < Real.sqrt x := Real.sqrt_pos.mpr hx0
@@ -9060,24 +6413,16 @@ theorem log_le_two_sqrt {x : ℝ} (hx : 1 ≤ x) : Real.log x ≤ 2 * Real.sqrt 
   have hle : Real.log (Real.sqrt x) ≤ Real.sqrt x - 1 :=
     Real.log_le_sub_one_of_pos hs0
   nlinarith
-
-
 theorem abs_log_le {y : ℝ} (hy : 1 ≤ y) : |Real.log y| ≤ 2 * Real.sqrt y := by
   rw [abs_of_nonneg (Real.log_nonneg hy)]
   exact log_le_two_sqrt hy
-
-
-
-
 theorem near_cost_bound {n : ℝ} (hn : 1 ≤ n) :
     2 + 4 * (2 + 2 * (n + 2)) * (|Real.log (2 + 2 * (n + 2))| + 1)
       ≤ (74 + 24 * Real.log 6) * (n + 2) ^ ((3 : ℝ) / 2) := by
   have hn2 : 1 ≤ n + 2 := by linarith
   have hM1 : 1 ≤ 2 + 2 * (n + 2) := by linarith
   have hMpos : (0 : ℝ) < 2 + 2 * (n + 2) := by linarith
-
   have hMle : 2 + 2 * (n + 2) ≤ 6 * (n + 2) := by linarith
-
   have hlogM : Real.log (2 + 2 * (n + 2)) ≤ Real.log 6 + 2 * Real.sqrt (n + 2) := by
     have h1 : Real.log (2 + 2 * (n + 2)) ≤ Real.log (6 * (n + 2)) :=
       Real.log_le_log hMpos hMle
@@ -9087,7 +6432,6 @@ theorem near_cost_bound {n : ℝ} (hn : 1 ≤ n) :
     rw [h2] at h1
     linarith
   have hsqrt1 : 1 ≤ Real.sqrt (n + 2) := Real.one_le_sqrt.mpr hn2
-
   have hbd : |Real.log (2 + 2 * (n + 2))| + 1
       ≤ (Real.log 6 + 3) * Real.sqrt (n + 2) := by
     rw [abs_of_nonneg (Real.log_nonneg hM1)]
@@ -9100,7 +6444,6 @@ theorem near_cost_bound {n : ℝ} (hn : 1 ≤ n) :
       have := mul_le_mul_of_nonneg_left hsqrt1 h6
       simpa using this
     nlinarith [hmul]
-
   have hstep : 4 * (2 + 2 * (n + 2)) * (|Real.log (2 + 2 * (n + 2))| + 1)
       ≤ 4 * (6 * (n + 2)) * ((Real.log 6 + 3) * Real.sqrt (n + 2)) := by
     have hb0 : 0 ≤ |Real.log (2 + 2 * (n + 2))| + 1 := by positivity
@@ -9114,7 +6457,6 @@ theorem near_cost_bound {n : ℝ} (hn : 1 ≤ n) :
       apply mul_le_mul_of_nonneg_left hbd
       linarith
     linarith
-
   have hpow : (n + 2) * Real.sqrt (n + 2) = (n + 2) ^ ((3 : ℝ) / 2) := by
     rw [show ((3 : ℝ) / 2) = 1 + 1 / 2 by norm_num, Real.rpow_add (by linarith)]
     rw [Real.rpow_one, Real.sqrt_eq_rpow]
@@ -9126,9 +6468,6 @@ theorem near_cost_bound {n : ℝ} (hn : 1 ≤ n) :
     calc (1 : ℝ) = (1 : ℝ) ^ ((3 : ℝ) / 2) := by simp
       _ ≤ (n + 2) ^ ((3 : ℝ) / 2) := Real.rpow_le_rpow (by norm_num) hn2 (by norm_num)
   nlinarith
-
-
-
 theorem window_bound_k3 {Cfar Cnear : ℝ} (hfar0 : 0 ≤ Cfar) (hCnear : 0 ≤ Cnear) :
     ∃ K : ℝ, 0 < K ∧ ∀ n : ℝ, 1 ≤ n →
       Cfar * Real.sqrt (1 + n)
@@ -9143,7 +6482,6 @@ theorem window_bound_k3 {Cfar Cnear : ℝ} (hfar0 : 0 ≤ Cfar) (hCnear : 0 ≤ 
     have hn2 : 1 ≤ n + 2 := by linarith
     have hnear := near_cost_bound hn
     have hCnear0 : 0 ≤ Cnear * (n + 2) ^ ((3 : ℝ) / 2) := by positivity
-
     have hpow3 : (n + 2) ^ ((3 : ℝ) / 2) * (n + 2) ^ ((3 : ℝ) / 2) = (n + 2) ^ 3 := by
       rw [← Real.rpow_add (by linarith)]
       norm_num
@@ -9158,7 +6496,6 @@ theorem window_bound_k3 {Cfar Cnear : ℝ} (hfar0 : 0 ≤ Cfar) (hCnear : 0 ≤ 
         _ = Cnear * (74 + 24 * Real.log 6)
             * ((n + 2) ^ ((3 : ℝ) / 2) * (n + 2) ^ ((3 : ℝ) / 2)) := by ring
         _ = Cnear * (74 + 24 * Real.log 6) * (n + 2) ^ 3 := by rw [hpow3]
-
     have hsqrt : Real.sqrt (1 + n) ≤ (1 + n) ^ 3 := by
       have h1 : Real.sqrt (1 + n) ≤ 1 + n := by
         have := Real.sq_sqrt (le_of_lt hn1) ▸ (Real.sqrt_nonneg (1 + n))
@@ -9167,7 +6504,6 @@ theorem window_bound_k3 {Cfar Cnear : ℝ} (hfar0 : 0 ≤ Cfar) (hCnear : 0 ≤ 
       linarith
     have hfar2 : Cfar * Real.sqrt (1 + n) ≤ Cfar * (1 + n) ^ 3 :=
       mul_le_mul_of_nonneg_left hsqrt hfar0
-
     have hshift : (n + 2) ^ 3 ≤ (27 / 8) * (1 + n) ^ 3 := by
       have h1 : n + 2 ≤ (3 / 2) * (1 + n) := by linarith
       have h0 : (0 : ℝ) ≤ n + 2 := by linarith
@@ -9186,41 +6522,12 @@ theorem window_bound_k3 {Cfar Cnear : ℝ} (hfar0 : 0 ≤ Cfar) (hCnear : 0 ≤ 
       have hlog6 : 0 < Real.log 6 := Real.log_pos (by norm_num)
       nlinarith
     linarith
-
 end RHLean.WP
-
-#print axioms RHLean.WP.log_le_two_sqrt
-#print axioms RHLean.WP.near_cost_bound
-#print axioms RHLean.WP.window_bound_k3
-
-
-
 end Inline_wp_WP_B3_nearfar
-
 section Inline_wp_WP_B3_zerosum
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory Complex Set
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.WP
-
-
-
 theorem near_cost_bound_M {n M : ℝ} (hn : 1 ≤ n) (hM : 1 ≤ M) (hMle : M ≤ 6 * (n + 2)) :
     2 + 4 * M * (|Real.log M| + 1)
       ≤ (74 + 24 * Real.log 6) * (n + 2) ^ ((3 : ℝ) / 2) := by
@@ -9263,21 +6570,15 @@ theorem near_cost_bound_M {n M : ℝ} (hn : 1 ≤ n) (hM : 1 ≤ M) (hMle : M �
     calc (1 : ℝ) = (1 : ℝ) ^ ((3 : ℝ) / 2) := by simp
       _ ≤ (n + 2) ^ ((3 : ℝ) / 2) := Real.rpow_le_rpow (by norm_num) hn2 (by norm_num)
   nlinarith
-
-
-
-
 theorem near_zero_window_cost {n R : ℝ} (hn : 1 ≤ n) {μ : ℂ}
     (hre : |μ.re| ≤ 1 / 2) (hμ : ‖μ‖ ≤ R) (hR : R ≤ 3 * (n + 2)) :
     (∫ t in n..(n + 1), (∫ x in (-(1 / 2) : ℝ)..(1 / 2), RHLean.ExplicitFormula.hadamardSec μ t x))
       ≤ (74 + 24 * Real.log 6) * (n + 2) ^ ((3 : ℝ) / 2) := by
   have hnpos : (0 : ℝ) ≤ n := by linarith
   have hn2 : (0 : ℝ) < n + 2 := by linarith
-
   have him : |μ.im| ≤ 3 * (n + 2) := by
     have h1 : |μ.im| ≤ ‖μ‖ := Complex.abs_im_le_norm μ
     linarith
-
   have hM : (1 : ℝ) ≤ 6 * (n + 2) := by linarith
   have hb1 : |n - μ.im| + 1 ≤ 6 * (n + 2) := by
     have h1 : |n - μ.im| ≤ n + |μ.im| := by
@@ -9293,12 +6594,6 @@ theorem near_zero_window_cost {n R : ℝ} (hn : 1 ≤ n) {μ : ℂ}
     (n := n) (μ := μ) (M := 6 * (n + 2)) hre hM hb1 hb2
   have hgrowth := near_cost_bound_M hn hM (le_refl (6 * (n + 2)))
   linarith
-
-
-
-
-
-
 theorem sum_near_window_cost {n R : ℝ} (hn : 1 ≤ n) (s : Finset ℂ)
     (hre : ∀ μ ∈ s, |μ.re| ≤ 1 / 2)
     (hμ : ∀ μ ∈ s, ‖μ‖ ≤ R) (hR : R ≤ 3 * (n + 2)) :
@@ -9315,10 +6610,6 @@ theorem sum_near_window_cost {n R : ℝ} (hn : 1 ≤ n) (s : Finset ℂ)
         Finset.sum_le_sum hper
     _ = (s.card : ℝ) * ((74 + 24 * Real.log 6) * (n + 2) ^ ((3 : ℝ) / 2)) := by
         rw [Finset.sum_const, nsmul_eq_mul]
-
-
-
-
 theorem near_band_total_le {Ccard : ℝ} (hCcard : 0 ≤ Ccard)
     (hcount : ∀ T : ℝ, 2 ≤ T →
       ((RHLean.ExplicitFormula.zeroBall (2 * (1 + T))).card : ℝ)
@@ -9342,7 +6633,6 @@ theorem near_band_total_le {Ccard : ℝ} (hCcard : 0 ≤ Ccard)
     have h := RHLean.ExplicitFormula.zeroBall_mem.mp hp
     have h2 : 2 * (1 + (n + 1)) = 2 * (n + 2) := by ring
     rw [h2] at h
-
     have hle : ‖centeredZero p‖ ≤ ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ + 1 / 2 := by
       unfold centeredZero
       calc ‖Complex.Hadamard.divisorZeroIndex₀_val p - 1 / 2‖
@@ -9350,12 +6640,10 @@ theorem near_band_total_le {Ccard : ℝ} (hCcard : 0 ≤ Ccard)
         _ = ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ + 1 / 2 := by norm_num
     linarith
   have hsum := sum_near_window_cost hn (B.image centeredZero) hre hμ (by linarith)
-
   have hT : (2 : ℝ) ≤ n + 1 := by linarith
   have hcard := hcount (n + 1) hT
   have hcard_img : ((B.image centeredZero).card : ℝ) ≤ (B.card : ℝ) := by
     exact_mod_cast Finset.card_image_le
-
   have hpow : (1 + (n + 1)) ^ ((3 : ℝ) / 2) ≤ 3 ^ ((3 : ℝ) / 2) * X := by
     have hle : 1 + (n + 1) ≤ 3 * (n + 2) := by linarith
     have h0 : (0 : ℝ) ≤ 1 + (n + 1) := by linarith
@@ -9366,7 +6654,6 @@ theorem near_band_total_le {Ccard : ℝ} (hCcard : 0 ≤ Ccard)
   have hcard2 : ((B.image centeredZero).card : ℝ) ≤ Ccard * (3 ^ ((3 : ℝ) / 2) * X) := by
     refine hcard_img.trans ?_
     exact hcard.trans (mul_le_mul_of_nonneg_left hpow hCcard)
-
   have hconst0 : (0 : ℝ) ≤ (74 + 24 * Real.log 6) * X := by
     have : 0 < Real.log 6 := Real.log_pos (by norm_num)
     positivity
@@ -9382,15 +6669,7 @@ theorem near_band_total_le {Ccard : ℝ} (hCcard : 0 ≤ Ccard)
       = (Ccard * 3 ^ ((3 : ℝ) / 2) * (74 + 24 * Real.log 6)) * (X * X) := by ring
     _ = (Ccard * 3 ^ ((3 : ℝ) / 2) * (74 + 24 * Real.log 6)) * (n + 2) ^ 3 := by
         rw [hcube]
-
-
 set_option maxHeartbeats 600000 in
-
-
-
-
-
-
 theorem near_band_total_le_shift {Ccard : ℝ} (hCcard : 0 ≤ Ccard)
     (hcount : ∀ T : ℝ, 2 ≤ T →
       ((RHLean.ExplicitFormula.zeroBall (2 * (1 + T))).card : ℝ)
@@ -9419,7 +6698,6 @@ theorem near_band_total_le_shift {Ccard : ℝ} (hCcard : 0 ≤ Ccard)
         _ = ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ + 1 / 2 := by norm_num
     linarith
   have hsum := sum_near_window_cost hn (B.image centeredZero) hre hμ (by linarith)
-
   have hT : (2 : ℝ) ≤ n + 3 / 2 := by linarith
   have hBeq : 2 * (1 + (n + 3 / 2)) = 2 * (n + 2) + 1 := by ring
   have hcard : ((B.card : ℝ)) ≤ Ccard * (1 + (n + 3 / 2)) ^ ((3 : ℝ) / 2) := by
@@ -9427,7 +6705,6 @@ theorem near_band_total_le_shift {Ccard : ℝ} (hCcard : 0 ≤ Ccard)
     rwa [hBeq] at this
   have hcard_img : ((B.image centeredZero).card : ℝ) ≤ (B.card : ℝ) := by
     exact_mod_cast Finset.card_image_le
-
   have hpow : (1 + (n + 3 / 2)) ^ ((3 : ℝ) / 2) ≤ 2 ^ ((3 : ℝ) / 2) * X := by
     have hle : 1 + (n + 3 / 2) ≤ 2 * (n + 2) := by linarith
     have h0 : (0 : ℝ) ≤ 1 + (n + 3 / 2) := by linarith
@@ -9453,12 +6730,6 @@ theorem near_band_total_le_shift {Ccard : ℝ} (hCcard : 0 ≤ Ccard)
       = (Ccard * 2 ^ ((3 : ℝ) / 2) * (74 + 24 * Real.log 6)) * (X * X) := by ring
     _ = (Ccard * 2 ^ ((3 : ℝ) / 2) * (74 + 24 * Real.log 6)) * (n + 2) ^ 3 := by
         rw [hcube]
-
-
-
-
-
-
 theorem far_zero_window_cost {n : ℝ} (hn : 0 ≤ n) {μ : ℂ}
     (hμ : 2 * (1 + (n + 1)) ≤ ‖μ‖) :
     (∫ t in n..(n + 1), (∫ x in (-(1 / 2) : ℝ)..(1 / 2),
@@ -9478,10 +6749,8 @@ theorem far_zero_window_cost {n : ℝ} (hn : 0 ≤ n) {μ : ℂ}
     rw [uIoc_of_le (by linarith : n ≤ n + 1)] at ht
     have ht0 : (0 : ℝ) ≤ t := le_trans hn ht.1.le
     have htle : t ≤ n + 1 := ht.2
-
     have hfar : 2 * (1 + t) ≤ ‖μ‖ := by linarith
     have hb := RHLean.ExplicitFormula.integral_norm_hadamardTerm_far (T := t) ht0 (μ := μ) hfar
-
     have hb' : (∫ x in (-(1 / 2) : ℝ)..(1 / 2), RHLean.ExplicitFormula.hadamardSec μ t x)
         ≤ 4 * (1 + t) / ‖μ‖ ^ 2 := hb
     have hmono : 4 * (1 + t) / ‖μ‖ ^ 2 ≤ C := by
@@ -9496,26 +6765,14 @@ theorem far_zero_window_cost {n : ℝ} (hn : 0 ≤ n) {μ : ℂ}
       exact norm_nonneg _
     rw [Real.norm_eq_abs, abs_of_nonneg hnn]
     exact hb'.trans hmono
-
-
-
-
-
-
 private abbrev XZ__wp_WP_B3_zerosum := Complex.Hadamard.divisorZeroIndex₀ Complex.riemannXi (Set.univ : Set ℂ)
-
-
-
-
-
-
 theorem far_band_total_le {C n : ℝ} (hn : 1 ≤ n)
     (hfar : 4 * (1 + (n + 1)) *
         (∑' p : XZ__wp_WP_B3_zerosum,
           (if 2 * (1 + (n + 1)) < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖
             then (1 : ℝ) / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2 else 0))
         ≤ C * Real.sqrt (1 + (n + 1))) :
-    (∑'
+    (∑' p : XZ__wp_WP_B3_zerosum,
         (if 2 * (1 + (n + 1)) < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ then
           (∫ t in n..(n + 1), (∫ x in (-(1 / 2) : ℝ)..(1 / 2),
             RHLean.ExplicitFormula.hadamardSec
@@ -9526,11 +6783,9 @@ theorem far_band_total_le {C n : ℝ} (hn : 1 ≤ n)
   have hn0 : (0 : ℝ) ≤ n := by linarith
   set a : ℝ := 4 * (1 + (n + 1)) with ha
   have ha0 : 0 ≤ a := by rw [ha]; linarith
-
   have hsumm0 : Summable (fun p : XZ__wp_WP_B3_zerosum =>
       (‖Complex.Hadamard.divisorZeroIndex₀_val p‖⁻¹) ^ 2) :=
     summable_riemannXi_divisorZeroIndex₀_norm_inv_sq
-
   have hnorm : Summable (fun p : XZ__wp_WP_B3_zerosum =>
       (if 2 * (1 + (n + 1)) < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖
         then (1 : ℝ) / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2 else 0)) := by
@@ -9543,7 +6798,6 @@ theorem far_band_total_le {C n : ℝ} (hn : 1 ≤ n)
       a * (if 2 * (1 + (n + 1)) < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖
         then (1 : ℝ) / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2 else 0)) :=
     hnorm.mul_left a
-
   have hterm : ∀ p : XZ__wp_WP_B3_zerosum,
       (if 2 * (1 + (n + 1)) < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ then
         (∫ t in n..(n + 1), (∫ x in (-(1 / 2) : ℝ)..(1 / 2),
@@ -9565,7 +6819,6 @@ theorem far_band_total_le {C n : ℝ} (hn : 1 ≤ n)
         _ = a * (1 / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2) := by
             rw [ha]; ring
     · rw [if_neg hp, if_neg hp, mul_zero]
-
   have hL : Summable (fun p : XZ__wp_WP_B3_zerosum =>
       (if 2 * (1 + (n + 1)) < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ then
         (∫ t in n..(n + 1), (∫ x in (-(1 / 2) : ℝ)..(1 / 2),
@@ -9587,17 +6840,12 @@ theorem far_band_total_le {C n : ℝ} (hn : 1 ≤ n)
   have hfac : (∑' p : XZ__wp_WP_B3_zerosum,
       a * (if 2 * (1 + (n + 1)) < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖
         then (1 : ℝ) / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2 else 0))
-      = a * (∑'
+      = a * (∑' p : XZ__wp_WP_B3_zerosum,
         (if 2 * (1 + (n + 1)) < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖
           then (1 : ℝ) / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2 else 0)) :=
     tsum_mul_left
   rw [hfac, ha]
   exact hfar
-
-
-
-
-
 private theorem norm_centeredZero_ge__wp_WP_B3_zerosum (p : XZ__wp_WP_B3_zerosum) :
     ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ - 1 / 2 ≤ ‖RHLean.centeredZero p‖ := by
   have h : RHLean.centeredZero p + (1 / 2 : ℂ) =
@@ -9606,20 +6854,14 @@ private theorem norm_centeredZero_ge__wp_WP_B3_zerosum (p : XZ__wp_WP_B3_zerosum
   have h2 := norm_add_le (RHLean.centeredZero p) (1 / 2 : ℂ)
   rw [h] at h2
   simpa using h2
-
 set_option maxHeartbeats 600000 in
-
-
-
-
-
 theorem far_band_total_le_centered {C n : ℝ} (hn : 1 ≤ n)
     (hfar : 16 * (n + 2) *
         (∑' p : XZ__wp_WP_B3_zerosum,
           (if 2 * (n + 2) + 1 < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖
             then (1 : ℝ) / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2 else 0))
         ≤ C * Real.sqrt (n + 2)) :
-    (∑'
+    (∑' p : XZ__wp_WP_B3_zerosum,
         (if 2 * (n + 2) + 1 < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ then
           (∫ t in n..(n + 1), (∫ x in (-(1 / 2) : ℝ)..(1 / 2),
             RHLean.ExplicitFormula.hadamardSec (RHLean.centeredZero p) t x))
@@ -9705,49 +6947,20 @@ theorem far_band_total_le_centered {C n : ℝ} (hn : 1 ≤ n)
   have hfac : (∑' p : XZ__wp_WP_B3_zerosum,
       16 * (n + 2) * (if 2 * (n + 2) + 1 < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖
         then (1 : ℝ) / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2 else 0))
-      = 16 * (n + 2) * (∑'
+      = 16 * (n + 2) * (∑' p : XZ__wp_WP_B3_zerosum,
         (if 2 * (n + 2) + 1 < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖
           then (1 : ℝ) / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2 else 0)) :=
     tsum_mul_left
   rw [hfac]
   exact hfar
-
 end RHLean.WP
-
-#print axioms RHLean.WP.near_band_total_le_shift
-#print axioms RHLean.WP.near_cost_bound_M
-#print axioms RHLean.WP.near_zero_window_cost
-#print axioms RHLean.WP.sum_near_window_cost
-#print axioms RHLean.WP.near_band_total_le
-#print axioms RHLean.WP.far_zero_window_cost
-#print axioms RHLean.WP.far_band_total_le
-#print axioms RHLean.WP.far_band_total_le_centered
-
-
-
 end Inline_wp_WP_B3_zerosum
-
 section Inline_wp_WP_B3_split
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory
 open scoped BigOperators
-
 namespace RHLean.WP
-
 private abbrev XZ__wp_WP_B3_split := Complex.Hadamard.divisorZeroIndex₀ Complex.riemannXi (Set.univ : Set ℂ)
-
 set_option maxHeartbeats 400000 in
-
-
 theorem tsum_split_finset [DecidableEq XZ__wp_WP_B3_split] {f : XZ__wp_WP_B3_split → ℝ} (s : Finset XZ__wp_WP_B3_split)
     (hsumm : Summable f) :
     (∑' p : XZ__wp_WP_B3_split, f p) = (∑ p ∈ s, f p) + (∑' p : XZ__wp_WP_B3_split, if p ∈ s then 0 else f p) := by
@@ -9759,42 +6972,16 @@ theorem tsum_split_finset [DecidableEq XZ__wp_WP_B3_split] {f : XZ__wp_WP_B3_spl
   refine tsum_congr ?_
   intro p
   by_cases hp : p ∈ s <;> simp [hp]
-
 end RHLean.WP
-
-#print axioms RHLean.WP.tsum_split_finset
-
-
-
 end Inline_wp_WP_B3_split
-
 section Inline_wp_WP_B3_bands
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory Complex Set
 open scoped Real Topology BigOperators Interval
-
 namespace RHLean.WP
-
 private abbrev XZ__wp_WP_B3_bands := Complex.Hadamard.divisorZeroIndex₀ Complex.riemannXi (Set.univ : Set ℂ)
-
-
 noncomputable def wcost (n : ℝ) (p : XZ__wp_WP_B3_bands) : ℝ :=
   ∫ t in n..(n + 1), (∫ x in (-(1 / 2) : ℝ)..(1 / 2),
     RHLean.ExplicitFormula.hadamardSec (RHLean.centeredZero p) t x)
-
 theorem wcost_nonneg {n : ℝ} (p : XZ__wp_WP_B3_bands) : 0 ≤ wcost n p := by
   unfold wcost
   rw [intervalIntegral.integral_of_le (by linarith : n ≤ n + 1)]
@@ -9804,10 +6991,7 @@ theorem wcost_nonneg {n : ℝ} (p : XZ__wp_WP_B3_bands) : 0 ≤ wcost n p := by
   refine integral_nonneg_of_ae ?_
   filter_upwards with x
   exact norm_nonneg _
-
 set_option maxHeartbeats 600000 in
-
-
 theorem summable_wcost {n : ℝ} (hn : 0 ≤ n) : Summable (fun p : XZ__wp_WP_B3_bands => wcost n p) := by
   classical
   set s : Finset XZ__wp_WP_B3_bands := RHLean.ExplicitFormula.zeroBall (2 * (n + 2) + 1) with hs
@@ -9884,15 +7068,13 @@ theorem summable_wcost {n : ℝ} (hn : 0 ≤ n) : Summable (fun p : XZ__wp_WP_B3
     funext p
     by_cases hp : p ∈ s <;> simp [hp]
   exact hcongr ▸ hsum
-
 set_option maxHeartbeats 1200000 in
-
 theorem tsum_window_cost_le_bands {Ccard Cfar n : ℝ} (hCcard : 0 ≤ Ccard)
     (hcount : ∀ T : ℝ, 2 ≤ T →
       ((RHLean.ExplicitFormula.zeroBall (2 * (1 + T))).card : ℝ)
         ≤ Ccard * (1 + T) ^ ((3 : ℝ) / 2))
     (hfar : 16 * (n + 2) *
-        (∑'
+        (∑' p : XZ__wp_WP_B3_bands,
           (if 2 * (n + 2) + 1 < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖
             then (1 : ℝ) / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2 else 0))
         ≤ Cfar * Real.sqrt (n + 2))
@@ -9904,7 +7086,6 @@ theorem tsum_window_cost_le_bands {Ccard Cfar n : ℝ} (hCcard : 0 ≤ Ccard)
   have hn0 : (0 : ℝ) ≤ n := by linarith
   have hn2 : (0 : ℝ) < n + 2 := by linarith
   set s : Finset XZ__wp_WP_B3_bands := RHLean.ExplicitFormula.zeroBall (2 * (n + 2) + 1) with hs
-
   have hnear_per : ∀ p ∈ s, wcost n p ≤ (74 + 24 * Real.log 6) * (n + 2) ^ ((3 : ℝ) / 2) := by
     intro p hp
     have hb := RHLean.ExplicitFormula.zeroBall_mem.mp (hs ▸ hp : p ∈ RHLean.ExplicitFormula.zeroBall (2 * (n + 2) + 1))
@@ -9961,7 +7142,6 @@ theorem tsum_window_cost_le_bands {Ccard Cfar n : ℝ} (hCcard : 0 ≤ Ccard)
             * ((n + 2) ^ ((3 : ℝ) / 2) * (n + 2) ^ ((3 : ℝ) / 2)) := hid
       _ = (Ccard * 2 ^ ((3 : ℝ) / 2) * (74 + 24 * Real.log 6)) * (n + 2) ^ 3 := by
           rw [hpow]
-
   have hnorm : Summable (fun p : XZ__wp_WP_B3_bands =>
       (if 2 * (n + 2) + 1 < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖
         then (1 : ℝ) / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2 else 0)) := by
@@ -9994,7 +7174,6 @@ theorem tsum_window_cost_le_bands {Ccard Cfar n : ℝ} (hCcard : 0 ≤ Ccard)
         exact hp (by rw [hs]; exact RHLean.ExplicitFormula.zeroBall_mem.mpr (not_lt.mp hcon))
       rw [if_pos hgt]
       have hval : (0 : ℝ) < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ := by linarith
-
       have hge : ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ - 1 / 2
           ≤ ‖RHLean.centeredZero p‖ := by
         have heq : RHLean.centeredZero p + (1 / 2 : ℂ) =
@@ -10031,18 +7210,17 @@ theorem tsum_window_cost_le_bands {Ccard Cfar n : ℝ} (hCcard : 0 ≤ Ccard)
   have hL : Summable (fun p : XZ__wp_WP_B3_bands => (if p ∈ s then 0 else wcost n p)) := by
     refine Summable.of_nonneg_of_le (fun p => ?_) htail_per hmaj
     by_cases hp : p ∈ s <;> simp [hp, wcost_nonneg]
-  have htail : (∑'
+  have htail : (∑' p : XZ__wp_WP_B3_bands, (if p ∈ s then 0 else wcost n p)) ≤ Cfar * Real.sqrt (n + 2) := by
     refine le_trans (hL.tsum_le_tsum htail_per hmaj) ?_
     have hfac : (∑' p : XZ__wp_WP_B3_bands, 16 * (n + 2) *
         (if 2 * (n + 2) + 1 < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖
           then (1 : ℝ) / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2 else 0))
-        = 16 * (n + 2) * (∑'
+        = 16 * (n + 2) * (∑' p : XZ__wp_WP_B3_bands,
           (if 2 * (n + 2) + 1 < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖
             then (1 : ℝ) / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2 else 0)) :=
       tsum_mul_left
     rw [hfac]
     exact hfar
-
   have hfin : Summable (fun p : XZ__wp_WP_B3_bands => if p ∈ s then wcost n p else 0) :=
     summable_of_ne_finset_zero (s := s) (fun p hp => by simp [hp])
   have hsum : Summable (fun p : XZ__wp_WP_B3_bands => (if p ∈ s then wcost n p else 0)
@@ -10054,39 +7232,14 @@ theorem tsum_window_cost_le_bands {Ccard Cfar n : ℝ} (hCcard : 0 ≤ Ccard)
   have hcost : Summable (fun p : XZ__wp_WP_B3_bands => wcost n p) := hcongr ▸ hsum
   rw [tsum_split_finset s hcost]
   linarith [hnear, htail]
-
 end RHLean.WP
-
-#print axioms RHLean.WP.summable_wcost
-#print axioms RHLean.WP.tsum_window_cost_le_bands
-
-
-
 end Inline_wp_WP_B3_bands
-
 section Inline_wp_WP_B3_domination
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory Complex Set
 open scoped Real Topology BigOperators
-
 namespace RHLean.WP
-
 private abbrev XZ__wp_WP_B3_domination := Complex.Hadamard.divisorZeroIndex₀ Complex.riemannXi (Set.univ : Set ℂ)
-
 set_option maxHeartbeats 800000 in
-
 private theorem far_bound__wp_WP_B3_domination {w : ℂ} {p : XZ__wp_WP_B3_domination}
     (hv : max 1 (2 * ‖w‖ + 1 / 2) < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖) :
     ‖w / (w ^ 2 - RHLean.centeredZero p ^ 2)‖
@@ -10096,7 +7249,6 @@ private theorem far_bound__wp_WP_B3_domination {w : ℂ} {p : XZ__wp_WP_B3_domin
   have hB2 : 2 * ‖w‖ + 1 / 2 < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ :=
     lt_of_le_of_lt (le_max_right _ _) hv
   have hval0 : (0 : ℝ) < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ := by linarith
-
   have hlam_eq : RHLean.centeredZero p + (1 / 2 : ℂ) =
       Complex.Hadamard.divisorZeroIndex₀_val p := by
     rw [RHLean.centeredZero]; ring
@@ -10109,7 +7261,6 @@ private theorem far_bound__wp_WP_B3_domination {w : ℂ} {p : XZ__wp_WP_B3_domin
     linarith
   have hlam0 : (0 : ℝ) < ‖RHLean.centeredZero p‖ := by linarith
   have hwlam : ‖w‖ ≤ ‖RHLean.centeredZero p‖ / 2 := by linarith
-
   have hden : (3 / 4) * ‖RHLean.centeredZero p‖ ^ 2
       ≤ ‖w ^ 2 - RHLean.centeredZero p ^ 2‖ := by
     have h1 : ‖RHLean.centeredZero p ^ 2‖
@@ -10124,7 +7275,6 @@ private theorem far_bound__wp_WP_B3_domination {w : ℂ} {p : XZ__wp_WP_B3_domin
     rw [norm_pow, norm_pow] at h1
     nlinarith [h1, hwlam, hlam0, norm_nonneg w]
   have hden0 : (0 : ℝ) < (3 / 4) * ‖RHLean.centeredZero p‖ ^ 2 := by positivity
-
   have hinv : (1 : ℝ) / ‖RHLean.centeredZero p‖ ^ 2
       ≤ 4 / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2 := by
     have h3 : (‖Complex.Hadamard.divisorZeroIndex₀_val p‖ / 2) ^ 2
@@ -10157,11 +7307,7 @@ private theorem far_bound__wp_WP_B3_domination {w : ℂ} {p : XZ__wp_WP_B3_domin
   rw [inv_pow]
   field_simp
   try ring
-
 set_option maxHeartbeats 800000 in
-
-
-
 theorem summable_norm_centered_hadamard {w : ℂ} (hw0 : w ≠ 0)
     (hne : ∀ p : XZ__wp_WP_B3_domination, w ^ 2 - RHLean.centeredZero p ^ 2 ≠ 0) :
     Summable (fun p : XZ__wp_WP_B3_domination => ‖w / (w ^ 2 - RHLean.centeredZero p ^ 2)‖) := by
@@ -10177,10 +7323,7 @@ theorem summable_norm_centered_hadamard {w : ℂ} (hw0 : w ≠ 0)
   refine Filter.mem_of_superset hfin.compl_mem_cofinite ?_
   intro p hp
   simpa only [Set.mem_setOf_eq, norm_norm] using far_bound__wp_WP_B3_domination (not_le.mp hp)
-
 set_option maxHeartbeats 800000 in
-
-
 theorem norm_logDeriv_le_tsum_hadamardSec {w : ℂ} (hw0 : w ≠ 0)
     (hne : ∀ p : XZ__wp_WP_B3_domination, w ^ 2 - RHLean.centeredZero p ^ 2 ≠ 0) :
     ‖logDeriv Complex.riemannXi ((1 / 2 : ℂ) + w)‖
@@ -10204,45 +7347,15 @@ theorem norm_logDeriv_le_tsum_hadamardSec {w : ℂ} (hw0 : w ≠ 0)
     rw [hw]
   rw [← hEq]
   exact norm_tsum_le_tsum_norm hsumm
-
 end RHLean.WP
-
-#print axioms RHLean.WP.summable_norm_centered_hadamard
-#print axioms RHLean.WP.norm_logDeriv_le_tsum_hadamardSec
-
-
-
 end Inline_wp_WP_B3_domination
-
 section Inline_wp_WP_B3_tonelli
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory Complex Set
 open scoped Real Topology BigOperators Interval ENNReal
-
-
-
 namespace RHLean.WP
-
-
 private abbrev XZ__wp_WP_B3_tonelli := Complex.Hadamard.divisorZeroIndex₀ Complex.riemannXi (Set.univ : Set ℂ)
-
-
 private noncomputable def hJ__wp_WP_B3_tonelli (μ : ℂ) (q : ℝ × ℝ) : ℝ≥0∞ :=
   ENNReal.ofReal (RHLean.ExplicitFormula.hadamardSec μ q.1 q.2)
-
-
 private theorem measurable_hJ__wp_WP_B3_tonelli (μ : ℂ) : Measurable (hJ__wp_WP_B3_tonelli μ) := by
   have hW : Measurable fun q : ℝ × ℝ => ((q.2 : ℂ) + (q.1 : ℂ) * Complex.I) := by fun_prop
   have hD : Measurable fun q : ℝ × ℝ =>
@@ -10254,9 +7367,6 @@ private theorem measurable_hJ__wp_WP_B3_tonelli (μ : ℂ) : Measurable (hJ__wp_
     rw [hJ__wp_WP_B3_tonelli, RHLean.ExplicitFormula.hadamardSec, norm_div]
   rw [hEq]
   exact ENNReal.measurable_ofReal.comp (hW.norm.div hD.norm)
-
-
-
 private theorem measurable_hSec_fixed__wp_WP_B3_tonelli (μ : ℂ) (t : ℝ) :
     Measurable fun x : ℝ => ENNReal.ofReal (RHLean.ExplicitFormula.hadamardSec μ t x) := by
   have hEq : (fun x : ℝ => ENNReal.ofReal (RHLean.ExplicitFormula.hadamardSec μ t x))
@@ -10271,22 +7381,18 @@ private theorem measurable_hSec_fixed__wp_WP_B3_tonelli (μ : ℂ) (t : ℝ) :
   have hD : Measurable fun x : ℝ => (((x : ℂ) + (t : ℂ) * Complex.I) ^ 2 - μ ^ 2) := by
     fun_prop
   exact hW.norm.div hD.norm
-
-
-
 theorem lintegral_lintegral_tsum_hadamardSec (a b : ℝ) :
     (∫⁻ t in Ι a b, ∫⁻ x in Ι (-(1 / 2) : ℝ) (1 / 2),
-        (∑'
+        (∑' p : XZ__wp_WP_B3_tonelli,
           ENNReal.ofReal (RHLean.ExplicitFormula.hadamardSec
             (Complex.Hadamard.divisorZeroIndex₀_val p) t x)))
       = ∑' p : XZ__wp_WP_B3_tonelli, (∫⁻ t in Ι a b, ∫⁻ x in Ι (-(1 / 2) : ℝ) (1 / 2),
           ENNReal.ofReal (RHLean.ExplicitFormula.hadamardSec
             (Complex.Hadamard.divisorZeroIndex₀_val p) t x)) := by
   classical
-
   have hpt : ∀ t : ℝ,
       (∫⁻ x in Ι (-(1 / 2) : ℝ) (1 / 2),
-          (∑'
+          (∑' p : XZ__wp_WP_B3_tonelli,
             ENNReal.ofReal (RHLean.ExplicitFormula.hadamardSec
               (Complex.Hadamard.divisorZeroIndex₀_val p) t x)))
         = ∑' p : XZ__wp_WP_B3_tonelli, (∫⁻ x in Ι (-(1 / 2) : ℝ) (1 / 2),
@@ -10299,7 +7405,6 @@ theorem lintegral_lintegral_tsum_hadamardSec (a b : ℝ) :
           (Complex.Hadamard.divisorZeroIndex₀_val p) t x)) (fun p => ?_)
     exact ((measurable_hSec_fixed__wp_WP_B3_tonelli (Complex.Hadamard.divisorZeroIndex₀_val p)
       t).aemeasurable).mono_measure Measure.restrict_le_self
-
   refine (lintegral_congr_ae (Filter.Eventually.of_forall hpt)).trans ?_
   refine lintegral_tsum (μ := volume.restrict (Ι a b))
     (f := fun (p : XZ__wp_WP_B3_tonelli) (t : ℝ) => ∫⁻ x in Ι (-(1 / 2) : ℝ) (1 / 2),
@@ -10310,57 +7415,23 @@ theorem lintegral_lintegral_tsum_hadamardSec (a b : ℝ) :
     (measurable_hJ__wp_WP_B3_tonelli _).aemeasurable.mono_measure
       (Measure.prod_mono le_rfl Measure.restrict_le_self)
   exact hjoint.lintegral_prod_right'
-
 end RHLean.WP
-
-#print axioms RHLean.WP.lintegral_lintegral_tsum_hadamardSec
-
-
-
 end Inline_wp_WP_B3_tonelli
-
 section Inline_wp_WP_B3_transfer
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory Complex Set
 open scoped Real Topology BigOperators Interval ENNReal
-
 namespace RHLean.WP
-
 abbrev XZ := Complex.Hadamard.divisorZeroIndex₀ Complex.riemannXi (Set.univ : Set ℂ)
-
-
 noncomputable def W (q : ℝ × ℝ) : ℂ := (q.2 : ℂ) + (q.1 : ℂ) * Complex.I
-
 private theorem W_re__wp_WP_B3_transfer {q : ℝ × ℝ} : (W q).re = q.2 := by simp [W]
-
 private theorem W_im__wp_WP_B3_transfer {q : ℝ × ℝ} : (W q).im = q.1 := by simp [W]
-
-
 private theorem eq_of_W_eq__wp_WP_B3_transfer {q : ℝ × ℝ} {z : ℂ} (h : W q = z) : q = (z.im, z.re) := by
   have h1 : q.1 = z.im := by rw [← W_im__wp_WP_B3_transfer (q := q), h]
   have h2 : q.2 = z.re := by rw [← W_re__wp_WP_B3_transfer (q := q), h]
   exact Prod.ext h1 h2
-
-
 private def badSet__wp_WP_B3_transfer : Set (ℝ × ℝ) :=
   {q | (∃ p : XZ, W q = RHLean.centeredZero p ∨ W q = -RHLean.centeredZero p)
     ∨ W q = 0}
-
 private theorem countable_badSet__wp_WP_B3_transfer : badSet__wp_WP_B3_transfer.Countable := by
   have hsub : ∀ z : ℂ, ({q : ℝ × ℝ | W q = z} : Set (ℝ × ℝ)).Subsingleton := by
     intro z a ha b hb
@@ -10382,11 +7453,8 @@ private theorem countable_badSet__wp_WP_B3_transfer : badSet__wp_WP_B3_transfer.
   rcases hq with h | h
   · exact Or.inl h
   · exact Or.inr h
-
-
 noncomputable def muwin (n : ℝ) : Measure (ℝ × ℝ) :=
   (volume.restrict (Ι n (n + 1))).prod (volume.restrict (Ι (-(1 / 2) : ℝ) (1 / 2)))
-
 private theorem muwin_badSet__wp_WP_B3_transfer (n : ℝ) : muwin n badSet__wp_WP_B3_transfer = 0 := by
   have hbad0 : (volume.prod volume) badSet__wp_WP_B3_transfer = 0 :=
     countable_badSet__wp_WP_B3_transfer.measure_zero (volume.prod volume)
@@ -10394,8 +7462,6 @@ private theorem muwin_badSet__wp_WP_B3_transfer (n : ℝ) : muwin n badSet__wp_W
     Measure.prod_mono (Measure.restrict_le_self (s := Ι n (n + 1)))
       (Measure.restrict_le_self (s := Ι (-(1 / 2) : ℝ) (1 / 2)))
   exact le_antisymm (le_trans (hle badSet__wp_WP_B3_transfer) (le_of_eq hbad0)) (by simp)
-
-
 private theorem domination_of_not_bad__wp_WP_B3_transfer {q : ℝ × ℝ} (hq : q ∉ badSet__wp_WP_B3_transfer) :
     ‖logDeriv Complex.riemannXi ((1 / 2 : ℂ) + W q)‖
       ≤ ∑' p : XZ,
@@ -10411,10 +7477,8 @@ private theorem domination_of_not_bad__wp_WP_B3_transfer {q : ℝ × ℝ} (hq : 
     · exact hq (Or.inl ⟨p, Or.inr (by linear_combination h1)⟩)
   have h := norm_logDeriv_le_tsum_hadamardSec hw0 hne
   simpa [W_re__wp_WP_B3_transfer, W_im__wp_WP_B3_transfer] using h
-
 private theorem W_ne_zero_of_not_bad__wp_WP_B3_transfer {q : ℝ × ℝ} (hq : q ∉ badSet__wp_WP_B3_transfer) : W q ≠ 0 :=
   fun h => hq (Or.inr h)
-
 private theorem summable_hSec_of_not_bad__wp_WP_B3_transfer {q : ℝ × ℝ} (hq : q ∉ badSet__wp_WP_B3_transfer) :
     Summable (fun p : XZ =>
       RHLean.ExplicitFormula.hadamardSec (RHLean.centeredZero p) q.1 q.2) := by
@@ -10430,12 +7494,10 @@ private theorem summable_hSec_of_not_bad__wp_WP_B3_transfer {q : ℝ × ℝ} (hq
   have h := summable_norm_centered_hadamard hw0 hne
   refine h.congr fun p => ?_
   simp [RHLean.ExplicitFormula.hadamardSec, W]
-
-
 theorem ae_domination_and_summable (n : ℝ) :
     ∀ᵐ q ∂(muwin n),
       (‖logDeriv Complex.riemannXi ((1 / 2 : ℂ) + W q)‖
-          ≤ ∑'
+          ≤ ∑' p : XZ,
               RHLean.ExplicitFormula.hadamardSec (RHLean.centeredZero p) q.1 q.2)
       ∧ Summable (fun p : XZ =>
           RHLean.ExplicitFormula.hadamardSec (RHLean.centeredZero p) q.1 q.2) := by
@@ -10443,8 +7505,6 @@ theorem ae_domination_and_summable (n : ℝ) :
   refine measure_mono_null (fun q hq => ?_) (muwin_badSet__wp_WP_B3_transfer n)
   by_contra hq'
   exact hq ⟨domination_of_not_bad__wp_WP_B3_transfer hq', summable_hSec_of_not_bad__wp_WP_B3_transfer hq'⟩
-
-
 private theorem measurable_hSec_ofReal__wp_WP_B3_transfer (μ : ℂ) :
     Measurable fun q : ℝ × ℝ =>
       ENNReal.ofReal (RHLean.ExplicitFormula.hadamardSec μ q.1 q.2) := by
@@ -10462,9 +7522,7 @@ private theorem measurable_hSec_ofReal__wp_WP_B3_transfer (μ : ℂ) :
   have hD : Measurable fun q : ℝ × ℝ =>
       (((q.2 : ℂ) + (q.1 : ℂ) * Complex.I) ^ 2 - μ ^ 2) := by fun_prop
   exact hW.norm.div hD.norm
-
 set_option maxHeartbeats 800000 in
-
 theorem lintegral_window_le_tsum (n : ℝ) :
     (∫⁻ q, ENNReal.ofReal
         ‖logDeriv Complex.riemannXi ((1 / 2 : ℂ) + W q)‖ ∂(muwin n))
@@ -10473,7 +7531,7 @@ theorem lintegral_window_le_tsum (n : ℝ) :
           ∂(muwin n) := by
   have hae : (fun q => ENNReal.ofReal
         ‖logDeriv Complex.riemannXi ((1 / 2 : ℂ) + W q)‖)
-      ≤ᵐ[muwin n] (fun q => ∑'
+      ≤ᵐ[muwin n] (fun q => ∑' p : XZ, ENNReal.ofReal
           (RHLean.ExplicitFormula.hadamardSec (RHLean.centeredZero p) q.1 q.2)) := by
     filter_upwards [ae_domination_and_summable n] with q hq
     rw [← ENNReal.ofReal_tsum_of_nonneg (f := fun p : XZ =>
@@ -10485,20 +7543,13 @@ theorem lintegral_window_le_tsum (n : ℝ) :
     (f := fun (p : XZ) (q : ℝ × ℝ) => ENNReal.ofReal
       (RHLean.ExplicitFormula.hadamardSec (RHLean.centeredZero p) q.1 q.2)) (fun p => ?_)
   exact (measurable_hSec_ofReal__wp_WP_B3_transfer _).aemeasurable
-
-
-
-
 noncomputable def prcost (n : ℝ) (p : XZ) : ℝ :=
   ∫ q, RHLean.ExplicitFormula.hadamardSec (RHLean.centeredZero p) q.1 q.2 ∂(muwin n)
-
 theorem prcost_nonneg (n : ℝ) (p : XZ) : 0 ≤ prcost n p := by
   refine integral_nonneg ?_
   intro q
   exact norm_nonneg _
-
 set_option maxHeartbeats 800000 in
-
 theorem integral_window_le_tsum_of {n : ℝ} {c : XZ → ℝ} (hc : ∀ p, 0 ≤ c p)
     (hmeas : AEStronglyMeasurable
       (fun q : ℝ × ℝ => ‖logDeriv Complex.riemannXi ((1 / 2 : ℂ) + W q)‖) (muwin n))
@@ -10514,7 +7565,7 @@ theorem integral_window_le_tsum_of {n : ℝ} {c : XZ → ℝ} (hc : ∀ p, 0 ≤
       = (∫⁻ q, ENNReal.ofReal
           ‖logDeriv Complex.riemannXi ((1 / 2 : ℂ) + W q)‖ ∂(muwin n)).toReal :=
     integral_eq_lintegral_of_nonneg_ae (Filter.Eventually.of_forall hnonneg) hmeas
-  have htoReal : (∑'
+  have htoReal : (∑' p : XZ, ∫⁻ q, ENNReal.ofReal
         (RHLean.ExplicitFormula.hadamardSec (RHLean.centeredZero p) q.1 q.2)
         ∂(muwin n)) = ENNReal.ofReal (∑' p : XZ, c p) := by
     have h1 : (fun p : XZ => ∫⁻ q, ENNReal.ofReal
@@ -10529,8 +7580,6 @@ theorem integral_window_le_tsum_of {n : ℝ} {c : XZ → ℝ} (hc : ∀ p, 0 ≤
   · rw [htoReal]
     exact ENNReal.ofReal_ne_top
   · rw [htoReal, ENNReal.toReal_ofReal (tsum_nonneg hc)]
-
-
 theorem integral_window_le_tsum {n : ℝ}
     (hmeas : AEStronglyMeasurable
       (fun q : ℝ × ℝ => ‖logDeriv Complex.riemannXi ((1 / 2 : ℂ) + W q)‖) (muwin n))
@@ -10539,48 +7588,20 @@ theorem integral_window_le_tsum {n : ℝ}
         ∂(muwin n)) = ENNReal.ofReal (prcost n p))
     (hsumm : Summable (fun p : XZ => prcost n p)) :
     (∫ q, ‖logDeriv Complex.riemannXi ((1 / 2 : ℂ) + W q)‖ ∂(muwin n))
-      ≤ ∑'
+      ≤ ∑' p : XZ, prcost n p :=
   integral_window_le_tsum_of (c := fun p => prcost n p) (prcost_nonneg n) hmeas hfin hsumm
-
 end RHLean.WP
-
-#print axioms RHLean.WP.integral_window_le_tsum_of
-#print axioms RHLean.WP.ae_domination_and_summable
-#print axioms RHLean.WP.lintegral_window_le_tsum
-#print axioms RHLean.WP.prcost_nonneg
-#print axioms RHLean.WP.integral_window_le_tsum
-
-
-
 end Inline_wp_WP_B3_transfer
-
 section Inline_wp_WP_B3_window
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory Complex Set
 open scoped Real Topology BigOperators
-
 namespace RHLean.WP
-
 set_option maxHeartbeats 400000 in
-
-
-
 theorem exists_poly_window_bound {g : ℝ → ℝ} {A C : ℝ} (hA : 0 ≤ A) (hC : 0 ≤ C)
     (h : ∀ n : ℝ, 1 ≤ n → g n ≤ A * (n + 2) ^ 3 + C * Real.sqrt (n + 2)) :
     ∃ K : ℝ, 0 ≤ K ∧ ∀ n : ℝ, 1 ≤ n → g n ≤ K * (1 + n) ^ 3 := by
   refine ⟨27 * (A + C), by positivity, fun n hn => ?_⟩
   have h2 : (1 : ℝ) ≤ n + 2 := by linarith
-
   have hsqrt : Real.sqrt (n + 2) ≤ (n + 2) ^ 3 := by
     have h1 : Real.sqrt (n + 2) ≤ n + 2 := by
       conv_rhs => rw [← Real.sqrt_mul_self (by linarith : (0 : ℝ) ≤ n + 2)]
@@ -10593,7 +7614,6 @@ theorem exists_poly_window_bound {g : ℝ → ℝ} {A C : ℝ} (hA : 0 ≤ A) (h
     have hfac : (n + 2) ^ 3 - (n + 2)
         = (n + 2) * ((n + 2) - 1) * ((n + 2) + 1) := by ring
     linarith [h1, hnon, hfac.symm.le, hfac.le]
-
   have hcube : (n + 2) ^ 3 ≤ 27 * (1 + n) ^ 3 := by
     have hle : n + 2 ≤ 3 * (1 + n) := by linarith
     have h3 : (n + 2) ^ 3 ≤ (3 * (1 + n)) ^ 3 := pow_le_pow_left₀ (by linarith) hle 3
@@ -10608,39 +7628,13 @@ theorem exists_poly_window_bound {g : ℝ → ℝ} {A C : ℝ} (hA : 0 ≤ A) (h
     _ = (A + C) * (n + 2) ^ 3 := by ring
     _ ≤ (A + C) * (27 * (1 + n) ^ 3) := mul_le_mul_of_nonneg_left hcube hAc
     _ = 27 * (A + C) * (1 + n) ^ 3 := by ring
-
 end RHLean.WP
-
-#print axioms RHLean.WP.exists_poly_window_bound
-
-
-
 end Inline_wp_WP_B3_window
-
 section Inline_wp_WP_hwin
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval ENNReal
-
 namespace RHLean.WP
-
 set_option maxHeartbeats 1200000 in
-
-
 theorem hwin_of_transfer
     (hCcard : 0 ≤ Ccard) (hCfar : 0 ≤ Cfar)
     (sectionInt : ℝ → ℝ)
@@ -10662,7 +7656,6 @@ theorem hwin_of_transfer
     ∃ K : ℝ, 0 ≤ K ∧ ∃ k : ℕ, ∀ n : ℝ, 1 ≤ n →
       (∫ t in n..(n + 1), sectionInt t) ≤ K * (1 + n) ^ k := by
   classical
-
   have hstep : ∀ n : ℝ, 1 ≤ n →
       (∫ t in n..(n + 1), sectionInt t)
         ≤ (Ccard * 2 ^ ((3 : ℝ) / 2) * (74 + 24 * Real.log 6)) * (n + 2) ^ 3
@@ -10670,7 +7663,7 @@ theorem hwin_of_transfer
     intro n hn
     rw [hbridge n]
     calc (∫ q, ‖logDeriv Complex.riemannXi ((1 / 2 : ℂ) + W q)‖ ∂(muwin n))
-        ≤ ∑'
+        ≤ ∑' p : XZ, RHLean.WP.wcost n p :=
           integral_window_le_tsum_of (c := fun p => RHLean.WP.wcost n p)
             (fun p => RHLean.WP.wcost_nonneg p) (hmeas n) (hfin n)
             (RHLean.WP.summable_wcost (by linarith))
@@ -10681,37 +7674,13 @@ theorem hwin_of_transfer
     (A := Ccard * 2 ^ ((3 : ℝ) / 2) * (74 + 24 * Real.log 6)) (C := Cfar)
     (by positivity) hCfar hstep
   exact ⟨K, hK0, 3, fun n hn => hKn n hn⟩
-
 end RHLean.WP
-
-#print axioms RHLean.WP.hwin_of_transfer
-
-
-
 end Inline_wp_WP_hwin
-
 section Inline_wp_WP_A3_hex
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval ENNReal
-
 namespace RHLean.WP
-
 set_option maxHeartbeats 800000 in
-
 theorem admissibleT_of_avoid {T : ℕ → ℝ}
     (hTend : Tendsto T atTop atTop) (hpos : ∀ n, 0 < T n)
     (havoid : ∀ n (p : ExplicitFormula.XiZero), T n ≠ (RHLean.centeredZero p).im
@@ -10753,9 +7722,7 @@ theorem admissibleT_of_avoid {T : ℕ → ℝ}
     refine lt_of_le_of_ne (by linarith [him.2]) ?_
     intro h
     exact hne.1 (by linarith [h])
-
 set_option maxHeartbeats 800000 in
-
 theorem hex_at_of_side_facts (a : ℝ) {Bad : Set ℝ}
     (hBadtot : volume Bad = 0)
     (hBadsub : ∀ p : ExplicitFormula.XiZero,
@@ -10768,7 +7735,6 @@ theorem hex_at_of_side_facts (a : ℝ) {Bad : Set ℝ}
   obtain ⟨T, hTbad, hTpos, hTtop, hctrl⟩ :=
     horizontalControl_of_window_bound hBadtot hintWin hsec hwin
   refine ⟨T, ?_, hctrl⟩
-
   have havoid : ∀ n (p : ExplicitFormula.XiZero), T n ≠ (RHLean.centeredZero p).im
       ∧ T n ≠ -((RHLean.centeredZero p).im) := by
     intro n p
@@ -10778,15 +7744,11 @@ theorem hex_at_of_side_facts (a : ℝ) {Bad : Set ℝ}
     · intro h
       exact hTbad n (h ▸ (hBadsub p).2)
   exact admissibleT_of_avoid hTtop hTpos havoid
-
-
 def badOrd : Set ℝ := {t | ∃ p : ExplicitFormula.XiZero,
   t = (RHLean.centeredZero p).im ∨ t = -((RHLean.centeredZero p).im)}
-
 theorem badOrd_mem (p : ExplicitFormula.XiZero) :
     (RHLean.centeredZero p).im ∈ badOrd ∧ -((RHLean.centeredZero p).im) ∈ badOrd :=
   ⟨⟨p, Or.inl rfl⟩, ⟨p, Or.inr rfl⟩⟩
-
 theorem badOrd_countable : badOrd.Countable := by
   have h1 : ({t : ℝ | ∃ p : ExplicitFormula.XiZero,
       t = (RHLean.centeredZero p).im}).Countable :=
@@ -10804,14 +7766,9 @@ theorem badOrd_countable : badOrd.Countable := by
   obtain ⟨p, h | h⟩ := ht
   · exact Or.inl ⟨p, h⟩
   · exact Or.inr ⟨p, h⟩
-
 theorem badOrd_null : volume badOrd = 0 :=
   badOrd_countable.measure_zero volume
-
 set_option maxHeartbeats 800000 in
-
-
-
 theorem hex_of_side_facts
     (hintWin : ∀ n : ℕ, IntervalIntegrable sectionInt volume (n : ℝ) ((n : ℝ) + 1))
     (hsec : ∀ t : ℝ, t ∉ badOrd → IntervalIntegrable (sectionFun t) volume (-(1 / 2)) (1 / 2))
@@ -10820,10 +7777,6 @@ theorem hex_of_side_facts
     ∀ a : ℝ, ∀ f : ℝ → ℂ, f ∈ localizedCore a →
       ∃ T : ℕ → ℝ, ExplicitFormula.AdmissibleT T ∧ ExplicitFormula.HorizontalControl T :=
   fun a f _hf => hex_at_of_side_facts a badOrd_null badOrd_mem hintWin hsec hwin
-
-
-
-
 theorem weilExplicitFormulaOdd_of_side_facts_and_verticalEval
     (hintWin : ∀ n : ℕ, IntervalIntegrable sectionInt volume (n : ℝ) ((n : ℝ) + 1))
     (hsec : ∀ t : ℝ, t ∉ badOrd → IntervalIntegrable (sectionFun t) volume (-(1 / 2)) (1 / 2))
@@ -10833,51 +7786,14 @@ theorem weilExplicitFormulaOdd_of_side_facts_and_verticalEval
     ExplicitFormula.WeilExplicitFormulaOdd :=
   ExplicitFormula.weilExplicitFormulaOdd_of_control_verticalEval
     (hex_of_side_facts hintWin hsec hwin) hv
-
 end RHLean.WP
-
-#print axioms RHLean.WP.admissibleT_of_avoid
-#print axioms RHLean.WP.hex_at_of_side_facts
-#print axioms RHLean.WP.badOrd_null
-#print axioms RHLean.WP.hex_of_side_facts
-#print axioms RHLean.WP.weilExplicitFormulaOdd_of_side_facts_and_verticalEval
-
-
-
 end Inline_wp_WP_A3_hex
-
 section Inline_ExplicitFormula_RH105
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 set_option maxHeartbeats 800000
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators ComplexConjugate
-
 namespace RHLean.ExplicitFormula
-
-
-
-
-
-
 theorem integral_LSeries_trunc_eq_tsum_Ioc {f : ℝ → ℂ} (hf : f ∈ oddCore)
     {ε : ℝ} (hε : 0 < ε) (T : ℝ) :
     (∫ y : ℝ, bridgeLine f y * LSeries vonMangoldtComplex (bridgeSpectralArgument ε y)
@@ -10903,7 +7819,7 @@ theorem integral_LSeries_trunc_eq_tsum_Ioc {f : ℝ → ℂ} (hf : f ∈ oddCore
     · have hcont : Continuous (bridgePrimeIntegrand f ε n) :=
         (continuous_bridgeLine hf).mul (continuous_const.mul
           (continuous_primeLSeriesKernel (ε := ε) hn))
-      refine Integrable.mono'
+      refine Integrable.mono' (hg_norm_int.mul_const (primeLSeriesWeight ε n))
         hcont.aestronglyMeasurable ?_
       filter_upwards with y
       rw [norm_bridgePrimeIntegrand]
@@ -10918,57 +7834,25 @@ theorem integral_LSeries_trunc_eq_tsum_Ioc {f : ℝ → ℂ} (hf : f ∈ oddCore
     hasSum_integral_of_summable_integral_norm hF_int hF_sum
   have hLHS : (∫ y : ℝ,
         bridgeLine f y * LSeries vonMangoldtComplex (bridgeSpectralArgument ε y) ∂μ)
-      = ∫ y : ℝ, ∑'
+      = ∫ y : ℝ, ∑' n : ℕ, bridgePrimeIntegrand f ε n y ∂μ :=
     integral_congr_ae (Eventually.of_forall fun y =>
       (tsum_bridgePrimeIntegrand f ε y).symm)
   rw [hLHS, ← hhas.tsum_eq]
-
-
 theorem integral_LSeries_trunc_eq_tsum {f : ℝ → ℂ} (hf : f ∈ oddCore)
     {ε : ℝ} (hε : 0 < ε) {T : ℝ} (hT : 0 ≤ T) :
     (∫ y in (-T)..T, bridgeLine f y * LSeries vonMangoldtComplex (bridgeSpectralArgument ε y))
       = ∑' n : ℕ, ∫ y in (-T)..T, bridgePrimeIntegrand f ε n y := by
   simp_rw [intervalIntegral.integral_of_le (by linarith : -T ≤ T)]
   exact integral_LSeries_trunc_eq_tsum_Ioc hf hε T
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.integral_LSeries_trunc_eq_tsum_Ioc
-#print axioms RHLean.ExplicitFormula.integral_LSeries_trunc_eq_tsum
-
 end
-
 end Inline_ExplicitFormula_RH105
-
 section Inline_ExplicitFormula_RH106
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 set_option maxHeartbeats 800000
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators ComplexConjugate
-
 namespace RHLean.ExplicitFormula
-
-
 theorem tendsto_intervalIntegral_atTop {g : ℝ → ℂ} (hg : Integrable g volume) :
     Tendsto (fun T : ℝ => ∫ y in (-T)..T, g y) atTop (𝓝 (∫ y : ℝ, g y)) := by
   have hmain : Tendsto (fun T : ℝ => ∫ y : ℝ, (Set.Ioc (-T) T).indicator g y)
@@ -10988,65 +7872,22 @@ theorem tendsto_intervalIntegral_atTop {g : ℝ → ℂ} (hg : Integrable g volu
         filter_upwards [eventually_ge_atTop (|y| + 1)] with T hT
         rw [Set.mem_Ioc]
         constructor <;> linarith [neg_abs_le y, le_abs_self y]
-      refine Tendsto.congr'
+      refine Tendsto.congr' (hev.mono fun T hT => ?_) tendsto_const_nhds
       change g y = (Set.Ioc (-T) T).indicator g y
       rw [Set.indicator_of_mem hT]
   refine hmain.congr' ?_
   filter_upwards [eventually_ge_atTop (0 : ℝ)] with T hT
   rw [intervalIntegral.integral_of_le (by linarith : -T ≤ T),
     ← integral_indicator measurableSet_Ioc]
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.tendsto_intervalIntegral_atTop
-
 end
-
 end Inline_ExplicitFormula_RH106
-
 section Inline_ExplicitFormula_RH109
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators
-
 set_option maxHeartbeats 800000
-
 namespace RHLean.ExplicitFormula
-
-
-
-
-
-
-
-
-
 def VerticalIntegralEvalFull (a : ℝ) : Prop :=
   ∀ f : ℝ → ℂ, f ∈ localizedCore a →
     Integrable (fun y : ℝ =>
@@ -11054,10 +7895,6 @@ def VerticalIntegralEvalFull (a : ℝ) : Prop :=
     (∫ y : ℝ,
       bridgeLine f y * logDeriv riemannXi ((1 : ℂ) + (y : ℂ) * I)).re
       = Real.pi * (archimedeanBlock f + poleBlock f) - primeSideComb f a
-
-
-
-
 theorem verticalIntegralEvalAt_of_full {a : ℝ}
     (h : VerticalIntegralEvalFull a) : VerticalIntegralEvalAt a := by
   intro f hf T hT
@@ -11105,48 +7942,13 @@ theorem verticalIntegralEvalAt_of_full {a : ℝ}
       congrArg Complex.re (hstrip n).symm)
   rw [hfinal] at hmain
   exact hmain
-
 end RHLean.ExplicitFormula
-
-
-
-#print axioms RHLean.ExplicitFormula.verticalIntegralEvalAt_of_full
-
 end
-
 end Inline_ExplicitFormula_RH109
-
 section Inline_wp_WP_A3_close
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval ENNReal
-
 namespace RHLean.WP
-
-
-
-
 theorem ofReal_iterated_intervalIntegral_eq_lintegral
     {a b c d : ℝ} (hab : a ≤ b) (_hcd : c ≤ d)
     {f : ℝ → ℝ → ℝ}
@@ -11185,8 +7987,6 @@ theorem ofReal_iterated_intervalIntegral_eq_lintegral
           ∂((volume.restrict (Set.Ioc c d)).prod
             (volume.restrict (Set.Ioc a b))) :=
           (MeasureTheory.lintegral_prod _ hmeas).symm
-
-
 theorem measurable_hadamardSec_joint (μ : ℂ) :
     Measurable (fun q : ℝ × ℝ =>
       RHLean.ExplicitFormula.hadamardSec μ q.1 q.2) := by
@@ -11203,8 +8003,6 @@ theorem measurable_hadamardSec_joint (μ : ℂ) :
     rw [RHLean.ExplicitFormula.hadamardSec, norm_div]
   rw [hEq]
   exact hW.norm.div hD.norm
-
-
 theorem integrable_hadamardSec_section {μ : ℂ} {t : ℝ}
     (ht1 : t ≠ μ.im) (ht2 : t ≠ -μ.im) :
     Integrable (fun x : ℝ => RHLean.ExplicitFormula.hadamardSec μ t x)
@@ -11236,8 +8034,6 @@ theorem integrable_hadamardSec_section {μ : ℂ} {t : ℝ}
     rw [Set.uIoc_of_le (by norm_num : (-(1 / 2) : ℝ) ≤ 1 / 2)] at hx
     exact ⟨le_of_lt hx.1, hx.2⟩
   simpa only [MeasureTheory.IntegrableOn] using hOn.mono_set hsub
-
-
 theorem integrable_hadamardSec_outer {μ : ℂ} (hre : |μ.re| ≤ 1 / 2) (n : ℝ) :
     Integrable (fun t : ℝ => ∫ x, RHLean.ExplicitFormula.hadamardSec μ t x
       ∂(volume.restrict (Ι (-(1 / 2) : ℝ) (1 / 2))))
@@ -11282,9 +8078,6 @@ theorem integrable_hadamardSec_outer {μ : ℂ} (hre : |μ.re| ≤ 1 / 2) (n : �
     rw [intervalIntegral.integral_of_le (by norm_num : (-(1 / 2) : ℝ) ≤ 1 / 2)]
   rw [Real.norm_eq_abs, abs_of_nonneg (by rw [hEq]; exact hnonneg), hEq]
   exact RHLean.ExplicitFormula.integral_norm_hadamardTerm_le_log hre ht1 ht2
-
-
-
 theorem hfin (n : ℝ) (p : XZ) :
     (∫⁻ q, ENNReal.ofReal
         (RHLean.ExplicitFormula.hadamardSec (RHLean.centeredZero p) q.1 q.2)
@@ -11327,9 +8120,6 @@ theorem hfin (n : ℝ) (p : XZ) :
     simp [muwin, Set.uIoc_of_le hcd, Set.uIoc_of_le hab]
   rw [hmu]
   simpa [wcost] using hmain.symm
-
-
-
 theorem measurable_logDeriv_riemannXi : Measurable (logDeriv riemannXi) := by
   have hderiv_cont : Continuous (deriv riemannXi) :=
     continuous_iff_continuousAt.mpr fun s =>
@@ -11337,21 +8127,14 @@ theorem measurable_logDeriv_riemannXi : Measurable (logDeriv riemannXi) := by
   rw [show logDeriv riemannXi = fun z => deriv riemannXi z / riemannXi z from
     funext fun z => logDeriv_apply riemannXi z]
   exact hderiv_cont.measurable.div differentiable_riemannXi.continuous.measurable
-
-
 theorem measurable_W : Measurable (fun q : ℝ × ℝ => W q) := by
   unfold W
   fun_prop
-
-
-
 theorem hmeas (n : ℝ) :
     AEStronglyMeasurable
       (fun q : ℝ × ℝ => ‖logDeriv riemannXi ((1 / 2 : ℂ) + W q)‖) (muwin n) :=
   (measurable_logDeriv_riemannXi.comp
     (measurable_const.add measurable_W)).norm.aestronglyMeasurable
-
-
 theorem lintegral_window_lt_top {n : ℝ} (hn : 0 ≤ n) :
     (∫⁻ q, ENNReal.ofReal
         ‖logDeriv riemannXi ((1 / 2 : ℂ) + W q)‖ ∂(muwin n)) < ∞ := by
@@ -11364,12 +8147,10 @@ theorem lintegral_window_lt_top {n : ℝ} (hn : 0 ≤ n) :
   rw [hcongr] at hle
   have hsumm : Summable (fun p : XZ => wcost n p) := summable_wcost hn
   have htsum : (∑' p : XZ, ENNReal.ofReal (wcost n p))
-      = ENNReal.ofReal (∑'
+      = ENNReal.ofReal (∑' p : XZ, wcost n p) :=
     (ENNReal.ofReal_tsum_of_nonneg (fun p => wcost_nonneg p) hsumm).symm
   rw [htsum] at hle
   exact lt_of_le_of_lt hle ENNReal.ofReal_lt_top
-
-
 theorem integrable_logDeriv_muwin {n : ℝ} (hn : 0 ≤ n) :
     Integrable (fun q : ℝ × ℝ =>
       ‖logDeriv riemannXi ((1 / 2 : ℂ) + W q)‖) (muwin n) := by
@@ -11378,9 +8159,6 @@ theorem integrable_logDeriv_muwin {n : ℝ} (hn : 0 ≤ n) :
   rw [MeasureTheory.hasFiniteIntegral_iff_ofReal
     (Eventually.of_forall (fun q => norm_nonneg _))]
   exact lintegral_window_lt_top hn
-
-
-
 theorem hbridge {n : ℝ} (hn : 1 ≤ n) :
     (∫ t in n..(n + 1), sectionInt t)
       = ∫ q, ‖logDeriv riemannXi ((1 / 2 : ℂ) + W q)‖ ∂(muwin n) := by
@@ -11406,9 +8184,6 @@ theorem hbridge {n : ℝ} (hn : 1 ≤ n) :
     ext x
     rw [intervalIntegral.integral_of_le hx]
   exact (MeasureTheory.integral_prod _ hjoint').symm
-
-
-
 theorem hintWin (n : ℕ) :
     IntervalIntegrable sectionInt volume (n : ℝ) ((n : ℝ) + 1) := by
   have hn : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
@@ -11431,9 +8206,6 @@ theorem hintWin (n : ℕ) :
     rw [Set.uIoc_of_le hnle]
   rw [← hEqset]
   exact hsec
-
-
-
 theorem exists_Ccard :
     ∃ Ccard : ℝ, 0 ≤ Ccard ∧ ∀ T : ℝ, 2 ≤ T →
       ((RHLean.ExplicitFormula.zeroBall (2 * (1 + T))).card : ℝ)
@@ -11445,9 +8217,6 @@ theorem exists_Ccard :
   refine h.trans (le_of_eq ?_)
   rw [Real.mul_rpow (by norm_num : (0 : ℝ) ≤ 2) (by linarith : (0 : ℝ) ≤ 1 + T)]
   ring
-
-
-
 theorem exists_Cfar :
     ∃ Cfar : ℝ, 0 ≤ Cfar ∧ ∀ n : ℝ, 1 ≤ n →
       16 * (n + 2) *
@@ -11479,7 +8248,7 @@ theorem exists_Cfar :
       · rw [if_pos hp, if_pos (by linarith)]
       · rw [if_neg hp]
         split_ifs <;> positivity
-  have hle : (∑'
+  have hle : (∑' p : XZ,
         (if 2 * (n + 2) + 1 < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖
           then (1 : ℝ) / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2 else 0))
       ≤ (∑' p : XZ,
@@ -11491,7 +8260,7 @@ theorem exists_Cfar :
     · rw [if_neg hp]
       split_ifs <;> positivity
   have hbase : 4 * (n + 2) *
-      (∑'
+      (∑' p : XZ,
         (if 2 * (n + 2) < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖
           then (1 : ℝ) / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2 else 0))
       ≤ C * Real.sqrt (n + 2) := by
@@ -11501,7 +8270,7 @@ theorem exists_Cfar :
           (if 2 * (n + 2) + 1 < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖
             then (1 : ℝ) / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2 else 0))
       = 4 * (4 * (n + 2) *
-          (∑'
+          (∑' p : XZ,
             (if 2 * (n + 2) + 1 < ‖Complex.Hadamard.divisorZeroIndex₀_val p‖
               then (1 : ℝ) / ‖Complex.Hadamard.divisorZeroIndex₀_val p‖ ^ 2 else 0))) := by ring
     _ ≤ 4 * (4 * (n + 2) *
@@ -11511,8 +8280,6 @@ theorem exists_Cfar :
         gcongr
     _ ≤ 4 * (C * Real.sqrt (n + 2)) := by gcongr
     _ = (4 * C) * Real.sqrt (n + 2) := by ring
-
-
 theorem hwin_closed :
     ∃ K : ℝ, 0 ≤ K ∧ ∃ k : ℕ, ∀ n : ℝ, 1 ≤ n →
       (∫ t in n..(n + 1), sectionInt t) ≤ K * (1 + n) ^ k := by
@@ -11525,7 +8292,7 @@ theorem hwin_closed :
     intro n hn
     rw [hbridge hn]
     calc (∫ q, ‖logDeriv riemannXi ((1 / 2 : ℂ) + W q)‖ ∂(muwin n))
-        ≤ ∑'
+        ≤ ∑' p : XZ, wcost n p :=
           integral_window_le_tsum_of (c := fun p => wcost n p)
             (fun p => wcost_nonneg p) (hmeas n) (hfin n)
             (summable_wcost (by linarith))
@@ -11537,24 +8304,16 @@ theorem hwin_closed :
     (A := Ccard * 2 ^ ((3 : ℝ) / 2) * (74 + 24 * Real.log 6)) (C := Cfar)
     (by positivity) hCfar hstep
   exact ⟨K, hK0, 3, fun n hn => hKn n hn⟩
-
-
 theorem hwin_nat :
     ∃ K : ℝ, 0 ≤ K ∧ ∃ k : ℕ, ∀ n : ℕ, 1 ≤ n →
       (∫ t in (n : ℝ)..((n : ℝ) + 1), sectionInt t) ≤ K * (1 + (n : ℝ)) ^ k := by
   obtain ⟨K, hK0, k, hK⟩ := hwin_closed
   exact ⟨K, hK0, k, fun n hn => hK n (by exact_mod_cast hn)⟩
-
-
 theorem hex_closed (hsec : ∀ t : ℝ, t ∉ badOrd →
     IntervalIntegrable (sectionFun t) volume (-(1 / 2)) (1 / 2)) :
     ∀ a : ℝ, ∀ f : ℝ → ℂ, f ∈ localizedCore a →
       ∃ T : ℕ → ℝ, ExplicitFormula.AdmissibleT T ∧ ExplicitFormula.HorizontalControl T :=
   hex_of_side_facts hintWin hsec hwin_nat
-
-
-
-
 theorem weilBridge_of_verticalEvalFull
     (hV : ∀ a : ℝ, ExplicitFormula.VerticalIntegralEvalFull a)
     (hsec : ∀ t : ℝ, t ∉ badOrd →
@@ -11566,41 +8325,12 @@ theorem weilBridge_of_verticalEvalFull
     hintWin hsec hwin_nat hv
   intro a ha f hf
   exact hodd a ha f hf
-
 end RHLean.WP
-
-#print axioms RHLean.WP.ofReal_iterated_intervalIntegral_eq_lintegral
-#print axioms RHLean.WP.hfin
-
-
-
 end Inline_wp_WP_A3_close
-
 section Inline_wp_WP_A3_hsec
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory Complex Set Filter
 open scoped Real Topology BigOperators Interval ENNReal
-
 namespace RHLean.WP
-
-
-
 theorem norm_hadamardTerm_far_abs {t : ℝ} {μ : ℂ}
     (hμ : 2 * (1 + |t|) ≤ ‖μ‖) {x : ℝ} (hx : |x| ≤ 1 / 2) :
     ‖((x : ℂ) + (t : ℂ) * I) / (((x : ℂ) + (t : ℂ) * I) ^ 2 - μ ^ 2)‖
@@ -11646,17 +8376,12 @@ theorem norm_hadamardTerm_far_abs {t : ℝ} {μ : ℂ}
           ring
       _ ≤ (4 * (1 + |t|) / ‖μ‖ ^ 2) * (‖w - μ‖ * ‖w + μ‖) :=
           mul_le_mul_of_nonneg_left hden (by positivity)
-
-
 theorem hadamardSec_le_sep {t : ℝ} {μ : ℂ}
     (hsep1 : t ≠ μ.im) (hsep2 : t ≠ -μ.im) (x : ℝ) :
     RHLean.ExplicitFormula.hadamardSec μ t x
       ≤ (1 / 2) * (1 / |t - μ.im| + 1 / |t + μ.im|) := by
   rw [RHLean.ExplicitFormula.hadamardSec]
   exact RHLean.ExplicitFormula.norm_hadamardTerm_sep hsep1 hsep2
-
-
-
 theorem hsec {t : ℝ} (ht : t ∉ badOrd) :
     IntervalIntegrable (sectionFun t) volume (-(1 / 2)) (1 / 2) := by
   classical
@@ -11727,7 +8452,7 @@ theorem hsec {t : ℝ} (ht : t ∉ badOrd) :
           simp [hwdef] at him
           exact (hnot p).2 (by linarith)
       have hdom := norm_logDeriv_le_tsum_hadamardSec (w := w) hw0 hne
-      have hdom'
+      have hdom' : ‖logDeriv riemannXi ((1 / 2 : ℂ) + w)‖ ≤
           ∑' p : XZ, RHLean.ExplicitFormula.hadamardSec
             (RHLean.centeredZero p) t x := by
         simpa [hwdef] using hdom
@@ -11740,7 +8465,7 @@ theorem hsec {t : ℝ} (ht : t ∉ badOrd) :
           ≤ ∑ p ∈ s, sep p := by
         refine Finset.sum_le_sum (fun p _hp => ?_)
         exact hadamardSec_le_sep (hnot p).1 (hnot p).2 x
-      have htail : (∑'
+      have htail : (∑' p : {p : XZ // p ∉ s},
           RHLean.ExplicitFormula.hadamardSec (RHLean.centeredZero p.1) t x)
           ≤ ∑' p : {p : XZ // p ∉ s}, far p.1 := by
         refine Summable.tsum_le_tsum (fun p => ?_) (hsumm_f.subtype _)
@@ -11800,21 +8525,21 @@ theorem hsec {t : ℝ} (ht : t ∉ badOrd) :
         dsimp [M]
         exact le_trans (le_add_of_nonneg_right (tsum_nonneg (fun p => hfar_nonneg p)))
           (le_max_left _ _)
-      have htail_le : (∑'
+      have htail_le : (∑' p : {p : XZ // p ∉ s}, far p.1) ≤ ∑' p : XZ, far p := by
         have hfinite : 0 ≤ ∑ p ∈ s, far p := Finset.sum_nonneg (fun p _ => hfar_nonneg p)
         calc (∑' p : {p : XZ // p ∉ s}, far p.1)
-            ≤ (∑ p ∈ s, far p) + ∑'
+            ≤ (∑ p ∈ s, far p) + ∑' p : {p : XZ // p ∉ s}, far p.1 :=
               le_add_of_nonneg_left hfinite
           _ = ∑' p : XZ, far p := hfar_split
       calc sectionFun t x
           = ‖logDeriv riemannXi ((1 / 2 : ℂ) + w)‖ := by simp [sectionFun, hwdef]
-        _ ≤ ∑'
+        _ ≤ ∑' p : XZ,
               RHLean.ExplicitFormula.hadamardSec (RHLean.centeredZero p) t x := hdom'
         _ = (∑ p ∈ s, RHLean.ExplicitFormula.hadamardSec (RHLean.centeredZero p) t x)
               + ∑' p : {p : XZ // p ∉ s},
                   RHLean.ExplicitFormula.hadamardSec (RHLean.centeredZero p.1) t x :=
               hsplit.symm
-        _ ≤ (∑ p ∈ s, sep p) + ∑'
+        _ ≤ (∑ p ∈ s, sep p) + ∑' p : {p : XZ // p ∉ s}, far p.1 :=
               add_le_add hnear htail
         _ ≤ (∑ p ∈ s, sep p) + ∑' p : XZ, far p := by
               gcongr
@@ -11823,156 +8548,56 @@ theorem hsec {t : ℝ} (ht : t ∉ badOrd) :
     (T := t) (M := M) ?_
   intro x hxI
   exact hfx x hxI
-
-
-
 theorem hex_complete :
     ∀ a : ℝ, ∀ f : ℝ → ℂ, f ∈ localizedCore a →
       ∃ T : ℕ → ℝ, ExplicitFormula.AdmissibleT T ∧ ExplicitFormula.HorizontalControl T :=
   hex_closed (fun t ht => hsec ht)
-
-
 theorem weilBridge_of_verticalEvalFull_closed
     (hV : ∀ a : ℝ, ExplicitFormula.VerticalIntegralEvalFull a) : WeilBridge :=
   weilBridge_of_verticalEvalFull hV (fun t ht => hsec ht)
-
 end RHLean.WP
-
-#print axioms RHLean.WP.hex_complete
-#print axioms RHLean.WP.weilBridge_of_verticalEvalFull_closed
-
-#print axioms RHLean.WP.norm_hadamardTerm_far_abs
-#print axioms RHLean.WP.hadamardSec_le_sep
-#print axioms RHLean.WP.hsec
-
-
-
 end Inline_wp_WP_A3_hsec
-
-
-
-
-
-
-
-
 namespace RHLean
-
-
-
-
 theorem weilBridge_of_verticalEvalFull
     (hV : ∀ a : ℝ, ExplicitFormula.VerticalIntegralEvalFull a) : WeilBridge :=
   WP.weilBridge_of_verticalEvalFull_closed hV
-
-
 theorem rh_full_proof_of_verticalEvalFull
     (hV : ∀ a : ℝ, ExplicitFormula.VerticalIntegralEvalFull a)
     (hY7 : Y7OperatorTarget) (hII : GateIIOperatorStep) : RiemannHypothesis :=
   rh_full_proof (weilBridge_of_verticalEvalFull hV) hY7 hII
-
-
 theorem riemannHypothesis_of_zhu_verticalEvalFull
     (hV : ∀ a : ℝ, ExplicitFormula.VerticalIntegralEvalFull a)
     (hzhu : ZhuBase.ZhuWindowPositivity)
     (hII : ZhuBase.GateIIOperatorStepFour) : RiemannHypothesis :=
   ZhuBase.riemannHypothesis_of_zhu (weilBridge_of_verticalEvalFull hV) hzhu hII
-
 end RHLean
-
-#print axioms RHLean.weilBridge_of_verticalEvalFull
-#print axioms RHLean.rh_full_proof_of_verticalEvalFull
-#print axioms RHLean.riemannHypothesis_of_zhu_verticalEvalFull
-
-
-
 section Inline_GateII_Chain
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace RHLean.GateII.Chain
-
 open Finset
 open MeasureTheory
 open Filter
 open scoped Topology
-
-
-
-
 noncomputable def Lambda (n : ℕ) : ℝ := ArithmeticFunction.vonMangoldt n
-
-
-
-
-
 noncomputable def Nset (k m : ℕ) : Finset ℕ :=
   (Finset.range (k + 1)).filter (fun n => Lambda n ≠ 0 ∧ ¬ n ∣ k ∧ k / n = m)
-
-
-
 noncomputable def V (k m : ℕ) : ℝ :=
   (∑ n ∈ Nset k m, (Lambda n) ^ 2 / (n : ℝ))
     - (∑ n ∈ Nset k m, Lambda n) ^ 2 / (∑ n ∈ Nset k m, (n : ℝ))
-
 theorem mem_Nset {k m n : ℕ} :
     n ∈ Nset k m ↔ n ≤ k ∧ Lambda n ≠ 0 ∧ ¬ n ∣ k ∧ k / n = m := by
   simp [Nset, Finset.mem_filter]
-
-
 theorem Nset_pos {k m : ℕ} {n : ℕ} (hn : n ∈ Nset k m) : 0 < (n : ℝ) := by
   have hΛ : Lambda n ≠ 0 := (mem_Nset.mp hn).2.1
   have hn0 : n ≠ 0 := by
     intro h0
     exact hΛ (by simp [Lambda, h0, ArithmeticFunction.map_zero])
   exact_mod_cast Nat.pos_of_ne_zero hn0
-
-
-
 theorem V_nonneg (k m : ℕ) : 0 ≤ V k m := by
   have hcs := Finset.sq_sum_div_le_sum_sq_div (s := Nset k m)
     (f := Lambda) (g := fun n : ℕ => (n : ℝ))
     (fun n hn => Nset_pos hn)
   unfold V
   linarith
-
-
 theorem V_le_weighted (k m : ℕ) :
     V k m ≤ ∑ n ∈ Nset k m, (Lambda n) ^ 2 / (n : ℝ) := by
   unfold V
@@ -11982,51 +8607,24 @@ theorem V_le_weighted (k m : ℕ) :
   have hdiv : 0 ≤ (∑ n ∈ Nset k m, Lambda n) ^ 2 / (∑ n ∈ Nset k m, (n : ℝ)) :=
     div_nonneg hsq hden
   linarith
-
-
-
 noncomputable def Vsum (k : ℕ) : ℝ := ∑ m ∈ Finset.range (k + 1), V k m
-
-
 theorem Vsum_le_weighted (k : ℕ) :
     Vsum k ≤ ∑ m ∈ Finset.range (k + 1), ∑ n ∈ Nset k m, (Lambda n) ^ 2 / (n : ℝ) := by
   unfold Vsum
   exact Finset.sum_le_sum (fun m _ => V_le_weighted k m)
-
-
-
-
 noncomputable def wNat (j : ℕ) : ℝ := Real.log (1 + 1 / (j : ℝ))
-
-
 noncomputable def beta0 : ℝ := Real.log 2 + 1 / 2
-
 theorem beta0_pos : 0 < beta0 := by
   unfold beta0
   linarith [Real.log_pos (by norm_num : (1 : ℝ) < 2)]
-
-
-
 noncomputable def Lkn (k n : ℕ) : ℝ :=
   1 / 2 + Real.log (wNat (k / n) / wNat k)
-
-
 noncomputable def activeN (k : ℕ) : Finset ℕ :=
   (Finset.range (k + 1)).filter (fun n => Lambda n ≠ 0 ∧ ¬ n ∣ k)
-
-
 noncomputable def sigmaTilde (k : ℕ) : ℝ :=
   ∑ n ∈ activeN k, (Lambda n) ^ 2 / ((n : ℝ) * (Real.log n + beta0))
-
-
 noncomputable def sigma (k : ℕ) : ℝ :=
   ∑ n ∈ activeN k, (Lambda n) ^ 2 / ((n : ℝ) * Lkn k n)
-
-
-
-
-
-
 theorem sigmaTilde_le_sigma_of_L_bound {k : ℕ}
     (hpos : ∀ n ∈ activeN k, 0 < Lkn k n)
     (hL : ∀ n ∈ activeN k, Lkn k n ≤ Real.log n + beta0)
@@ -12046,25 +8644,14 @@ theorem sigmaTilde_le_sigma_of_L_bound {k : ℕ}
     mul_le_mul_of_nonneg_left (hL n hn) hnpos.le
   have hΛ2 : 0 ≤ (Lambda n) ^ 2 := sq_nonneg _
   exact div_le_div_of_nonneg_left hΛ2 hdn hle
-
-
-
-
 def AWGC (k : ℕ) : Prop :=
   (1 / Real.log 2) * Vsum k ≤ sigmaTilde k
-
-
-
-
 noncomputable def w (k : ℕ) : ℝ := Real.log (1 + 1 / (k : ℝ))
-
 theorem w_pos {k : ℕ} (hk : 1 ≤ k) : 0 < w k := by
   unfold w
   apply Real.log_pos
   have hk0 : (0 : ℝ) < (k : ℝ) := by exact_mod_cast hk
   linarith [one_div_pos.mpr hk0]
-
-
 theorem w_lt_inv {k : ℕ} (hk : 1 ≤ k) : w k < 1 / (k : ℝ) := by
   unfold w
   have hk0 : (0 : ℝ) < (k : ℝ) := by exact_mod_cast hk
@@ -12074,11 +8661,7 @@ theorem w_lt_inv {k : ℕ} (hk : 1 ≤ k) : w k < 1 / (k : ℝ) := by
     linarith
   have h := Real.log_lt_sub_one_of_pos hx hx1
   linarith
-
-
 theorem wNat_eq_w (k : ℕ) : wNat k = w k := rfl
-
-
 theorem w_sq_div_48_lt {k : ℕ} (hk : 1 ≤ k) :
     (w k) ^ 2 / 48 < 1 / (48 * (k : ℝ) ^ 2) := by
   have hw := w_lt_inv hk
@@ -12092,21 +8675,8 @@ theorem w_sq_div_48_lt {k : ℕ} (hk : 1 ≤ k) :
   have heq : (1 / (k : ℝ)) ^ 2 / 48 = 1 / (48 * (k : ℝ) ^ 2) := by
     field_simp
   linarith
-
-
-
-
-
-
-
 noncomputable def masterGap (k : ℕ) (W : ℝ) : ℝ :=
   1 / 2 + Real.log k - (439 / (250 * Real.log 2)) * Vsum k - (5 / 2) * W
-
-
-
-
-
-
 theorem master_scalar_reduction {k : ℕ} {W : ℝ}
     (hS : Vsum k ≤ (14736 / 100000) * Real.log k + (2904 / 1000))
     (hW : W ≤ (47 / 1000) * Real.log k)
@@ -12135,11 +8705,6 @@ theorem master_scalar_reduction {k : ℕ} {W : ℝ}
   have hCW : (5 / 2) * W ≤ (5 / 2) * ((47 / 1000) * L) :=
     mul_le_mul_of_nonneg_left hW (by norm_num)
   linarith
-
-
-
-
-
 theorem master_scalar_audited {k : ℕ} {W : ℝ}
     (hS : Vsum k ≤ (12 / 100) * Real.log k + (2873 / 1000))
     (hW : W ≤ (47 / 1000) * Real.log k)
@@ -12172,46 +8737,16 @@ theorem master_scalar_audited {k : ℕ} {W : ℝ}
     nlinarith [hX, hL0, hCL, hC2]
   refine ⟨hlin, ?_⟩
   nlinarith [hSbound, hWbound, hX, hL0]
-
-
-
-
 theorem master_scalar_positive {k : ℕ} {W : ℝ}
     (hS : Vsum k ≤ (12 / 100) * Real.log k + (2873 / 1000))
     (hW : W ≤ (47 / 1000) * Real.log k)
     (hX : 15 ≤ Real.log k) :
     0 < 1 / 2 + Real.log k - (439 / (250 * Real.log 2)) * Vsum k - (5 / 2) * W :=
   (master_scalar_audited hS hW hX).2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 theorem wNat_pos {k : ℕ} (hk : 1 ≤ k) : 0 < wNat k := by
   simpa [wNat_eq_w] using w_pos hk
-
-
 theorem wNat_lt_inv {k : ℕ} (hk : 1 ≤ k) : wNat k < 1 / (k : ℝ) := by
   simpa [wNat_eq_w] using w_lt_inv hk
-
-
-
 theorem wNat_gt_inv_succ {k : ℕ} (hk : 1 ≤ k) :
     1 / ((k : ℝ) + 1) < wNat k := by
   rw [wNat_eq_w, w]
@@ -12229,8 +8764,6 @@ theorem wNat_gt_inv_succ {k : ℕ} (hk : 1 ≤ k) :
     ring
   rw [heq2] at hmid
   linarith
-
-
 theorem wNat_lt_wNat {m k : ℕ} (hm : 1 ≤ m) (hmk : m < k) :
     wNat k < wNat m := by
   unfold wNat
@@ -12240,15 +8773,9 @@ theorem wNat_lt_wNat {m k : ℕ} (hm : 1 ≤ m) (hmk : m < k) :
     have : (1 : ℝ) / (k : ℝ) < 1 / (m : ℝ) :=
       one_div_lt_one_div_of_lt hm0 (by exact_mod_cast hmk)
     linarith
-
-
-
-
-
-
 theorem Lkn_lt_log_add_beta0 {k n : ℕ} (hn : n ∈ activeN k) :
     Lkn k n < Real.log n + beta0 := by
-  have hn'
+  have hn' := Finset.mem_filter.mp hn
   have hΛ : Lambda n ≠ 0 := hn'.2.1
   have hnle : n ≤ k := by
     have := Finset.mem_range.mp hn'.1
@@ -12261,7 +8788,6 @@ theorem Lkn_lt_log_add_beta0 {k n : ℕ} (hn : n ∈ activeN k) :
   have hk1 : 1 ≤ k := by omega
   have hm1 : 1 ≤ k / n := Nat.div_pos hnle hnpos
   have hmk : k / n < k := Nat.div_lt_self hkpos (by omega : 1 < n)
-
   have hk_lt : k < n * (k / n + 1) := by
     have hmod : k % n < n := Nat.mod_lt k hnpos
     have h := Nat.div_add_mod k n
@@ -12269,7 +8795,6 @@ theorem Lkn_lt_log_add_beta0 {k n : ℕ} (hn : n ∈ activeN k) :
       rw [Nat.mul_add, Nat.mul_one]
     omega
   have hk1' : k + 1 ≤ n * (k / n + 1) := Nat.succ_le_of_lt hk_lt
-
   have hwm : wNat (k / n) < 1 / ((k / n : ℕ) : ℝ) := wNat_lt_inv hm1
   have hwk : 1 / ((k : ℝ) + 1) < wNat k := wNat_gt_inv_succ hk1
   have hwkpos : 0 < wNat k := wNat_pos hk1
@@ -12315,9 +8840,6 @@ theorem Lkn_lt_log_add_beta0 {k n : ℕ} (hn : n ∈ activeN k) :
           rw [hlog2n]
           unfold beta0
           ring
-
-
-
 theorem sigmaTilde_le_sigma (k : ℕ) : sigmaTilde k ≤ sigma k := by
   apply sigmaTilde_le_sigma_of_L_bound
   · intro n hn
@@ -12350,13 +8872,6 @@ theorem sigmaTilde_le_sigma (k : ℕ) : sigmaTilde k ≤ sigma k := by
       Real.log_pos (by exact_mod_cast (show 1 < n by omega))
     have hb : 0 < beta0 := beta0_pos
     linarith
-
-
-
-
-
-
-
 theorem AWGC_of_V_bound {k : ℕ} {chihat : ℕ → ℝ}
     (hchi : ∀ m, chihat m ≤ V k m / Real.log 2) :
     ∑ m ∈ Finset.range (k + 1), chihat m ≤ (1 / Real.log 2) * Vsum k := by
@@ -12369,40 +8884,20 @@ theorem AWGC_of_V_bound {k : ℕ} {chihat : ℕ → ℝ}
     _ = (1 / Real.log 2) * Vsum k := by
         rw [Vsum]
         ring
-
-
-
-
 theorem mismatch_debit_le_sigma {k : ℕ} (hAWGC : AWGC k) {chihat : ℕ → ℝ}
     (hchi : ∀ m, chihat m ≤ V k m / Real.log 2) :
     ∑ m ∈ Finset.range (k + 1), chihat m ≤ sigma k :=
   le_trans (AWGC_of_V_bound hchi) (le_trans hAWGC (sigmaTilde_le_sigma k))
-
-
-
-
-
-
 def FiniteSweep : Prop :=
   ∀ k : ℕ, 2 ≤ k → k ≤ 3594641 → (1 / Real.log 2) * Vsum k ≤ sigmaTilde k
-
-
-
 def AWGCTail : Prop :=
   ∀ k : ℕ, 3594642 ≤ k → (1 / Real.log 2) * Vsum k ≤ sigmaTilde k
-
-
-
 theorem AWGC_of_sweep_tail (hsweep : FiniteSweep) (htail : AWGCTail) :
     ∀ k : ℕ, 2 ≤ k → AWGC k := by
   intro k hk
   by_cases h : k ≤ 3594641
   · exact hsweep k hk h
   · exact htail k (by omega)
-
-
-
-
 theorem exp_15_le_3594642 : Real.exp 15 ≤ (3594642 : ℝ) := by
   have h1 : Real.exp 1 < (2.7182818286 : ℝ) := Real.exp_one_lt_d9
   have h2 : (Real.exp 1) ^ 15 < (2.7182818286 : ℝ) ^ 15 :=
@@ -12413,30 +8908,13 @@ theorem exp_15_le_3594642 : Real.exp 15 ≤ (3594642 : ℝ) := by
   rw [h3]
   have h4 : (2.7182818286 : ℝ) ^ 15 < (3594642 : ℝ) := by norm_num
   linarith
-
-
 theorem log_3594642_ge_15 : (15 : ℝ) ≤ Real.log 3594642 :=
   (Real.le_log_iff_exp_le (by norm_num : (0 : ℝ) < 3594642)).mpr exp_15_le_3594642
-
-
-
-
-
-
-
-
 theorem awgc_tail_assembly {primePart hpp L : ℝ}
     (hprime : primePart ≤ 0.100317302 * L + 0.259330618)
     (hhpp : hpp ≤ 2.871496589970) (hL : 15 ≤ L) :
     primePart + hpp < 0.12 * L + 2.873 := by
   nlinarith
-
-
-
-
-
-
-
 theorem W_tail_assembly {L k C W1 W2 : ℝ}
     (hC : C ≤ 1.018232801063381479)
     (hlog2 : 0 < Real.log 2)
@@ -12460,11 +8938,6 @@ theorem W_tail_assembly {L k C W1 W2 : ℝ}
         + 9 / (192 * Real.log 2) * (C / 4 + Real.log (k / 2) / (2 * k))) := by ring
   rw [hfac] at hsum
   nlinarith [hsum, hb, hLpos]
-
-
-
-
-
 theorem W_tail_branch_bounds {L k C : ℝ}
     (hC : C ≤ 1.018232801063381479) (hCpos : 0 ≤ C)
     (hlog2 : 0 < Real.log 2) (hlog2ub : Real.log 2 ≤ 0.6931471808)
@@ -12520,15 +8993,6 @@ theorem W_tail_branch_bounds {L k C : ℝ}
         ≤ 0.067627 * 0.25456184 := mul_le_mul hc2 hsum hcl (by norm_num)
       _ ≤ 0.017216 := by norm_num
   exact ⟨hb1, hb2⟩
-
-
-
-
-
-
-
-
-
 theorem W_tail {L k C W1 W2 : ℝ}
     (hC : C ≤ 1.018232801063381479) (hCpos : 0 ≤ C)
     (hlog2 : 0 < Real.log 2) (hlog2ub : Real.log 2 ≤ 0.6931471808)
@@ -12541,11 +9005,6 @@ theorem W_tail {L k C W1 W2 : ℝ}
     rw [hL]
     exact Real.log_pos (by linarith)
   exact W_tail_assembly hC hlog2 hb1 hb2 hW1 hW2 hLpos
-
-
-
-
-
 theorem exp_852_gt_5000 : (5000 : ℝ) < Real.exp 8.52 := by
   have h1 : (2.7182818283 : ℝ) < Real.exp 1 := Real.exp_one_gt_d9
   have h2 : (2.7182818283 : ℝ) ^ 8 < (Real.exp 1) ^ 8 :=
@@ -12560,15 +9019,8 @@ theorem exp_852_gt_5000 : (5000 : ℝ) < Real.exp 8.52 := by
   have h6 : (5000 : ℝ) < (2.7182818283 : ℝ) ^ 8 * (1.68168 : ℝ) := by norm_num
   rw [show (8.52 : ℝ) = 8 + 0.52 by norm_num, Real.exp_add, h3]
   nlinarith [h2, h4, h5, h6, Real.exp_pos (0.52 : ℝ)]
-
-
 theorem log_5000_lt_852 : Real.log 5000 < 8.52 :=
   (Real.log_lt_iff_lt_exp (by norm_num : (0 : ℝ) < 5000)).mpr exp_852_gt_5000
-
-
-
-
-
 theorem leakage_bound_of_log {k : ℕ} (hk : 5000 ≤ k) (hlog : Real.log k ≤ 8.52) :
     (Real.log k) ^ 2 / (48 * Real.log 2 * (k : ℝ) ^ 2) < 9 / 10 ^ 8 := by
   have hlog2 : (0.6931471803 : ℝ) < Real.log 2 := Real.log_two_gt_d9
@@ -12590,10 +9042,6 @@ theorem leakage_bound_of_log {k : ℕ} (hk : 5000 ≤ k) (hlog : Real.log k ≤ 
     rw [div_lt_iff₀ (by positivity)]
     nlinarith [hlog2]
   linarith
-
-
-
-
 theorem reserve_scalar {k : ℕ} (hk : 1 ≤ k) :
     (8 / 1000 : ℝ) < 1 / 2 - Real.log ((k : ℝ) * w k) - 492 / 1000 := by
   have hk0 : (0 : ℝ) < (k : ℝ) := by exact_mod_cast (by omega : 0 < k)
@@ -12606,23 +9054,11 @@ theorem reserve_scalar {k : ℕ} (hk : 1 ≤ k) :
     have h := Real.log_lt_log (mul_pos hk0 hwpos) hlt
     rwa [Real.log_one] at h
   linarith
-
-
-
-
 theorem reserve_corrected {E leak : ℝ} (hE : (8 / 1000 : ℝ) < E)
     (hleak : leak < 9 / 10 ^ 8) :
     (79999 / 10000000 : ℝ) < E - leak := by
   norm_num at *
   linarith
-
-
-
-
-
-
-
-
 theorem master_scalar_uniform_all {W : ℕ → ℝ}
     (hsweep : ∀ k : ℕ, 7 ≤ k → k ≤ 3594641 → 0 < masterGap k (W k))
     (htail : ∀ k : ℕ, 3594642 ≤ k →
@@ -12637,13 +9073,7 @@ theorem master_scalar_uniform_all {W : ℕ → ℝ}
       le_trans log_3594642_ge_15
         (Real.log_le_log (by norm_num) (by exact_mod_cast hk'))
     exact (master_scalar_audited (htail k hk').1 (htail k hk').2 hlog).2
-
-
-
-
 noncomputable def Bk (k : ℕ) : ℝ := 1 / 2 + Real.log (1 / wNat k)
-
-
 theorem wNat_le_log2 {k : ℕ} (hk : 1 ≤ k) : wNat k ≤ Real.log 2 := by
   rcases eq_or_lt_of_le hk with h | h
   · subst h
@@ -12652,10 +9082,6 @@ theorem wNat_le_log2 {k : ℕ} (hk : 1 ≤ k) : wNat k ≤ Real.log 2 := by
     have h1 : wNat 1 = Real.log 2 := by norm_num [wNat]
     rw [h1] at hlt
     exact hlt.le
-
-
-
-
 theorem Lkn_gt_log {k n : ℕ} (hn : n ∈ activeN k) : Real.log n < Lkn k n := by
   have hn' := Finset.mem_filter.mp hn
   have hΛ : Lambda n ≠ 0 := hn'.2.1
@@ -12675,7 +9101,6 @@ theorem Lkn_gt_log {k n : ℕ} (hn : n ∈ activeN k) : Real.log n < Lkn k n := 
     intro hkn
     exact hndvd (hkn ▸ dvd_rfl)
   have hnlt : n < k := lt_of_le_of_ne hnle hne
-
   have hwm_lb : 2 / (1 + 2 * ((k / n : ℕ) : ℝ)) < wNat (k / n) := by
     have hmpos : (0 : ℝ) < 1 / ((k / n : ℕ) : ℝ) := one_div_pos.mpr hm0
     have h := Real.lt_log_one_add_of_pos hmpos
@@ -12696,7 +9121,6 @@ theorem Lkn_gt_log {k n : ℕ} (hn : n ∈ activeN k) : Real.log n < Lkn k n := 
           div_lt_div_of_pos_left ha hwk_pos hwk_ub
       _ < wNat (k / n) / wNat k :=
           div_lt_div_of_pos_right hwm_lb hwk_pos
-
   have hml : (((k / n : ℕ) : ℝ)) ≤ (k : ℝ) / (n : ℝ) := Nat.cast_div_le
   have hnle' : (n : ℝ) ≤ (k : ℝ) := by exact_mod_cast hnle
   have hn0 : (0 : ℝ) < (n : ℝ) := by exact_mod_cast hnpos
@@ -12715,7 +9139,6 @@ theorem Lkn_gt_log {k n : ℕ} (hn : n ∈ activeN k) : Real.log n < Lkn k n := 
       have hmodpos : (0 : ℝ) < ((k % n : ℕ) : ℝ) := by exact_mod_cast hmod
       linarith
     nlinarith [hnm, hnle']
-
   have hlog_lb : Real.log (2 * (n : ℝ) / 3)
       ≤ Real.log (2 * (k : ℝ) / (1 + 2 * ((k / n : ℕ) : ℝ))) :=
     Real.log_le_log (div_pos (mul_pos (by norm_num) hn0) (by norm_num)) hfrac.le
@@ -12737,17 +9160,8 @@ theorem Lkn_gt_log {k n : ℕ} (hn : n ∈ activeN k) : Real.log n < Lkn k n := 
     linarith
   unfold Lkn
   linarith [hlog_lb, hlog_ub, hsplit, h23]
-
-
-
-
-
 def MertensActive (k : ℕ) : Prop :=
   ∑ n ∈ activeN k, Lambda n / (n : ℝ) ≤ Real.log k
-
-
-
-
 theorem sigma_lt_of_mertens {k : ℕ} (hk : 2 ≤ k) (hM : MertensActive k) :
     sigma k < Real.log k := by
   have hterm : ∀ n ∈ activeN k,
@@ -12783,10 +9197,6 @@ theorem sigma_lt_of_mertens {k : ℕ} (hk : 2 ≤ k) (hM : MertensActive k) :
     rw [hs]
     exact Real.log_pos (by exact_mod_cast (show 1 < k by omega))
   · exact (Finset.sum_lt_sum_of_nonempty hne hterm).trans_le hM
-
-
-
-
 theorem feshbach_reserve_of_mertens {k : ℕ} (hk : 2 ≤ k) (hM : MertensActive k) :
     (1 / 2 : ℝ) < Bk k - sigma k := by
   have hk1 : 1 ≤ k := by omega
@@ -12807,26 +9217,6 @@ theorem feshbach_reserve_of_mertens {k : ℕ} (hk : 2 ≤ k) (hM : MertensActive
   unfold Bk
   rw [hloginv]
   linarith
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 theorem gateII_arithmetic_budget {W : ℕ → ℝ} {chihat : ℕ → ℕ → ℝ}
     (hSweep : FiniteSweep) (hTail : AWGCTail)
     (hMert : ∀ k : ℕ, 7 ≤ k → MertensActive k)
@@ -12849,14 +9239,6 @@ theorem gateII_arithmetic_budget {W : ℕ → ℝ} {chihat : ℕ → ℕ → ℝ
   · intro k hk
     exact master_scalar_uniform_all hWsweep
       (fun j hj => ⟨hVtail j hj, hWtail j hj⟩) k hk
-
-
-
-
-
-
-
-
 theorem V_le_shifted (k m : ℕ) (c : ℝ) :
     V k m ≤ ∑ n ∈ Nset k m, (Lambda n - c * (n : ℝ)) ^ 2 / (n : ℝ) := by
   have hterm : ∀ n ∈ Nset k m,
@@ -12890,16 +9272,9 @@ theorem V_le_shifted (k m : ℕ) (c : ℝ) :
       field_simp
       ring
     linarith
-
-
-
-
 noncomputable def Jm (m : ℕ) : ℝ :=
   ∫ u in (m : ℝ) / ((m : ℝ) + 1)..1, (1 - u) ^ 2 / u
-
-
 noncomputable def Jprim (u : ℝ) : ℝ := Real.log u - 2 * u + u ^ 2 / 2
-
 theorem hasDerivAt_Jprim {u : ℝ} (hu : u ≠ 0) :
     HasDerivAt Jprim ((1 - u) ^ 2 / u) u := by
   unfold Jprim
@@ -12916,9 +9291,6 @@ theorem hasDerivAt_Jprim {u : ℝ} (hu : u ≠ 0) :
     ring
   · field_simp
     ring
-
-
-
 theorem Jm_closed {m : ℕ} (hm : 1 ≤ m) :
     Jm m = -1 / ((m : ℝ) + 1) - 1 / (2 * ((m : ℝ) + 1) ^ 2)
       - Real.log ((m : ℝ) / ((m : ℝ) + 1)) := by
@@ -12949,9 +9321,6 @@ theorem Jm_closed {m : ℕ} (hm : 1 ≤ m) :
   rw [div_pow]
   field_simp
   ring
-
-
-
 theorem sum_log_telescope_quot (N : ℕ) :
     ∑ m ∈ Finset.range N, Real.log (((m : ℝ) + 1) / ((m : ℝ) + 2))
       = -Real.log ((N : ℝ) + 1) := by
@@ -12967,8 +9336,6 @@ theorem sum_log_telescope_quot (N : ℕ) :
       rw [Finset.sum_range_succ, ih]
       push_cast
       ring
-
-
 theorem sum_shifted_harmonic (N : ℕ) :
     ∑ m ∈ Finset.range N, 1 / ((m : ℝ) + 2) = (harmonic (N + 1) : ℝ) - 1 := by
   induction N with
@@ -12983,9 +9350,6 @@ theorem sum_shifted_harmonic (N : ℕ) :
         ring
       rw [hsucc]
       ring
-
-
-
 theorem Jm_partial_sum (N : ℕ) :
     ∑ m ∈ Finset.range N, Jm (m + 1)
       = 1 - (harmonic (N + 1) : ℝ)
@@ -13002,10 +9366,6 @@ theorem Jm_partial_sum (N : ℕ) :
   simp only [neg_div]
   rw [Finset.sum_neg_distrib, sum_shifted_harmonic N, sum_log_telescope_quot N]
   ring
-
-
-
-
 theorem Jm_succ_nonneg (m : ℕ) : 0 ≤ Jm (m + 1) := by
   unfold Jm
   apply intervalIntegral.integral_nonneg
@@ -13016,8 +9376,6 @@ theorem Jm_succ_nonneg (m : ℕ) : 0 ≤ Jm (m + 1) := by
     have hm0 : (0 : ℝ) < ((m + 1 : ℕ) : ℝ) / (((m + 1 : ℕ) : ℝ) + 1) := by positivity
     have hu0 : 0 < u := lt_of_lt_of_le hm0 hu.1
     exact div_nonneg (sq_nonneg _) hu0.le
-
-
 theorem sum_shifted_inv_sq (N : ℕ) :
     (∑ m ∈ Finset.range N, 1 / (((m : ℝ) + 2) ^ 2))
       = (∑ n ∈ Finset.range (N + 2), 1 / ((n : ℝ) ^ 2)) - 1 := by
@@ -13033,9 +9391,6 @@ theorem sum_shifted_inv_sq (N : ℕ) :
     ring
   rw [hrew]
   ring
-
-
-
 theorem hasSum_Jm :
     HasSum (fun m : ℕ => Jm (m + 1))
       (3 / 2 - Real.eulerMascheroniConstant - Real.pi ^ 2 / 12) := by
@@ -13083,25 +9438,12 @@ theorem hasSum_Jm :
   exact (hasSum_iff_tendsto_nat_of_nonneg (f := fun m : ℕ => Jm (m + 1))
     (fun m => Jm_succ_nonneg m)
     (3 / 2 - Real.eulerMascheroniConstant - Real.pi ^ 2 / 12)).mpr hlim
-
-
 theorem tsum_Jm :
     ∑' m : ℕ, Jm (m + 1)
       = 3 / 2 - Real.eulerMascheroniConstant - Real.pi ^ 2 / 12 :=
   hasSum_Jm.tsum_eq
-
-
-
-
 theorem sq_sub_le_sq_add {A D : ℝ} (h : 0 ≤ A * D) : (A - D) ^ 2 ≤ A ^ 2 + D ^ 2 :=
   by nlinarith
-
-
-
-
-
-
-
 theorem vonMangoldt_sub_sq_le {p ℓ : ℕ} (hp : p.Prime) (hℓ : ℓ ≠ 0) (c : ℝ)
     (hAD : 0 ≤ (Real.log ((p ^ ℓ : ℕ) : ℝ) - c * ((p ^ ℓ : ℕ) : ℝ))
       * (((ℓ : ℝ) - 1) * Real.log p)) :
@@ -13120,18 +9462,8 @@ theorem vonMangoldt_sub_sq_le {p ℓ : ℕ} (hp : p.Prime) (hℓ : ℓ ≠ 0) (c
     ring
   rw [hΛ, hsub]
   exact sq_sub_le_sq_add hAD
-
-
-
-
 noncomputable def Apar (c t : ℝ) : ℝ := Real.log t - c * t
-
-
-
 noncomputable def gpar (c t : ℝ) : ℝ := (Apar c t) ^ 2 / (t * Real.log t)
-
-
-
 theorem hasDerivAt_gpar {c t : ℝ} (ht : t ≠ 0) (hlog : Real.log t ≠ 0) :
     HasDerivAt (gpar c)
       (Apar c t * (1 - Real.log t) * (Real.log t + c * t) / (t * Real.log t) ^ 2) t := by
@@ -13161,20 +9493,12 @@ theorem hasDerivAt_gpar {c t : ℝ} (ht : t ≠ 0) (hlog : Real.log t ≠ 0) :
     unfold Apar
     field_simp
     ring
-
-
-
-
 theorem gpar_deriv_nonpos {c t : ℝ} (hc : 0 < c) (ht : 0 < t)
     (hlog1 : 1 ≤ Real.log t) (hA : 0 ≤ Apar c t) :
     Apar c t * (1 - Real.log t) * (Real.log t + c * t) ≤ 0 := by
   have h1 : 1 - Real.log t ≤ 0 := by linarith
   have h2 : 0 < Real.log t + c * t := add_pos (by linarith) (mul_pos hc ht)
   exact mul_nonpos_of_nonpos_of_nonneg (mul_nonpos_of_nonneg_of_nonpos hA h1) h2.le
-
-
-
-
 theorem gpar_antitoneOn_Icc {c a b : ℝ} (hc : 0 < c) (ha : Real.exp 1 ≤ a)
     (hab : a ≤ b) (hA : ∀ t ∈ Set.Icc a b, 0 ≤ Apar c t) :
     AntitoneOn (gpar c) (Set.Icc a b) := by
@@ -13220,11 +9544,6 @@ theorem gpar_antitoneOn_Icc {c a b : ℝ} (hc : 0 < c) (ha : Real.exp 1 ≤ a)
     rw [(hasDerivAt_gpar (ne_of_gt ht0) (ne_of_gt hl0)).deriv]
     exact div_nonpos_of_nonpos_of_nonneg
       (gpar_deriv_nonpos hc ht0 hlt (hA t (Set.Ioo_subset_Icc_self ht))) (sq_nonneg _)
-
-
-
-
-
 theorem Apar_nonneg {b t : ℝ} (hb : Real.exp 1 ≤ b) (ht : Real.exp 1 ≤ t)
     (htb : t ≤ b) : 0 ≤ Apar (Real.log b / b) t := by
   unfold Apar
@@ -13234,27 +9553,14 @@ theorem Apar_nonneg {b t : ℝ} (hb : Real.exp 1 ≤ b) (ht : Real.exp 1 ≤ t)
   have hmul := mul_le_mul_of_nonneg_right hanti ht0.le
   have h1 : Real.log t / t * t = Real.log t := by field_simp
   linarith
-
-
-
-
 theorem stirlingSecond_two_zero : Nat.stirlingSecond 2 0 = 0 := by decide
-
 theorem stirlingSecond_two_one : Nat.stirlingSecond 2 1 = 1 := by decide
-
 theorem stirlingSecond_two_two : Nat.stirlingSecond 2 2 = 1 := by decide
-
-
-
 theorem hpp_rational_identity (x : ℝ) (hx : x ≠ 1) :
     2 * x ^ 2 / (1 - x) ^ 3 + 3 * x / (1 - x) ^ 2 + 1 / (1 - x)
       = (1 + x) / (1 - x) ^ 3 := by
   field_simp
   ring
-
-
-
-
 theorem hasSum_hpp_series {x : ℝ} (hx : |x| < 1) :
     HasSum (fun j : ℕ => ((j : ℝ) + 1) ^ 2 * x ^ (j + 2))
       (x ^ 2 * (1 + x) / (1 - x) ^ 3) := by
@@ -13285,7 +9591,7 @@ theorem hasSum_hpp_series {x : ℝ} (hx : |x| < 1) :
     rw [hval] at h
     simpa only [Nat.cast_pow] using h
   have hcomb := (h2.add (h1.mul_left 2)).add h0
-  have hcomb'
+  have hcomb' : HasSum
       (fun n : ℕ => (n : ℝ) ^ 2 * x ^ n + 2 * ((n : ℝ) * x ^ n) + x ^ n)
       (x * (1 + x) / (1 - x) ^ 3 + 2 * (x / (1 - x) ^ 2) + 1 / (1 - x)) :=
     by simpa only [Pi.add_apply] using hcomb
@@ -13310,12 +9616,6 @@ theorem hasSum_hpp_series {x : ℝ} (hx : |x| < 1) :
   have hval3 : x ^ 2 * ((1 + x) / (1 - x) ^ 3) = x ^ 2 * (1 + x) / (1 - x) ^ 3 :=
     by ring
   rwa [hfun3, hval3] at hfinal'
-
-
-
-
-
-
 theorem hpp_prime_series {p : ℝ} (hp : 1 < p) :
     HasSum (fun j : ℕ => ((j : ℝ) + 1) ^ 2 / p ^ (j + 2))
       ((p + 1) / (p - 1) ^ 3) := by
@@ -13332,22 +9632,8 @@ theorem hpp_prime_series {p : ℝ} (hp : 1 < p) :
       = (p + 1) / (p - 1) ^ 3 := by
     field_simp
   rwa [hfun, hval] at h
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable def tailPrim (x : ℝ) : ℝ :=
   -((Real.log x) ^ 2 + 2 * Real.log x + 2) / x
-
-
 theorem hasDerivAt_tailPrim {x : ℝ} (hx : 0 < x) :
     HasDerivAt tailPrim ((Real.log x) ^ 2 / x ^ 2) x := by
   have hlog : HasDerivAt Real.log x⁻¹ x := Real.hasDerivAt_log hx.ne'
@@ -13357,8 +9643,6 @@ theorem hasDerivAt_tailPrim {x : ℝ} (hx : 0 < x) :
   simp only [id_eq]
   field_simp [hx.ne']
   simp
-
-
 theorem tendsto_tailPrim_atTop : Tendsto tailPrim atTop (𝓝 0) := by
   have h2 : Tendsto (fun x : ℝ => (Real.log x) ^ 2 / x) atTop (𝓝 0) := by
     simpa using Real.tendsto_pow_log_div_mul_add_atTop (1 : ℝ) 0 2 one_ne_zero
@@ -13374,9 +9658,6 @@ theorem tendsto_tailPrim_atTop : Tendsto tailPrim atTop (𝓝 0) := by
     ring
   rw [hfun]
   simpa using h
-
-
-
 theorem hasDerivAt_log_sq_div_sq {x : ℝ} (hx : 0 < x) :
     HasDerivAt (fun t : ℝ => (Real.log t) ^ 2 / t ^ 2)
       (2 * Real.log x * (1 - Real.log x) / x ^ 3) x := by
@@ -13386,9 +9667,6 @@ theorem hasDerivAt_log_sq_div_sq {x : ℝ} (hx : 0 < x) :
   field_simp [hx.ne']
   simp only [Pi.pow_apply]
   ring
-
-
-
 theorem integral_log_sq_div_sq {P N : ℝ} (hP : 0 < P) (hPN : P ≤ N) :
     ∫ x in P..N, (Real.log x) ^ 2 / x ^ 2 = tailPrim N - tailPrim P := by
   refine intervalIntegral.integral_eq_sub_of_hasDerivAt ?_ ?_
@@ -13404,8 +9682,6 @@ theorem integral_log_sq_div_sq {P N : ℝ} (hP : 0 < P) (hPN : P ≤ N) :
     have hden : ContinuousOn (fun x : ℝ => x ^ 2) (Set.uIcc P N) :=
       continuousOn_id.pow 2
     exact (hnum.div hden (fun x hx => pow_ne_zero 2 (hsub hx))).intervalIntegrable
-
-
 theorem antitoneOn_log_sq_div_sq {P : ℝ} (hP : Real.exp 1 ≤ P) :
     AntitoneOn (fun t : ℝ => (Real.log t) ^ 2 / t ^ 2) (Set.Ici P) := by
   have hP0 : 0 < P := lt_of_lt_of_le (Real.exp_pos 1) hP
@@ -13429,9 +9705,6 @@ theorem antitoneOn_log_sq_div_sq {P : ℝ} (hP : Real.exp 1 ≤ P) :
     refine div_nonpos_of_nonpos_of_nonneg ?_ (by positivity)
     exact mul_nonpos_of_nonneg_of_nonpos (mul_nonneg (by norm_num) (by linarith))
       (by linarith)
-
-
-
 theorem log_sq_div_sq_partial_le (P : ℕ) (hP : Real.exp 1 ≤ (P : ℝ)) (M : ℕ) :
     ∑ i ∈ Finset.range M,
         (Real.log ((i + P + 1 : ℕ) : ℝ)) ^ 2 / ((i + P + 1 : ℕ) : ℝ) ^ 2
@@ -13466,33 +9739,22 @@ theorem log_sq_div_sq_partial_le (P : ℕ) (hP : Real.exp 1 ≤ (P : ℝ)) (M : 
     _ = ((Real.log (P : ℝ)) ^ 2 + 2 * Real.log (P : ℝ) + 2) / (P : ℝ) := by
       unfold tailPrim
       ring
-
-
-
-
 theorem tsum_log_sq_div_sq_tail_le (P : ℕ) (hP : Real.exp 1 ≤ (P : ℝ)) :
     ∑' i : ℕ, (Real.log ((i + P + 1 : ℕ) : ℝ)) ^ 2 / ((i + P + 1 : ℕ) : ℝ) ^ 2
       ≤ ((Real.log (P : ℝ)) ^ 2 + 2 * Real.log (P : ℝ) + 2) / (P : ℝ) :=
   Real.tsum_le_of_sum_range_le (fun i => div_nonneg (sq_nonneg _) (sq_nonneg _))
     (log_sq_div_sq_partial_le P hP)
-
-
-
 theorem summable_log_sq_div_sq_tail (P : ℕ) (hP : Real.exp 1 ≤ (P : ℝ)) :
     Summable (fun i : ℕ =>
       (Real.log ((i + P + 1 : ℕ) : ℝ)) ^ 2 / ((i + P + 1 : ℕ) : ℝ) ^ 2) :=
   summable_of_sum_range_le (fun i => div_nonneg (sq_nonneg _) (sq_nonneg _))
     (log_sq_div_sq_partial_le P hP)
-
 noncomputable def hppRatio (x : ℝ) : ℝ := (1 + x) / (1 - x) ^ 3
-
 noncomputable def hppTerm (n : ℕ) : ℝ :=
   if Nat.Prime n then
     (Real.log (n : ℝ)) ^ 2 * (((n : ℝ) + 1) / ((n : ℝ) - 1) ^ 3)
   else 0
-
-noncomputable def Hpp : ℝ := ∑'
-
+noncomputable def Hpp : ℝ := ∑' n : ℕ, hppTerm n
 theorem hasDerivAt_hppRatio {x : ℝ} (hx : x ≠ 1) :
     HasDerivAt hppRatio ((4 + 2 * x) / (1 - x) ^ 4) x := by
   have h1 : HasDerivAt (fun t : ℝ => 1 + t) 1 x := by
@@ -13511,7 +9773,6 @@ theorem hasDerivAt_hppRatio {x : ℝ} (hx : x ≠ 1) :
   have h := h1.div h2 (pow_ne_zero 3 (sub_ne_zero.mpr (Ne.symm hx)))
   refine h.congr_deriv ?_
   field_simp <;> ring
-
 theorem hppRatio_monotoneOn : MonotoneOn hppRatio (Set.Icc 0 (1 / 2 : ℝ)) := by
   apply monotoneOn_of_deriv_nonneg (convex_Icc 0 (1 / 2 : ℝ))
   · have hsub : Set.Icc (0 : ℝ) (1 / 2) ⊆ {1}ᶜ := by
@@ -13531,11 +9792,9 @@ theorem hppRatio_monotoneOn : MonotoneOn hppRatio (Set.Icc 0 (1 / 2 : ℝ)) := b
     have ht1 : t < 1 := lt_of_lt_of_le ht.2 (by norm_num)
     rw [(hasDerivAt_hppRatio (ne_of_lt ht1)).deriv]
     exact div_nonneg (by linarith [ht.1]) (by positivity)
-
 theorem hppRatio_nonneg {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x ≤ 1) : 0 ≤ hppRatio x := by
   unfold hppRatio
   exact div_nonneg (by linarith) (pow_nonneg (by linarith) 3)
-
 theorem hpp_term_eq {n : ℕ} (hn : 1 < n) :
     (Real.log (n : ℝ)) ^ 2 * (((n : ℝ) + 1) / ((n : ℝ) - 1) ^ 3)
       = hppRatio (1 / (n : ℝ)) * ((Real.log (n : ℝ)) ^ 2 / (n : ℝ) ^ 2) := by
@@ -13545,8 +9804,6 @@ theorem hpp_term_eq {n : ℕ} (hn : 1 < n) :
     linarith
   unfold hppRatio
   field_simp <;> ring
-
-
 theorem hppTerm_le_ratio_mul (P : ℕ) (hP : 4 ≤ P) {n : ℕ} (hn : P < n) :
     hppTerm n ≤ hppRatio (1 / (P : ℝ)) * ((Real.log (n : ℝ)) ^ 2 / (n : ℝ) ^ 2) := by
   have hP0 : (0 : ℝ) < P := by exact_mod_cast (by omega : 0 < P)
@@ -13572,7 +9829,6 @@ theorem hppTerm_le_ratio_mul (P : ℕ) (hP : 4 ≤ P) {n : ℕ} (hn : P < n) :
       rw [div_le_iff₀ hP0]
       have hP4 : (4 : ℝ) ≤ P := by exact_mod_cast hP
       linarith)) hfn
-
 theorem Hpp_lt_of_certificate (P : ℕ) (hP : 4 ≤ P)
     (u : ℕ → ℚ) (uP : ℚ)
     (hu : ∀ p, Nat.Prime p → p ≤ P → Real.log (p : ℝ) ≤ (u p : ℝ))
@@ -13669,19 +9925,6 @@ theorem Hpp_lt_of_certificate (P : ℕ) (hP : 4 ≤ P)
     · rw [if_neg hprime, hppTerm, if_neg hprime]
   rw [Hpp, ← hsplit]
   linarith [hfinite, hshift_bound, hnum]
-
-
-
-
-
-
-
-
-
-
-
-
-
 theorem log_le_of_taylor {p N : ℕ} {u : ℚ} (hp : 0 < p) (hu : 0 ≤ u)
     (h : (p : ℚ) ≤ ∑ k ∈ Finset.range N, u ^ k / (Nat.factorial k : ℚ)) :
     Real.log (p : ℝ) ≤ (u : ℝ) := by
@@ -13695,9 +9938,6 @@ theorem log_le_of_taylor {p N : ℕ} {u : ℚ} (hp : 0 < p) (hu : 0 ≤ u)
           exact_mod_cast h
     _ = ∑ k ∈ Finset.range N, ((u : ℝ)) ^ k / (Nat.factorial k : ℝ) := hcast
     _ ≤ Real.exp (u : ℝ) := Real.sum_le_exp_of_nonneg (by exact_mod_cast hu) N
-
-
-
 structure LogUpper where
   p : ℕ
   u : ℚ
@@ -13705,13 +9945,7 @@ structure LogUpper where
   hp : 0 < p
   hu : 0 ≤ u
   htaylor : (p : ℚ) ≤ ∑ k ∈ Finset.range N, u ^ k / (Nat.factorial k : ℚ)
-
-
 theorem LogUpper.sound (b : LogUpper) : Real.log (b.p : ℝ) ≤ (b.u : ℝ) :=
   log_le_of_taylor b.hp b.hu b.htaylor
-
 end RHLean.GateII.Chain
-
-
-
 end Inline_GateII_Chain

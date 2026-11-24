@@ -1,58 +1,18 @@
 import RHLeanFullShard01
-
-
 set_option maxHeartbeats 2000000
 set_option maxHeartbeats 800000
-
 section Inline_Y7_Arch
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 set_option maxHeartbeats 1000000
-
 open MeasureTheory
 open scoped BigOperators
-
 namespace Y7Arch
-
 open Y7Op
 open Y7Matrix
-
-
-
-
 noncomputable def archKernelMatrix (m n : ℕ) : ℝ :=
   (1 / 4) * ∫ x in Set.Ioo (-1 : ℝ) 1, ∫ y in Set.Ioo (-1 : ℝ) 1,
     (((Y7Legendre.phi m).eval x - (Y7Legendre.phi m).eval y) *
       ((Y7Legendre.phi n).eval x - (Y7Legendre.phi n).eval y)) / ‖x - y‖
-
-
 theorem archKernelMatrix_symm (m n : ℕ) :
     archKernelMatrix m n = archKernelMatrix n m := by
   unfold archKernelMatrix
@@ -62,8 +22,6 @@ theorem archKernelMatrix_symm (m n : ℕ) :
   apply MeasureTheory.integral_congr_ae
   filter_upwards with y
   ring
-
-
 theorem archKernelMatrix_zero_left (n : ℕ) : archKernelMatrix 0 n = 0 := by
   have hphi0 : ∀ y : ℝ, (Y7Legendre.phi 0).eval y = (Y7Legendre.phi 0).eval 0 := by
     unfold Y7Legendre.phi
@@ -78,13 +36,8 @@ theorem archKernelMatrix_zero_left (n : ℕ) : archKernelMatrix 0 n = 0 := by
     rw [hphi0 x, hphi0 y, sub_self, zero_mul, zero_div]
   simp_rw [hzero]
   simp
-
-
 theorem archKernelMatrix_zero_right (m : ℕ) : archKernelMatrix m 0 = 0 := by
   rw [archKernelMatrix_symm m 0, archKernelMatrix_zero_left m]
-
-
-
 theorem archKernelMatrix_zero_matches (n : ℕ) :
     archKernelMatrix 0 n =
       (if 0 = n then Y7Matrix.harmonicR 0 else 0) := by
@@ -93,10 +46,6 @@ theorem archKernelMatrix_zero_matches (n : ℕ) :
   · subst h
     simp [Y7Matrix.harmonicR_zero]
   · simp [h]
-
-
-
-
 private lemma abs_phi_sub_le_of_bound {m : ℕ} {C : ℝ}
     (hC : ∀ x ∈ Set.Icc (-1 : ℝ) 1,
       ‖(Polynomial.derivative (Y7Legendre.phi m)).eval x‖ ≤ C)
@@ -113,9 +62,6 @@ private lemma abs_phi_sub_le_of_bound {m : ℕ} {C : ℝ}
   have h := Convex.norm_image_sub_le_of_norm_deriv_le hdiff hbound
     (convex_Icc (-1 : ℝ) 1) hx hy
   simpa only [Real.norm_eq_abs, abs_sub_comm] using h
-
-
-
 private lemma integrableOn_arch_quotient (m n : ℕ) {u : ℝ}
     (hu : u ∈ Set.Ioo (-1 : ℝ) 1) :
     IntegrableOn (fun y : ℝ =>
@@ -178,9 +124,6 @@ private lemma integrableOn_arch_quotient (m n : ℕ) {u : ℝ}
             mul_le_mul_of_nonneg_left hdist
               (mul_nonneg (mul_nonneg Cm0 Cn0) (norm_nonneg _))
         _ = 2 * Cm * Cn * ‖u - y‖ := by ring
-
-
-
 private lemma integrableOn_arch_quotient_integral (m n : ℕ) :
     IntegrableOn (fun u : ℝ => ∫ y in Set.Ioo (-1 : ℝ) 1,
       ((Y7Legendre.phi m).eval u - (Y7Legendre.phi m).eval y) *
@@ -269,12 +212,6 @@ private lemma integrableOn_arch_quotient_integral (m n : ℕ) :
       norm_num
     rw [measureReal_def, hvol] at hb
     simpa only [mul_assoc] using hb
-
-
-
-
-
-
 theorem archFormRescaled_legSum (s : Finset ℕ) (x : ℕ → ℝ) :
     RHLean.archFormRescaled (legSum x s) =
       ∑ m ∈ s, ∑ n ∈ s, x m * x n * archKernelMatrix m n := by
@@ -368,10 +305,6 @@ theorem archFormRescaled_legSum (s : Finset ℕ) (x : ℕ → ℝ) :
     apply integrable_finsetSum
     intro n hn
     exact Integrable.const_mul (integrableOn_arch_quotient_integral m n) (x m * x n)
-
-
-
-
 theorem archDiagonalRep_of_archKernelMatrix
     (h : ∀ m n : ℕ,
       archKernelMatrix m n = if m = n then Y7Matrix.harmonicR m else 0) :
@@ -383,17 +316,11 @@ theorem archDiagonalRep_of_archKernelMatrix
   apply Finset.sum_congr rfl
   intro n hn
   rw [h m n]
-
-
-
-
 private lemma phi_eval_neg (m : ℕ) (x : ℝ) :
     (Y7Legendre.phi m).eval (-x) = (-1 : ℝ) ^ m * (Y7Legendre.phi m).eval x := by
   have h := congr_arg (fun p : Polynomial ℝ => p.eval x) (Y7Legendre.phi_comp_neg_X m)
   simpa only [Polynomial.eval_comp, Polynomial.eval_neg, Polynomial.eval_X,
     Polynomial.eval_smul, smul_eq_mul] using h
-
-
 private lemma setIntegral_Ioo_comp_neg {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (f : ℝ → E) :
     (∫ x in Set.Ioo (-1 : ℝ) 1, f (-x)) = ∫ x in Set.Ioo (-1 : ℝ) 1, f x := by
@@ -422,9 +349,6 @@ private lemma setIntegral_Ioo_comp_neg {E : Type*} [NormedAddCommGroup E] [Norme
     _ = ∫ x, (Set.Ioo (-1 : ℝ) 1).indicator f x := integral_neg_eq_self _ volume
     _ = ∫ x in Set.Ioo (-1 : ℝ) 1, f x := by
         rw [integral_indicator measurableSet_Ioo]
-
-
-
 private lemma archKernelMatrix_integrand_neg (m n : ℕ) (x y : ℝ) :
     (((Y7Legendre.phi m).eval (-x) - (Y7Legendre.phi m).eval (-y)) *
         ((Y7Legendre.phi n).eval (-x) - (Y7Legendre.phi n).eval (-y))) /
@@ -452,10 +376,6 @@ private lemma archKernelMatrix_integrand_neg (m n : ℕ) (x y : ℝ) :
     rw [pow_add]
     ring]
   ring
-
-
-
-
 theorem archKernelMatrix_parity (m n : ℕ) (hmn : Odd (m + n)) :
     archKernelMatrix m n = 0 := by
   let F : ℝ → ℝ → ℝ := fun x y =>
@@ -497,18 +417,10 @@ theorem archKernelMatrix_parity (m n : ℕ) (hmn : Odd (m + n)) :
     calc archKernelMatrix m n = (-1 : ℝ) ^ (m + n) * archKernelMatrix m n := hneg
       _ = -archKernelMatrix m n := by rw [hmn.neg_one_pow, neg_one_mul]
   linarith
-
-
-
-
 noncomputable def archL (f : ℝ → ℝ) (x : ℝ) : ℝ :=
   ∫ y in Set.Ioo (-1 : ℝ) 1, (f x - f y) / ‖x - y‖
-
-
 noncomputable def archH (f : ℝ → ℝ) (x : ℝ) : ℝ :=
   ∫ y in Set.Ioo (-1 : ℝ) 1, (x - y) / ‖x - y‖ * f y
-
-
 private lemma integrableOn_archL_legP (n : ℕ) {x : ℝ}
     (hx : x ∈ Set.Ioo (-1 : ℝ) 1) :
     IntegrableOn (fun y : ℝ =>
@@ -550,8 +462,6 @@ private lemma integrableOn_archL_legP (n : ℕ) {x : ℝ}
         exact sub_ne_zero.mpr hxy
       rw [div_le_iff₀ hpos]
       exact h'
-
-
 private lemma integrableOn_archH_legP (n : ℕ) (x : ℝ) :
     IntegrableOn (fun y : ℝ => (x - y) / ‖x - y‖ * (Y7Legendre.legP n).eval y)
       (Set.Ioo (-1 : ℝ) 1) := by
@@ -581,9 +491,6 @@ private lemma integrableOn_archH_legP (n : ℕ) (x : ℝ) :
     calc ‖(x - y) / ‖x - y‖‖ * ‖(Y7Legendre.legP n).eval y‖
         ≤ 1 * Cn := mul_le_mul hratio hyb (norm_nonneg _) (by norm_num)
       _ = Cn := one_mul Cn
-
-
-
 theorem archL_mul_X_legP (n : ℕ) {x : ℝ} (hx : x ∈ Set.Ioo (-1 : ℝ) 1) :
     archL (fun y => y * (Y7Legendre.legP n).eval y) x
       = x * archL (fun y => (Y7Legendre.legP n).eval y) x
@@ -601,8 +508,6 @@ theorem archL_mul_X_legP (n : ℕ) {x : ℝ} (hx : x ∈ Set.Ioo (-1 : ℝ) 1) :
   · rw [MeasureTheory.integral_const_mul]
   · exact (integrableOn_archL_legP n hx).const_mul x
   · exact integrableOn_archH_legP n x
-
-
 theorem archL_add_smul (n m : ℕ) (a b : ℝ) {x : ℝ}
     (hx : x ∈ Set.Ioo (-1 : ℝ) 1) :
     archL (fun y => a * (Y7Legendre.legP n).eval y + b * (Y7Legendre.legP m).eval y) x
@@ -622,64 +527,17 @@ theorem archL_add_smul (n m : ℕ) (a b : ℝ) {x : ℝ}
   · rw [MeasureTheory.integral_const_mul, MeasureTheory.integral_const_mul]
   · exact (integrableOn_archL_legP n hx).const_mul a
   · exact (integrableOn_archL_legP m hx).const_mul b
-
 end Y7Arch
-
-
-#print axioms Y7Arch.archKernelMatrix_symm
-#print axioms Y7Arch.archKernelMatrix_zero_left
-#print axioms Y7Arch.archKernelMatrix_zero_matches
-#print axioms Y7Arch.archKernelMatrix_parity
-#print axioms Y7Arch.archFormRescaled_legSum
-#print axioms Y7Arch.archDiagonalRep_of_archKernelMatrix
-#print axioms Y7Arch.archL_mul_X_legP
-#print axioms Y7Arch.archL_add_smul
-
 end
-
 end Inline_Y7_Arch
-
-
-
 section Inline_Y7_ArchDiag
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 set_option maxHeartbeats 2000000
-
 open MeasureTheory
 open scoped BigOperators
-
 namespace Y7Arch
-
 open Y7Op
 open Y7Matrix
-
-
-
-
-
 private lemma integrableOn_ratio_mul_Ioo (f : ℝ → ℝ) (hf : Continuous f) (x : ℝ) :
     IntegrableOn (fun y : ℝ => (x - y) / ‖x - y‖ * f y) (Set.Ioo (-1 : ℝ) 1) := by
   obtain ⟨C, hC⟩ := (isCompact_Icc (a := (-1 : ℝ)) (b := 1)).exists_bound_of_continuousOn
@@ -701,9 +559,6 @@ private lemma integrableOn_ratio_mul_Ioo (f : ℝ → ℝ) (hf : Continuous f) (
     calc ‖(x - y) / ‖x - y‖‖ * ‖f y‖ ≤ 1 * C :=
           mul_le_mul hratio hyb (norm_nonneg _) (by norm_num)
       _ = C := one_mul C
-
-
-
 theorem archH_eq_of_continuous (f : ℝ → ℝ) (hf : Continuous f) {x : ℝ}
     (hx : x ∈ Set.Ioo (-1 : ℝ) 1) :
     archH f x = 2 * (∫ y in (-1 : ℝ)..x, f y) - ∫ y in (-1 : ℝ)..1, f y := by
@@ -772,16 +627,9 @@ theorem archH_eq_of_continuous (f : ℝ → ℝ) (hf : Continuous f) {x : ℝ}
   have harch : archH f x = ∫ y in Set.Ioo (-1 : ℝ) 1, g y := rfl
   rw [harch, hsplit, hcongr1, hcongr2, hconv1, hconv2, hadj]
   ring
-
-
-
-
-
 noncomputable def legPrim (n : ℕ) (x : ℝ) : ℝ :=
   ((Y7Legendre.legP (n + 1)).eval x - (Y7Legendre.legP (n - 1)).eval x) /
     (2 * (n : ℝ) + 1)
-
-
 lemma legPrim_hasDerivAt (n : ℕ) (hn : 1 ≤ n) (x : ℝ) :
     HasDerivAt (legPrim n) ((Y7Legendre.legP n).eval x) x := by
   have hpoly := Y7Deriv.derivative_legP_succ_sub_pred n hn
@@ -802,21 +650,14 @@ lemma legPrim_hasDerivAt (n : ℕ) (hn : 1 ≤ n) (x : ℝ) :
     mul_div_cancel_left₀ _ (by positivity)
   rw [hval] at hd
   exact hd
-
-
-
 lemma integral_legP_eq_legPrim (n : ℕ) (hn : 1 ≤ n) (a b : ℝ) :
     (∫ y in a..b, (Y7Legendre.legP n).eval y) = legPrim n b - legPrim n a :=
   intervalIntegral.integral_eq_sub_of_hasDerivAt
     (fun x _ => legPrim_hasDerivAt n hn x)
     ((Polynomial.continuous (Y7Legendre.legP n)).intervalIntegrable a b)
-
-
 lemma legPrim_one (n : ℕ) (hn : 1 ≤ n) : legPrim n 1 = 0 := by
   unfold legPrim
   rw [Y7Legendre.eval_one_legP, Y7Legendre.eval_one_legP, sub_self, zero_div]
-
-
 lemma legPrim_neg_one (n : ℕ) (hn : 1 ≤ n) : legPrim n (-1) = 0 := by
   unfold legPrim
   rw [Y7Legendre.eval_legP_neg, Y7Legendre.eval_legP_neg, Y7Legendre.eval_one_legP,
@@ -825,9 +666,6 @@ lemma legPrim_neg_one (n : ℕ) (hn : 1 ≤ n) : legPrim n (-1) = 0 := by
     rw [show n + 1 = (n - 1) + 2 by omega, pow_add]
     ring
   rw [hpow, mul_one, sub_self, zero_div]
-
-
-
 theorem archH_legP (n : ℕ) (hn : 1 ≤ n) {x : ℝ} (hx : x ∈ Set.Ioo (-1 : ℝ) 1) :
     archH (fun y => (Y7Legendre.legP n).eval y) x
       = 2 * (((Y7Legendre.legP (n + 1)).eval x - (Y7Legendre.legP (n - 1)).eval x)
@@ -840,11 +678,6 @@ theorem archH_legP (n : ℕ) (hn : 1 ≤ n) {x : ℝ} (hx : x ∈ Set.Ioo (-1 : 
     simpa [Y7Legendre.legP_zero] using h
   rw [h1, h0, sub_zero]
   rfl
-
-
-
-
-
 theorem exists_legP_expansion (N : ℕ) (q : Polynomial ℝ) (hq : q.natDegree ≤ N) :
     ∃ c : ℕ → ℝ, q = ∑ k ∈ Finset.range (N + 1),
       Polynomial.C (c k) * Y7Legendre.legP k := by
@@ -902,8 +735,6 @@ theorem exists_legP_expansion (N : ℕ) (q : Polynomial ℝ) (hq : q.natDegree �
           rw [if_neg (by omega)]
         rw [Finset.sum_congr rfl hcongr]
         simp
-
-
 theorem integral_mul_legP_of_expansion {N : ℕ} {q : Polynomial ℝ} {c : ℕ → ℝ}
     (hq : q = ∑ k ∈ Finset.range (N + 1), Polynomial.C (c k) * Y7Legendre.legP k)
     {j : ℕ} (hj : j ≤ N) :
@@ -933,8 +764,6 @@ theorem integral_mul_legP_of_expansion {N : ℕ} {q : Polynomial ℝ} {c : ℕ �
   · intro k hk
     exact (continuous_const.mul ((Polynomial.continuous (Y7Legendre.legP k)).mul
       (Polynomial.continuous (Y7Legendre.legP j)))).intervalIntegrable (-1) 1
-
-
 theorem legP_eq_zero_of_forall_integral_eq_zero (N : ℕ) (q : Polynomial ℝ) (hq : q.natDegree ≤ N)
     (h : ∀ j ≤ N, (∫ x in (-1 : ℝ)..1, q.eval x * (Y7Legendre.legP j).eval x) = 0) :
     q = 0 := by
@@ -952,8 +781,6 @@ theorem legP_eq_zero_of_forall_integral_eq_zero (N : ℕ) (q : Polynomial ℝ) (
   intro k hk
   rw [Finset.mem_range] at hk
   rw [hc0 k (by omega), Polynomial.C_0, zero_mul]
-
-
 theorem integral_legP_mul_eq_zero_of_natDegree_lt {n : ℕ} {r : Polynomial ℝ}
     (hr : r.natDegree < n) :
     (∫ x in (-1 : ℝ)..1, (Y7Legendre.legP n).eval x * r.eval x) = 0 := by
@@ -980,9 +807,6 @@ theorem integral_legP_mul_eq_zero_of_natDegree_lt {n : ℕ} {r : Polynomial ℝ}
     · intro k hk
       exact (continuous_const.mul ((Polynomial.continuous (Y7Legendre.legP n)).mul
         (Polynomial.continuous (Y7Legendre.legP k)))).intervalIntegrable (-1) 1
-
-
-
 theorem coeff_legP_succ_mul (n : ℕ) :
     ((n : ℝ) + 1) * (Y7Legendre.legP (n + 1)).coeff (n + 1)
       = (2 * (n : ℝ) + 1) * (Y7Legendre.legP n).coeff n := by
@@ -997,10 +821,6 @@ theorem coeff_legP_succ_mul (n : ℕ) :
   rw [hfac, hfacn, pow_succ]
   push_cast
   field_simp
-
-
-
-
 theorem legP_three_term (n : ℕ) (hn : 1 ≤ n) :
     Polynomial.C (2 * (n : ℝ) + 1) * (Polynomial.X * Y7Legendre.legP n)
       = Polynomial.C ((n : ℝ) + 1) * Y7Legendre.legP (n + 1)
@@ -1178,21 +998,15 @@ theorem legP_three_term (n : ℕ) (hn : 1 ≤ n) :
         + Polynomial.C (n : ℝ) * Y7Legendre.legP (n - 1)) = 0 := by
     simpa [hqdef] using hq_zero
   exact sub_eq_zero.mp hzero'
-
-
 theorem archH_one {x : ℝ} (hx : x ∈ Set.Ioo (-1 : ℝ) 1) :
     archH (fun _ : ℝ => (1 : ℝ)) x = 2 * x := by
   rw [archH_eq_of_continuous _ continuous_const hx]
   rw [intervalIntegral.integral_const, intervalIntegral.integral_const]
   ring
-
-
 theorem archL_legP_zero (x : ℝ) :
     archL (fun y => (Y7Legendre.legP 0).eval y) x = 0 := by
   unfold archL
   simp [Y7Legendre.legP_zero]
-
-
 theorem archL_legP_one {x : ℝ} (hx : x ∈ Set.Ioo (-1 : ℝ) 1) :
     archL (fun y => (Y7Legendre.legP 1).eval y) x = 2 * x := by
   have hpt : (fun y : ℝ =>
@@ -1207,10 +1021,6 @@ theorem archL_legP_one {x : ℝ} (hx : x ∈ Set.Ioo (-1 : ℝ) 1) :
     unfold archL
     rw [hpt]]
   exact archH_one hx
-
-
-
-
 private lemma archL_legP_arith (k : ℕ) {A B C D x P0 P1 P2 : ℝ}
     (hL : ((k : ℝ) + 2) * A + ((k : ℝ) + 1) * B
       = (2 * (k : ℝ) + 3) * (x * C) + (2 * (k : ℝ) + 3) * D)
@@ -1238,9 +1048,6 @@ private lemma archL_legP_arith (k : ℕ) {A B C D x P0 P1 P2 : ℝ}
     rw [hgoal]
     ring
   exact mul_left_cancel₀ hk2 hgoal'
-
-
-
 theorem archL_legP (n : ℕ) :
     ∀ x : ℝ, x ∈ Set.Ioo (-1 : ℝ) 1 →
       archL (fun y => (Y7Legendre.legP n).eval y) x
@@ -1321,14 +1128,8 @@ theorem archL_legP (n : ℕ) :
       have hA := archL_legP_arith k hL ihC ihB hDc hrecx hH1 hH2
       rw [show k + 1 + 1 = k + 2 by omega]
       simpa [hAdef] using hA
-
-
-
-
 private noncomputable def archQuot (p : Polynomial ℝ) (x y : ℝ) : ℝ :=
   (p.eval x - p.eval y) / ‖x - y‖
-
-
 private lemma eval_sub_le_of_deriv_bound (p : Polynomial ℝ) {C : ℝ}
     (hC : ∀ x ∈ Set.Icc (-1 : ℝ) 1, ‖(Polynomial.derivative p).eval x‖ ≤ C)
     {x y : ℝ} (hx : x ∈ Set.Icc (-1 : ℝ) 1) (hy : y ∈ Set.Icc (-1 : ℝ) 1) :
@@ -1344,8 +1145,6 @@ private lemma eval_sub_le_of_deriv_bound (p : Polynomial ℝ) {C : ℝ}
   have h := Convex.norm_image_sub_le_of_norm_deriv_le hdiff hbound
     (convex_Icc (-1 : ℝ) 1) hx hy
   simpa only [Real.norm_eq_abs, abs_sub_comm] using h
-
-
 private lemma archQuot_norm_le (p : Polynomial ℝ) {C : ℝ}
     (hC : ∀ x ∈ Set.Icc (-1 : ℝ) 1, ‖(Polynomial.derivative p).eval x‖ ≤ C)
     {x y : ℝ} (hx : x ∈ Set.Icc (-1 : ℝ) 1) (hy : y ∈ Set.Icc (-1 : ℝ) 1) :
@@ -1358,8 +1157,6 @@ private lemma archQuot_norm_le (p : Polynomial ℝ) {C : ℝ}
       exact sub_ne_zero.mpr hne
     rw [archQuot, norm_div, Real.norm_of_nonneg (norm_nonneg _), div_le_iff₀ hpos]
     exact eval_sub_le_of_deriv_bound p hC hx hy
-
-
 private lemma integrable_of_bounded_prod {f : ℝ × ℝ → ℝ} {C : ℝ}
     (hm : AEStronglyMeasurable f ((volume.restrict (Set.Ioo (-1 : ℝ) 1)).prod
       (volume.restrict (Set.Ioo (-1 : ℝ) 1))))
@@ -1374,9 +1171,6 @@ private lemma integrable_of_bounded_prod {f : ℝ × ℝ → ℝ} {C : ℝ}
   rw [Measure.prod_restrict]
   filter_upwards [ae_restrict_mem (measurableSet_Ioo.prod measurableSet_Ioo)] with z hz
   exact hb z.1 hz.1 z.2 hz.2
-
-
-
 private lemma integrable_arch_pair (m n : ℕ) :
     Integrable (fun z : ℝ × ℝ =>
       ((Y7Legendre.legP m).eval z.1 - (Y7Legendre.legP m).eval z.2)
@@ -1424,8 +1218,6 @@ private lemma integrable_arch_pair (m n : ℕ) :
       _ ≤ Cm * (Cn * 2) :=
           mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hdist hCn0) hCm0
       _ = 2 * Cm * Cn := by ring
-
-
 private lemma integrable_arch_left (m n : ℕ) :
     Integrable (fun z : ℝ × ℝ =>
       (Y7Legendre.legP m).eval z.1
@@ -1458,9 +1250,6 @@ private lemma integrable_arch_left (m n : ℕ) :
       rw [archQuot]
     rw [hre, norm_mul]
     exact mul_le_mul hm hq (norm_nonneg _) hBm0
-
-
-
 theorem archDoubleIntegral_eq (m n : ℕ) :
     (∫ x in Set.Ioo (-1 : ℝ) 1, ∫ y in Set.Ioo (-1 : ℝ) 1,
         ((Y7Legendre.legP m).eval x - (Y7Legendre.legP m).eval y)
@@ -1549,8 +1338,6 @@ theorem archDoubleIntegral_eq (m n : ℕ) :
           rw [hinner]
           rfl
   rw [← key, ← hprodF]
-
-
 theorem archKernelMatrix_eq_factors (m n : ℕ) :
     archKernelMatrix m n
       = (1 / 4) * Real.sqrt ((2 * (m : ℝ) + 1) / 2)
@@ -1581,9 +1368,6 @@ theorem archKernelMatrix_eq_factors (m n : ℕ) :
     ring]
   rw [MeasureTheory.integral_const_mul]
   ring
-
-
-
 theorem archKernelMatrix_eq_ite (m n : ℕ) :
     archKernelMatrix m n = if m = n then Y7Matrix.harmonicR m else 0 := by
   have hint : (∫ x in (-1 : ℝ)..1,
@@ -1638,96 +1422,26 @@ theorem archKernelMatrix_eq_ite (m n : ℕ) :
     field_simp
   · rw [if_neg h, if_neg h]
     ring
-
-
-
 theorem archDiagonalRep : Y7Op.ArchDiagonalRep :=
   archDiagonalRep_of_archKernelMatrix archKernelMatrix_eq_ite
-
-
-
 theorem formMatrixRep_seven : Y7Op.FormMatrixRep 7 :=
   Y7Op.formMatrixRep_of_parts 7 archDiagonalRep (Y7Op.gammaRep 7 (by norm_num))
-
 end Y7Arch
-
-
-#print axioms Y7Arch.archH_eq_of_continuous
-#print axioms Y7Arch.legPrim_hasDerivAt
-#print axioms Y7Arch.integral_legP_eq_legPrim
-#print axioms Y7Arch.archH_legP
-#print axioms Y7Arch.exists_legP_expansion
-#print axioms Y7Arch.integral_mul_legP_of_expansion
-#print axioms Y7Arch.legP_eq_zero_of_forall_integral_eq_zero
-#print axioms Y7Arch.integral_legP_mul_eq_zero_of_natDegree_lt
-#print axioms Y7Arch.coeff_legP_succ_mul
-#print axioms Y7Arch.legP_three_term
-#print axioms Y7Arch.archH_one
-#print axioms Y7Arch.archL_legP_zero
-#print axioms Y7Arch.archL_legP_one
-#print axioms Y7Arch.archL_legP_arith
-#print axioms Y7Arch.archL_legP
-#print axioms Y7Arch.integrable_arch_pair
-#print axioms Y7Arch.integrable_arch_left
-#print axioms Y7Arch.archDoubleIntegral_eq
-#print axioms Y7Arch.archKernelMatrix_eq_factors
-#print axioms Y7Arch.archKernelMatrix_eq_ite
-#print axioms Y7Arch.archDiagonalRep
-#print axioms Y7Arch.formMatrixRep_seven
-
 end
-
 end Inline_Y7_ArchDiag
-
-
-
 section Inline_Y7_Target
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace Y7Target
-
 open RHLean
-
-
-
-
-
 def Y7PhysicalTarget : Prop :=
   ∀ f : ℝ → ℂ, f ∈ localizedCore (endpoint 7) → 0 ≤ localizedForm (endpoint 7) f
-
-
-
 def GateIIIBridge : Prop :=
   ∀ a : ℝ, 0 < a → ∀ f : ℝ → ℂ,
     f ∈ localizedCore a → weilOdd f = localizedForm a f
-
-
-
 theorem base_certificate_of_Y7PhysicalTarget
     (hbridge : GateIIIBridge) (hY7 : Y7PhysicalTarget) :
     LocalPSD (endpoint 7) :=
   base_certificate_of_bridge_y7 hbridge hY7
-
-
-
 theorem rh_of_Y7PhysicalTarget
     (hbridge : GateIIIBridge) (hY7 : Y7PhysicalTarget)
     (hII : ∀ k : ℕ, 7 ≤ k →
@@ -1737,56 +1451,16 @@ theorem rh_of_Y7PhysicalTarget
         f ∈ localizedCore (endpoint (k + 1)) → 0 ≤ localizedForm (endpoint (k + 1)) f)) :
     RiemannHypothesis :=
   rh_of_workstream_targets hbridge hY7 hII
-
 end Y7Target
-
 end
-
 end Inline_Y7_Target
-
-
-
 section Inline_Y7_Rescale
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory
 open scoped BigOperators
-
 namespace Y7Rescale
-
-
 noncomputable def rescaleFun (a : ℝ) (f : ℝ → ℂ) : ℝ → ℂ :=
   fun x => (Real.sqrt a : ℂ) * f (a * x)
-
-
-
-
 theorem integral_Ioo_comp_mul {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (a : ℝ) (ha : 0 < a) (F : ℝ → E) :
     (∫ x in Set.Ioo (-a) a, F x) = a • ∫ u in Set.Ioo (-1 : ℝ) 1, F (a * u) := by
@@ -1799,8 +1473,6 @@ theorem integral_Ioo_comp_mul {E : Type*} [NormedAddCommGroup E] [NormedSpace �
   rw [h1, h2, intervalIntegral.integral_comp_mul_left F ha.ne']
   simp only [mul_neg, mul_one]
   rw [smul_smul, mul_inv_cancel₀ ha.ne', one_smul]
-
-
 theorem integral_Ioo_integral_Ioo_comp_mul {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℝ E] (a : ℝ) (ha : 0 < a) (Φ : ℝ → ℝ → E) :
     (∫ x in Set.Ioo (-a) a, ∫ y in Set.Ioo (-a) a, Φ x y)
@@ -1812,10 +1484,6 @@ theorem integral_Ioo_integral_Ioo_comp_mul {E : Type*} [NormedAddCommGroup E]
   apply MeasureTheory.integral_congr_ae
   filter_upwards with u
   exact integral_Ioo_comp_mul a ha (fun y => Φ (a * u) y)
-
-
-
-
 theorem rescaleFun_mem_localizedCore {a : ℝ} (ha : 0 < a) {f : ℝ → ℂ}
     (hf : f ∈ RHLean.localizedCore a) : rescaleFun a f ∈ RHLean.localizedCore 1 := by
   obtain ⟨⟨hcd, -, hodd⟩, hsupp⟩ := hf
@@ -1847,10 +1515,6 @@ theorem rescaleFun_mem_localizedCore {a : ℝ} (ha : 0 < a) {f : ℝ → ℂ}
     ring
   · intro x hx
     exact hcore x hx
-
-
-
-
 theorem rescaleFun_mul_star (a : ℝ) (ha : 0 ≤ a) (f : ℝ → ℂ) (x y : ℝ) :
     rescaleFun a f x * star (rescaleFun a f y)
       = ((a : ℝ) : ℂ) * (f (a * x) * star (f (a * y))) := by
@@ -1862,17 +1526,12 @@ theorem rescaleFun_mul_star (a : ℝ) (ha : 0 ≤ a) (f : ℝ → ℂ) (x y : �
       = ((Real.sqrt a : ℂ) * star (Real.sqrt a : ℂ))
           * (f (a * x) * star (f (a * y))) := by ring
     _ = ((a : ℝ) : ℂ) * (f (a * x) * star (f (a * y))) := by rw [hs]
-
 lemma norm_rescaleFun_sq (a : ℝ) (ha : 0 < a) (f : ℝ → ℂ) (x : ℝ) :
     ‖rescaleFun a f x‖ ^ 2 = a * ‖f (a * x)‖ ^ 2 := by
   have hs : ‖(Real.sqrt a : ℂ)‖ ^ 2 = a := by
     rw [← Complex.normSq_eq_norm_sq, Complex.normSq_ofReal, Real.mul_self_sqrt ha.le]
   simp only [rescaleFun, norm_mul, mul_pow]
   rw [hs]
-
-
-
-
 theorem mass_rescale {a : ℝ} (ha : 0 < a) (f : ℝ → ℂ) :
     (∫ x in Set.Ioo (-a) a, ‖f x‖ ^ 2)
       = ∫ x in Set.Ioo (-1 : ℝ) 1, ‖rescaleFun a f x‖ ^ 2 := by
@@ -1881,8 +1540,6 @@ theorem mass_rescale {a : ℝ} (ha : 0 < a) (f : ℝ → ℂ) :
   apply MeasureTheory.integral_congr_ae
   filter_upwards with u
   rw [norm_rescaleFun_sq a ha f u]
-
-
 theorem potentialForm_rescale {a : ℝ} (ha : 0 < a) {f : ℝ → ℂ}
     (hf : f ∈ RHLean.localizedCore a) :
     RHLean.potentialForm a f
@@ -1918,8 +1575,6 @@ theorem potentialForm_rescale {a : ℝ} (ha : 0 < a) {f : ℝ → ℂ}
     have h1 := hu.1; have h2 := hu.2; nlinarith
   rw [RHLean.endpointPotential_scale a u ha hu2, norm_rescaleFun_sq a ha f u]
   ring
-
-
 theorem archForm_rescale {a : ℝ} (ha : 0 < a) (f : ℝ → ℂ) :
     RHLean.archForm a f = RHLean.archFormRescaled (rescaleFun a f) := by
   have hpt : ∀ u v : ℝ, a * (a *
@@ -1965,8 +1620,6 @@ theorem archForm_rescale {a : ℝ} (ha : 0 < a) (f : ℝ → ℂ) :
   apply MeasureTheory.integral_congr_ae
   filter_upwards with v
   exact hpt u v
-
-
 theorem gammaForm_rescale {a : ℝ} (ha : 0 < a) (f : ℝ → ℂ) :
     RHLean.gammaForm a f = RHLean.gammaFormRescaled a (rescaleFun a f) := by
   have hpt : ∀ u v : ℝ, a * (a * (RHLean.gammaKernel ‖a * u - a * v‖
@@ -1999,8 +1652,6 @@ theorem gammaForm_rescale {a : ℝ} (ha : 0 < a) (f : ℝ → ℂ) :
   apply MeasureTheory.integral_congr_ae
   filter_upwards with v
   exact hpt u v
-
-
 theorem polarInner_rescale {a : ℝ} (ha : 0 < a) (f : ℝ → ℂ) :
     RHLean.polarInner a f
       = (Real.sqrt a : ℂ) * RHLean.polarInnerRescaled a (rescaleFun a f) := by
@@ -2030,8 +1681,6 @@ theorem polarInner_rescale {a : ℝ} (ha : 0 < a) (f : ℝ → ℂ) :
   apply MeasureTheory.integral_congr_ae
   filter_upwards with u
   exact hpt u
-
-
 theorem polarForm_rescale {a : ℝ} (ha : 0 < a) (f : ℝ → ℂ) :
     RHLean.polarForm a f = RHLean.polarFormRescaled a (rescaleFun a f) := by
   have hs : ‖(Real.sqrt a : ℂ)‖ ^ 2 = a := by
@@ -2039,9 +1688,6 @@ theorem polarForm_rescale {a : ℝ} (ha : 0 < a) (f : ℝ → ℂ) :
   unfold RHLean.polarForm RHLean.polarFormRescaled
   rw [polarInner_rescale ha f, norm_mul, mul_pow, hs]
   ring
-
-
-
 theorem integral_Ioo_comp_mul' {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (a : ℝ) (ha : 0 < a) {c d : ℝ} (hcd : c ≤ d) (F : ℝ → E) :
     (∫ x in Set.Ioo (a * c) (a * d), F x) = a • ∫ u in Set.Ioo c d, F (a * u) := by
@@ -2052,12 +1698,6 @@ theorem integral_Ioo_comp_mul' {E : Type*} [NormedAddCommGroup E] [NormedSpace �
     rw [← MeasureTheory.integral_Ioc_eq_integral_Ioo, ← intervalIntegral.integral_of_le hcd]
   rw [h1, h2]
   exact (intervalIntegral.smul_integral_comp_mul_left (a := c) (b := d) F a).symm
-
-
-
-
-
-
 theorem shiftForm_rescale {a : ℝ} (ha : 0 < a) {f : ℝ → ℂ}
     (hf : f ∈ RHLean.localizedCore a) :
     RHLean.shiftForm a f = RHLean.shiftFormRescaled a (rescaleFun a f) := by
@@ -2168,11 +1808,6 @@ theorem shiftForm_rescale {a : ℝ} (ha : 0 < a) {f : ℝ → ℂ}
   rw [htrunc, hsubst, hconj]
   simp only [Complex.add_re, Complex.star_def, Complex.conj_re]
   ring
-
-
-
-
-
 theorem localizedForm_rescale {a : ℝ} (ha : 0 < a) {f : ℝ → ℂ}
     (hf : f ∈ RHLean.localizedCore a) :
     RHLean.localizedForm a f = RHLean.localizedFormRescaled a (rescaleFun a f) := by
@@ -2181,94 +1816,31 @@ theorem localizedForm_rescale {a : ℝ} (ha : 0 < a) {f : ℝ → ℂ}
     gammaForm_rescale ha f, polarForm_rescale ha f, shiftForm_rescale ha hf,
     RHLean.physicalConstant_eq_c0_add_log]
   ring
-
-
-
 theorem localPSDRescaled_implies_physical (a : ℝ) (ha : 0 < a)
     (h : RHLean.LocalPSDRescaled a) :
     ∀ f : ℝ → ℂ, f ∈ RHLean.localizedCore a → 0 ≤ RHLean.localizedForm a f := by
   intro f hf
   rw [localizedForm_rescale ha hf]
   exact h ha (rescaleFun a f) (rescaleFun_mem_localizedCore ha hf)
-
-
-
 theorem y7PhysicalTarget_of_localPSDRescaled
     (h : RHLean.LocalPSDRescaled (RHLean.endpoint 7)) : Y7Target.Y7PhysicalTarget :=
   localPSDRescaled_implies_physical (RHLean.endpoint 7)
     (by unfold RHLean.endpoint; positivity) h
-
-
-
-
-
 theorem base_certificate_of_localPSDRescaled
     (hbridge : Y7Target.GateIIIBridge)
     (h : RHLean.LocalPSDRescaled (RHLean.endpoint 7)) :
     RHLean.LocalPSD (RHLean.endpoint 7) :=
   Y7Target.base_certificate_of_Y7PhysicalTarget hbridge
     (y7PhysicalTarget_of_localPSDRescaled h)
-
 end Y7Rescale
-
-
-#print axioms Y7Rescale.integral_Ioo_comp_mul
-#print axioms Y7Rescale.integral_Ioo_integral_Ioo_comp_mul
-#print axioms Y7Rescale.rescaleFun_mem_localizedCore
-#print axioms Y7Rescale.rescaleFun_mul_star
-#print axioms Y7Rescale.norm_rescaleFun_sq
-#print axioms Y7Rescale.mass_rescale
-#print axioms Y7Rescale.potentialForm_rescale
-#print axioms Y7Rescale.archForm_rescale
-#print axioms Y7Rescale.gammaForm_rescale
-#print axioms Y7Rescale.polarInner_rescale
-#print axioms Y7Rescale.polarForm_rescale
-#print axioms Y7Rescale.shiftForm_rescale
-#print axioms Y7Rescale.localizedForm_rescale
-#print axioms Y7Rescale.localPSDRescaled_implies_physical
-#print axioms Y7Rescale.y7PhysicalTarget_of_localPSDRescaled
-#print axioms Y7Rescale.base_certificate_of_localPSDRescaled
-
 end
-
 end Inline_Y7_Rescale
-
-
-
 section Inline_Y7_Producer_Family
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 set_option maxHeartbeats 8000000
 set_option maxRecDepth 1000000
-
 namespace Y7ProducerF
-
 open Matrix
-
-
 def center (i j : Fin 7) : ℚ :=
   match i.val, j.val with
   | 0, 0 => (4580581760858755613026736057913872391771 / 5000000000000000000000000000000000000000000000000000000000000000)
@@ -2321,8 +1893,6 @@ def center (i j : Fin 7) : ℚ :=
   | 6, 5 => (-1893080252087048260695847352414333178631 / 100000000000000000000000000000000000000000)
   | 6, 6 => (21364222086254911412640912067174881939 / 31250000000000000000000000000000000000)
   | _, _ => 0
-
-
 def radius (i j : Fin 7) : ℚ :=
   match i.val, j.val with
   | 0, 0 => (500000000000002287290433779803907273497190219778881807 / 50000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
@@ -2375,9 +1945,6 @@ def radius (i j : Fin 7) : ℚ :=
   | 6, 5 => (4476949464892610600771621924740907233759 / 1000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | 6, 6 => (29982356726134832786737706781137012041 / 5000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | _, _ => 0
-
-
-
 def scale (i : Fin 7) : ℚ :=
   match i.val with
   | 0 => (1 / 1)
@@ -2388,33 +1955,22 @@ def scale (i : Fin 7) : ℚ :=
   | 5 => (100000000000000 / 427)
   | 6 => (250000000000000 / 121)
   | _ => 1
-
 private def margin (i : Fin 7) : ℚ :=
   (center i i - radius i i) / (scale i * scale i) -
     ∑ j : Fin 7,
       if i = j then 0 else
         (|center i j| + radius i j) / (scale i * scale j)
-
-
-
-
 theorem rational_row_margins : ∀ i : Fin 7, (0 : ℚ) < margin i := by
   intro i
   fin_cases i <;>
     norm_num [margin, center, radius, scale, Fin.sum_univ_succ]
-
-
-
 def InProducerFamily (F : Matrix (Fin 7) (Fin 7) ℝ) : Prop :=
   F.IsSymm ∧ ∀ i j, ((center i j - radius i j : ℚ) : ℝ) ≤ F i j ∧
                     F i j ≤ ((center i j + radius i j : ℚ) : ℝ)
-
 private lemma scale_pos (i : Fin 7) : (0 : ℚ) < scale i := by
   fin_cases i <;> norm_num [scale]
-
 private lemma radius_nonneg (i j : Fin 7) : (0 : ℚ) ≤ radius i j := by
   fin_cases i <;> fin_cases j <;> norm_num [radius]
-
 private lemma abs_le_of_mem {c r x : ℝ}
     (h : c - r ≤ x ∧ x ≤ c + r) : |x| ≤ |c| + r := by
   rw [abs_le]
@@ -2423,7 +1979,6 @@ private lemma abs_le_of_mem {c r x : ℝ}
     linarith [h.1]
   · have : c ≤ |c| := le_abs_self c
     linarith [h.2]
-
 private lemma margin_erase (i : Fin 7) :
     margin i = (center i i - radius i i) / (scale i * scale i)
       - ∑ j ∈ Finset.univ.erase i, (|center i j| + radius i j) / (scale i * scale j) := by
@@ -2435,10 +1990,6 @@ private lemma margin_erase (i : Fin 7) :
   apply Finset.sum_congr rfl
   intro j hj
   rw [if_neg (Ne.symm (Finset.mem_erase.mp hj).1)]
-
-
-
-
 theorem producerFamily_posDef (F : Matrix (Fin 7) (Fin 7) ℝ)
     (hF : InProducerFamily F) : F.PosDef := by
   classical
@@ -2525,63 +2076,18 @@ theorem producerFamily_posDef (F : Matrix (Fin 7) (Fin 7) ℝ)
       ne_of_gt (by exact_mod_cast scale_pos j : (0 : ℝ) < (scale j : ℝ))
     field_simp [hsi, hsj]
   rwa [hDSD] at hcong
-
-
-
 theorem assembly_posDef_of_producerFamily
     (AU WL Scrit Corr : Matrix (Fin 7) (Fin 7) ℝ) (θ : ℝ)
     (h : InProducerFamily (AU - WL - (1 + 1 / θ) • Scrit - Corr)) :
     (AU - WL - (1 + 1 / θ) • Scrit - Corr).PosDef :=
   producerFamily_posDef _ h
-
 end Y7ProducerF
-
-
-#print axioms Y7ProducerF.producerFamily_posDef
-#print axioms Y7ProducerF.assembly_posDef_of_producerFamily
-#print axioms Y7ProducerF.rational_row_margins
-
 end
-
 end Inline_Y7_Producer_Family
-
-
-
 section Inline_Y7_Slab_Bounds
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace Y7Slab
-
 open Finset
-
-
-
 def bound : Matrix (Fin 7) (Fin 7) ℚ :=
   !![1 / 1000000, 1 / 1000000, 1 / 1000000, 1 / 1000000,
       1 / 1000000, 1 / 1000000, 1 / 1000000;
@@ -2597,15 +2103,9 @@ def bound : Matrix (Fin 7) (Fin 7) ℚ :=
       21 / 200000, 349 / 125000, 3011 / 1000000;
      1 / 1000000, 1 / 1000000, 1 / 1000000, 1 / 1000000,
       113 / 1000000, 3011 / 1000000, 3251 / 1000000]
-
 lemma bound_symm : bound.IsSymm := by
   ext i j
   fin_cases i <;> fin_cases j <;> norm_num [bound]
-
-
-
-
-
 theorem slab_entry_bound (N : ℕ) (d A B C1 C2 : ℕ → ℝ) (w : ℝ)
     (hd0 : ∀ i < N, 0 < d i) (hd : ∀ i < N, (d i)⁻¹ ≤ w)
     (hC1 : ∀ i < N, |C1 i| ≤ A i) (hC2 : ∀ i < N, |C2 i| ≤ B i)
@@ -2619,37 +2119,13 @@ theorem slab_entry_bound (N : ℕ) (d A B C1 C2 : ℕ → ℝ) (w : ℝ)
     (fun i hi => hd i (Finset.mem_range.mp hi))
     (fun i hi => hA i (Finset.mem_range.mp hi))
     (fun i hi => hB i (Finset.mem_range.mp hi)) hw
-
 end Y7Slab
-
 end
-
 end Inline_Y7_Slab_Bounds
-
-
-
 section Inline_Y7_Sinf_Bounds
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 namespace Y7Sinf
-
 open Matrix
-
-
 def sinfBound : Matrix (Fin 7) (Fin 7) ℚ :=
   !![4430022522 / 10 ^ 35, 0, 0, 0, 0, 0, 0;
      0, 3638302149 / 10 ^ 29, 0, 0, 0, 0, 0;
@@ -2658,13 +2134,7 @@ def sinfBound : Matrix (Fin 7) (Fin 7) ℚ :=
      0, 0, 0, 0, 2106190812 / 10 ^ 15, 0, 0;
      0, 0, 0, 0, 0, 1410662419 / 10 ^ 12, 0;
      0, 0, 0, 0, 0, 0, 1554723406 / 10 ^ 12]
-
-
 def scritBound : Matrix (Fin 7) (Fin 7) ℚ := Y7Slab.bound + sinfBound
-
-
-
-
 theorem scrit_entry_bound (Slow Sinf : Matrix (Fin 7) (Fin 7) ℝ)
     (hSlow : ∀ a b, |Slow a b| ≤ (Y7Slab.bound a b : ℝ))
     (hSinf : ∀ a b, |Sinf a b| ≤ (sinfBound a b : ℝ)) :
@@ -2677,74 +2147,25 @@ theorem scrit_entry_bound (Slow Sinf : Matrix (Fin 7) (Fin 7) ℝ)
         add_le_add (hSlow a b) (hSinf a b)
     _ = (scritBound a b : ℝ) := by
         rw [scritBound, Matrix.add_apply, Rat.cast_add]
-
 end Y7Sinf
-
-
-
 namespace Y7Assembly
-
 open Matrix
-
-
-
 noncomputable def finalMatrix (AU WL Scrit Corr : Matrix (Fin 7) (Fin 7) ℝ) (θ : ℝ) :
     Matrix (Fin 7) (Fin 7) ℝ :=
   AU - WL - (1 + 1 / θ) • Scrit - Corr
-
-
-
-
 theorem finalMatrix_posDef_of_family (AU WL Scrit Corr : Matrix (Fin 7) (Fin 7) ℝ)
     (θ : ℝ) (hF : RHLean.Y7FinalInterval.InY7Family (finalMatrix AU WL Scrit Corr θ)) :
     (finalMatrix AU WL Scrit Corr θ).PosDef :=
   RHLean.Y7FinalInterval.Y7_family_posDef _ hF
-
 end Y7Assembly
-
 end
-
 end Inline_Y7_Sinf_Bounds
-
-
-
 section Inline_Y7_Assembly_Box
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 set_option maxHeartbeats 8000000
 set_option maxRecDepth 1000000
-
 namespace Y7AssemblyBox
-
 open Matrix
-
-
-
 def AUlo (i j : Fin 7) : ℚ :=
   match i.val, j.val with
   | 0, 0 => (158187319931801070427139958455742594032736012247852818320440553542355355586333208188692304817713723118102132593265654833 / 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
@@ -2797,8 +2218,6 @@ def AUlo (i j : Fin 7) : ℚ :=
   | 6, 5 => (-75555440083387624762540111029991470025957220258449387708593609760531408101955006897513606409395306581349951871233769851 / 50000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | 6, 6 => (142810745888427703529657200001341919594037003934546158490431769049468343773224078874719128315399796772808540490386904859 / 200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | _, _ => 0
-
-
 def AUhi (i j : Fin 7) : ℚ :=
   match i.val, j.val with
   | 0, 0 => (158187319931801070427139958455742594032736012247852818320441446457644644413666791811307695182286276881897867406734345167 / 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
@@ -2851,8 +2270,6 @@ def AUhi (i j : Fin 7) : ℚ :=
   | 6, 5 => (-75555440083387624762540111029991470025957220258449387708593390239468591898044993102486393590604693418650048128766230149 / 50000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | 6, 6 => (142810745888427703529657200001341919594037003934546158490431830950531656226775921125280871684600203227191459509613095141 / 200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | _, _ => 0
-
-
 def WLlo (i j : Fin 7) : ℚ :=
   match i.val, j.val with
   | 0, 0 => (6473792308412933777530124321434900581511412163383996481807762250279306319637949178976666033635785781316403025643172229 / 78125000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
@@ -2905,8 +2322,6 @@ def WLlo (i j : Fin 7) : ℚ :=
   | 6, 5 => (136191677170373111999230270284876975864370232200762499386798286967414584463270518578193494420404348795352742607617757773 / 50000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | 6, 6 => (149279733067959877619666593115212575152526581760313040731684390925433470418583613357373983327745926659690780013776939877 / 50000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | _, _ => 0
-
-
 def WLhi (i j : Fin 7) : ℚ :=
   match i.val, j.val with
   | 0, 0 => (6473792308412933777530124321434900581511412163383996481807768999720693680362050821023333966364214218683596974356827771 / 78125000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
@@ -2959,8 +2374,6 @@ def WLhi (i j : Fin 7) : ℚ :=
   | 6, 5 => (136191677170373111999230270284876975864370232200762499386798713032585415536729481421806505579595651204647257392382242227 / 50000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | 6, 6 => (149279733067959877619666593115212575152526581760313040731684609074566529581416386642626016672254073340309219986223060123 / 50000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | _, _ => 0
-
-
 def Corrlo (i j : Fin 7) : ℚ :=
   match i.val, j.val with
   | 0, 0 => (6337330825886572561313812935257989968930014417220618352290659241506118116903895634780938524993123715010777129350273337 / 62500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
@@ -3013,8 +2426,6 @@ def Corrlo (i j : Fin 7) : ℚ :=
   | 6, 5 => (248736065267645241826837323754009224149853483642467787560590348014979387353847055573637711814040216936261856721776938231 / 50000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | 6, 6 => (589193626172845208649654889378320714668025740816699548877714672827193513053800857646821348130050819450364313362620871619 / 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | _, _ => 0
-
-
 def Corrhi (i j : Fin 7) : ℚ :=
   match i.val, j.val with
   | 0, 0 => (6337330825886572561313812935257989968930014417220618352290715758493881883096104365219061475006876284989222870649726663 / 62500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
@@ -3067,8 +2478,6 @@ def Corrhi (i j : Fin 7) : ℚ :=
   | 6, 5 => (248736065267645241826837323754009224149853483642467787560590651985020612646152944426362288185959783063738143278223061769 / 50000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | 6, 6 => (589193626172845208649654889378320714668025740816699548877715327172806486946199142353178651869949180549635686637379128381 / 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | _, _ => 0
-
-
 def Slowlo (i j : Fin 7) : ℚ :=
   match i.val, j.val with
   | 0, 0 => (8987235877719358575665981292792430935647412861028013290401996284781391821004273787946071291401040467927544986731688369 / 250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
@@ -3121,8 +2530,6 @@ def Slowlo (i j : Fin 7) : ℚ :=
   | 6, 5 => (1872041278685019255072853355376134353046251230298011045303929366261964137568607411258636305786932642851366253170167043883 / 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | 6, 6 => (203212522081155822418101987244896944656397256245623531244881805917850957886909727885979728154237987359334452247972865473 / 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | _, _ => 0
-
-
 def Slowhi (i j : Fin 7) : ℚ :=
   match i.val, j.val with
   | 0, 0 => (8987235877719358575665981292792430935647412861028013290402003715218608178995726212053928708598959532072455013268311631 / 250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
@@ -3175,8 +2582,6 @@ def Slowhi (i j : Fin 7) : ℚ :=
   | 6, 5 => (1872041278685019255072853355376134353046251230298011045303930633738035862431392588741363694213067357148633746829832956117 / 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | 6, 6 => (203212522081155822418101987244896944656397256245623531244882194082149042113090272114020271845762012640665547752027134527 / 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | _, _ => 0
-
-
 def Sinflo (i j : Fin 7) : ℚ :=
   match i.val, j.val with
   | 0, 0 => (27687640762408777345485648298868599226182308503993252036753105368170660873254449130264688670228117168876779381605981489 / 625000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
@@ -3229,8 +2634,6 @@ def Sinflo (i j : Fin 7) : ℚ :=
   | 6, 5 => (0 / 1)
   | 6, 6 => (15547234056707255766334689777220167655127319543258918734354580809540092669971504157475741139397580265155360847800595103 / 10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | _, _ => 0
-
-
 def Sinfhi (i j : Fin 7) : ℚ :=
   match i.val, j.val with
   | 0, 0 => (27687640762408777345485648298868599226182308503993252036753144631829339126745550869735311329771882831123220618394018511 / 625000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
@@ -3283,20 +2686,10 @@ def Sinfhi (i j : Fin 7) : ℚ :=
   | 6, 5 => (0 / 1)
   | 6, 6 => (15547234056707255766334689777220167655127319543258918734354619190459907330028495842524258860602419734844639152199404897 / 10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
   | _, _ => 0
-
-
 def Scrit_lo : Matrix (Fin 7) (Fin 7) ℚ := Slowlo + Sinflo
-
-
 def Scrit_hi : Matrix (Fin 7) (Fin 7) ℚ := Slowhi + Sinfhi
-
-
-
-
 def InBox (lo hi : Matrix (Fin 7) (Fin 7) ℚ) (M : Matrix (Fin 7) (Fin 7) ℝ) : Prop :=
   ∀ i j, ((lo i j : ℚ) : ℝ) ≤ M i j ∧ M i j ≤ ((hi i j : ℚ) : ℝ)
-
-
 lemma InBox.add {lo₁ hi₁ lo₂ hi₂ : Matrix (Fin 7) (Fin 7) ℚ}
     {M₁ M₂ : Matrix (Fin 7) (Fin 7) ℝ}
     (h₁ : InBox lo₁ hi₁ M₁) (h₂ : InBox lo₂ hi₂ M₂) :
@@ -3313,7 +2706,6 @@ lemma InBox.add {lo₁ hi₁ lo₂ hi₂ : Matrix (Fin 7) (Fin 7) ℚ}
     simp only [Matrix.add_apply] at *
     push_cast at a b ⊢
     linarith
-
 private lemma box_lower (i j : Fin 7) :
     Y7ProducerF.center i j - Y7ProducerF.radius i j ≤
       AUlo i j - WLhi i j - 6 * Scrit_hi i j - Corrhi i j := by
@@ -3321,7 +2713,6 @@ private lemma box_lower (i j : Fin 7) :
     norm_num [AUlo, AUhi, WLlo, WLhi, Scrit_lo, Scrit_hi, Corrlo, Corrhi,
       Slowlo, Slowhi, Sinflo, Sinfhi, Matrix.add_apply,
       Y7ProducerF.center, Y7ProducerF.radius]
-
 private lemma box_upper (i j : Fin 7) :
     AUhi i j - WLlo i j - 6 * Scrit_lo i j - Corrlo i j ≤
       Y7ProducerF.center i j + Y7ProducerF.radius i j := by
@@ -3329,9 +2720,6 @@ private lemma box_upper (i j : Fin 7) :
     norm_num [AUlo, AUhi, WLlo, WLhi, Scrit_lo, Scrit_hi, Corrlo, Corrhi,
       Slowlo, Slowhi, Sinflo, Sinfhi, Matrix.add_apply,
       Y7ProducerF.center, Y7ProducerF.radius]
-
-
-
 theorem finalMatrix_inProducerFamily
     (AU WL Scrit Corr : Matrix (Fin 7) (Fin 7) ℝ) (θ : ℝ)
     (hAUsym : AU.IsSymm) (hWLsym : WL.IsSymm)
@@ -3367,8 +2755,6 @@ theorem finalMatrix_inProducerFamily
         exact_mod_cast box_upper i j
       simp only [Matrix.sub_apply, Matrix.smul_apply, smul_eq_mul] at h1 h2 h3 h4 ⊢
       linarith
-
-
 theorem finalMatrix_inProducerFamily_of_parts
     (AU WL Slow Sinf Corr : Matrix (Fin 7) (Fin 7) ℝ) (θ : ℝ)
     (hAUsym : AU.IsSymm) (hWLsym : WL.IsSymm)
@@ -3379,9 +2765,6 @@ theorem finalMatrix_inProducerFamily_of_parts
     Y7ProducerF.InProducerFamily (Y7Assembly.finalMatrix AU WL (Slow + Sinf) Corr θ) :=
   finalMatrix_inProducerFamily AU WL (Slow + Sinf) Corr θ hAUsym hWLsym
     (hSlowsym.add hSinfsym) hCorrsym hAU hWL (InBox.add hSlow hSinf) hCorr hθ
-
-
-
 theorem finalMatrix_posDef_of_boxes
     (AU WL Scrit Corr : Matrix (Fin 7) (Fin 7) ℝ) (θ : ℝ)
     (hAUsym : AU.IsSymm) (hWLsym : WL.IsSymm)
@@ -3393,70 +2776,15 @@ theorem finalMatrix_posDef_of_boxes
   Y7ProducerF.producerFamily_posDef _
     (finalMatrix_inProducerFamily AU WL Scrit Corr θ hAUsym hWLsym hScritsym hCorrsym
       hAU hWL hScrit hCorr hθ)
-
 end Y7AssemblyBox
-
-
-#print axioms Y7AssemblyBox.finalMatrix_inProducerFamily
-#print axioms Y7AssemblyBox.finalMatrix_posDef_of_boxes
-
 end
-
 end Inline_Y7_Assembly_Box
-
-
-
 section Inline_Y7_Density
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory
 open scoped BigOperators
-
 namespace Y7Density
-
 open Y7Op
-
-
-
-
 theorem exists_legSum_eq_eval (q : Polynomial ℝ) :
     ∃ (s : Finset ℕ) (x : ℕ → ℝ), ∀ y : ℝ, legSum x s y = ((q.eval y : ℝ) : ℂ) := by
   obtain ⟨c, hc⟩ := Y7Arch.exists_legP_expansion q.natDegree q le_rfl
@@ -3481,9 +2809,6 @@ theorem exists_legSum_eq_eval (q : Polynomial ℝ) :
   rw [← Complex.ofReal_mul]
   congr 1
   field_simp [hs]
-
-
-
 theorem legSum_eq_eval (x : ℕ → ℝ) (s : Finset ℕ) :
     ∃ q : Polynomial ℝ, ∀ y : ℝ, legSum x s y = ((q.eval y : ℝ) : ℂ) := by
   refine ⟨∑ n ∈ s, Polynomial.C (x n * Real.sqrt ((2 * (n : ℝ) + 1) / 2))
@@ -3497,74 +2822,35 @@ theorem legSum_eq_eval (x : ℕ → ℝ) (s : Finset ℕ) :
   rw [← Complex.ofReal_mul]
   congr 1
   ring
-
-
-
-
 def IsOddPoly (p : Polynomial ℝ) : Prop := p.comp (-Polynomial.X) = -p
-
 lemma IsOddPoly.eval_neg {p : Polynomial ℝ} (hp : IsOddPoly p) (x : ℝ) :
     p.eval (-x) = -p.eval x := by
   have h := congrArg (fun q : Polynomial ℝ => q.eval x) hp
   simpa [IsOddPoly] using h
-
-
-
-
 noncomputable def polyForm (a : ℝ) (p : Polynomial ℝ) : ℝ :=
   RHLean.localizedFormRescaled a (fun y => ((p.eval y : ℝ) : ℂ))
-
-
 theorem localizedFormRescaled_congr {a : ℝ} {g h : ℝ → ℂ} (hgh : ∀ x, g x = h x) :
     RHLean.localizedFormRescaled a g = RHLean.localizedFormRescaled a h := by
   simp only [RHLean.localizedFormRescaled, RHLean.archFormRescaled,
     RHLean.potentialFormRescaled, RHLean.gammaFormRescaled, RHLean.polarFormRescaled,
     RHLean.polarInnerRescaled, RHLean.shiftFormRescaled, hgh]
-
-
-
 theorem polyForm_eq_legSum {a : ℝ} {p : Polynomial ℝ} {s : Finset ℕ} {x : ℕ → ℝ}
     (hpx : ∀ y : ℝ, legSum x s y = ((p.eval y : ℝ) : ℂ)) :
     polyForm a p = RHLean.localizedFormRescaled a (legSum x s) :=
   localizedFormRescaled_congr (fun y => (hpx y).symm)
-
 theorem polyForm_eq_of_eval_eq {a : ℝ} {p q : Polynomial ℝ}
     (h : ∀ x : ℝ, p.eval x = q.eval x) : polyForm a p = polyForm a q :=
   localizedFormRescaled_congr (fun x => by rw [h x])
-
-
-
-
 def PolynomialPositivity (a : ℝ) : Prop :=
   ∀ p : Polynomial ℝ, IsOddPoly p → 0 ≤ polyForm a p
-
-
-
-
-
-
-
-
-
-
-
-
-
 def MatrixBlocksPos (a : ℝ) : Prop :=
   ∀ (s : Finset ℕ) (x : ℕ → ℝ), (∀ m ∈ s, Odd m) →
     0 ≤ ∑ m ∈ s, ∑ n ∈ s, x m * x n * Y7Op.rescaledOperatorM a m n
-
-
 lemma eval_phi_neg (n : ℕ) (x : ℝ) :
     (Y7Legendre.phi n).eval (-x) = (-1 : ℝ) ^ n * (Y7Legendre.phi n).eval x := by
   have h := congr_arg (fun p : Polynomial ℝ => p.eval x) (Y7Legendre.phi_comp_neg_X n)
   simpa only [Polynomial.eval_comp, Polynomial.eval_neg, Polynomial.eval_X, Polynomial.eval_smul,
     smul_eq_mul] using h
-
-
-
-
-
 theorem exists_legSum_eq_eval_odd (p : Polynomial ℝ) (hp : IsOddPoly p) :
     ∃ (s : Finset ℕ) (x : ℕ → ℝ), (∀ m ∈ s, Odd m) ∧
       ∀ y : ℝ, legSum x s y = ((p.eval y : ℝ) : ℂ) := by
@@ -3611,10 +2897,6 @@ theorem exists_legSum_eq_eval_odd (p : Polynomial ℝ) (hp : IsOddPoly p) :
   have hleg : legSum x (s.filter Odd) y = A := by
     rw [hA, hO, legSum_apply]
   rw [hleg, hAeq]
-
-
-
-
 theorem polynomialPositivity_of_matrixBlocks {a : ℝ}
     (hrep : Y7Op.FormMatrixRep a) (h : MatrixBlocksPos a) :
     PolynomialPositivity a := by
@@ -3622,21 +2904,10 @@ theorem polynomialPositivity_of_matrixBlocks {a : ℝ}
   obtain ⟨s, x, hodd, hpx⟩ := exists_legSum_eq_eval_odd p hp
   rw [polyForm_eq_legSum hpx, hrep s x]
   exact h s x hodd
-
-
-
-
-
-
-
-
 def LegendreDensity (a : ℝ) : Prop :=
   ∀ g : ℝ → ℂ, g ∈ RHLean.localizedCore 1 → ∀ ε : ℝ, 0 < ε →
     ∃ p q : Polynomial ℝ, IsOddPoly p ∧ IsOddPoly q ∧
       |RHLean.localizedFormRescaled a g - (polyForm a p + polyForm a q)| ≤ ε
-
-
-
 theorem localPSDRescaled_of_polynomialPositivity {a : ℝ}
     (hpos : PolynomialPositivity a) (hdens : LegendreDensity a) :
     RHLean.LocalPSDRescaled a := by
@@ -3651,48 +2922,25 @@ theorem localPSDRescaled_of_polynomialPositivity {a : ℝ}
     have h1 := (abs_le.mp hp).1
     linarith
   linarith
-
-
-
-
-
-
 theorem formMatrixRep_endpoint_seven : Y7Op.FormMatrixRep (RHLean.endpoint 7) :=
   Y7Op.formMatrixRep_of_parts (RHLean.endpoint 7) Y7Arch.archDiagonalRep
     (Y7Op.gammaRep (RHLean.endpoint 7) (by unfold RHLean.endpoint; positivity))
-
-
 theorem localPSDRescaled_endpoint_seven_of
     (hpos : PolynomialPositivity (RHLean.endpoint 7))
     (hdens : LegendreDensity (RHLean.endpoint 7)) :
     RHLean.LocalPSDRescaled (RHLean.endpoint 7) :=
   localPSDRescaled_of_polynomialPositivity hpos hdens
-
-
-
 theorem physicalTarget_of_polynomialPositivity
     (hpos : PolynomialPositivity (RHLean.endpoint 7))
     (hdens : LegendreDensity (RHLean.endpoint 7)) : Y7Target.Y7PhysicalTarget :=
   Y7Rescale.y7PhysicalTarget_of_localPSDRescaled
     (localPSDRescaled_endpoint_seven_of hpos hdens)
-
-
-
 theorem base_certificate_of_polynomialPositivity (hbridge : Y7Target.GateIIIBridge)
     (hpos : PolynomialPositivity (RHLean.endpoint 7))
     (hdens : LegendreDensity (RHLean.endpoint 7)) :
     RHLean.LocalPSD (RHLean.endpoint 7) :=
   Y7Rescale.base_certificate_of_localPSDRescaled hbridge
     (localPSDRescaled_endpoint_seven_of hpos hdens)
-
-
-
-
-
-
-
-
-
 theorem schur_transport {m n : Type*} [Fintype m] [Fintype n]
     [DecidableEq m] [DecidableEq n]
     (A : Matrix m m ℝ) (B : Matrix m n ℝ) (d : n → ℝ) (hd : ∀ j, 0 < d j)
@@ -3705,11 +2953,6 @@ theorem schur_transport {m n : Type*} [Fintype m] [Fintype n]
   ext i j
   simp only [Matrix.add_apply, Matrix.sub_apply]
   ring
-
-
-
-
-
 theorem finalMatrix_block_posSemidef {n : Type*} [Fintype n] [DecidableEq n]
     (AU WL Scrit Corr : Matrix (Fin 7) (Fin 7) ℝ) (θ : ℝ)
     (hAUsym : AU.IsSymm) (hWLsym : WL.IsSymm)
@@ -3728,74 +2971,26 @@ theorem finalMatrix_block_posSemidef {n : Type*} [Fintype n] [DecidableEq n]
     (Y7AssemblyBox.finalMatrix_posDef_of_boxes AU WL Scrit Corr θ
       hAUsym hWLsym hScritsym hCorrsym hAU hWL hScrit hCorr hθ)
     hSc
-
 end Y7Density
-
-
-#print axioms Y7Density.exists_legSum_eq_eval
-#print axioms Y7Density.legSum_eq_eval
-#print axioms Y7Density.IsOddPoly.eval_neg
-#print axioms Y7Density.localizedFormRescaled_congr
-#print axioms Y7Density.polyForm_eq_legSum
-#print axioms Y7Density.polynomialPositivity_of_matrixBlocks
-#print axioms Y7Density.localPSDRescaled_of_polynomialPositivity
-#print axioms Y7Density.formMatrixRep_endpoint_seven
-#print axioms Y7Density.localPSDRescaled_endpoint_seven_of
-#print axioms Y7Density.physicalTarget_of_polynomialPositivity
-#print axioms Y7Density.base_certificate_of_polynomialPositivity
-#print axioms Y7Density.schur_transport
-#print axioms Y7Density.finalMatrix_block_posSemidef
-
 end
-
 end Inline_Y7_Density
-
-
-
 section Inline_Y7_Split
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory
 open scoped BigOperators
-
 namespace Y7Density
-
 open Y7Op
-
-
-
 lemma normSq_eq_re_im (z : ℂ) :
     ‖z‖ ^ 2 = ‖(((z.re : ℝ)) : ℂ)‖ ^ 2 + ‖(((z.im : ℝ)) : ℂ)‖ ^ 2 := by
   simp only [← Complex.normSq_eq_norm_sq, Complex.normSq_apply, Complex.normSq_ofReal,
     Complex.ofReal_re, Complex.ofReal_im]
   ring
-
 lemma normSq_sub_eq_re_im (z w : ℂ) :
     ‖z - w‖ ^ 2
       = ‖(((z.re : ℝ)) : ℂ) - ((((w.re : ℝ)) : ℂ))‖ ^ 2
         + ‖(((z.im : ℝ)) : ℂ) - ((((w.im : ℝ)) : ℂ))‖ ^ 2 := by
   rw [normSq_eq_re_im (z - w), Complex.sub_re, Complex.sub_im, ← Complex.ofReal_sub,
     ← Complex.ofReal_sub]
-
 lemma mul_star_re_eq_re_im (z w : ℂ) :
     (z * star w).re
       = ((((z.re : ℝ)) : ℂ) * star ((((w.re : ℝ)) : ℂ))).re
@@ -3803,46 +2998,29 @@ lemma mul_star_re_eq_re_im (z w : ℂ) :
   simp only [Complex.mul_re, Complex.star_def, Complex.conj_re, Complex.conj_im,
     Complex.ofReal_re, Complex.ofReal_im, Complex.conj_ofReal, ← Complex.ofReal_mul]
   ring
-
-
 lemma norm_ofReal_eq_abs (r : ℝ) : ‖(((r : ℝ)) : ℂ)‖ = |r| := by
   rw [Complex.norm_def, Complex.normSq_ofReal, show r * r = r ^ 2 by ring,
     Real.sqrt_sq_eq_abs]
-
 lemma norm_re_le (z : ℂ) : ‖(((z.re : ℝ)) : ℂ)‖ ≤ ‖z‖ := by
   rw [norm_ofReal_eq_abs]
   exact Complex.abs_re_le_norm z
-
 lemma norm_im_le (z : ℂ) : ‖(((z.im : ℝ)) : ℂ)‖ ≤ ‖z‖ := by
   rw [norm_ofReal_eq_abs]
   exact Complex.abs_im_le_norm z
-
-
-
-
 def rePart (g : ℝ → ℂ) : ℝ → ℂ := fun x => ((g x).re : ℂ)
-
-
 def imPart (g : ℝ → ℂ) : ℝ → ℂ := fun x => ((g x).im : ℂ)
-
 lemma rePart_apply (g : ℝ → ℂ) (x : ℝ) : rePart g x = ((g x).re : ℂ) := rfl
-
 lemma imPart_apply (g : ℝ → ℂ) (x : ℝ) : imPart g x = ((g x).im : ℂ) := rfl
-
 lemma rePart_add_I_mul_imPart (g : ℝ → ℂ) (x : ℝ) :
     rePart g x + Complex.I * imPart g x = g x := by
   have h := Complex.re_add_im (g x)
   simpa only [rePart, imPart, mul_comm] using h
-
 private lemma rePart_sub_eq (g : ℝ → ℂ) (x y : ℝ) :
     rePart g x - rePart g y = ((((g x - g y).re : ℝ)) : ℂ) := by
   simp only [rePart, Complex.sub_re, ← Complex.ofReal_sub]
-
 private lemma imPart_sub_eq (g : ℝ → ℂ) (x y : ℝ) :
     imPart g x - imPart g y = ((((g x - g y).im : ℝ)) : ℂ) := by
   simp only [imPart, Complex.sub_im, ← Complex.ofReal_sub]
-
-
 lemma rePart_mem_localizedCore {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1) :
     rePart g ∈ RHLean.localizedCore 1 := by
   obtain ⟨⟨hcd, -, hodd⟩, hsupp⟩ := hg
@@ -3862,8 +3040,6 @@ lemma rePart_mem_localizedCore {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCor
     simp only [rePart, map_neg, Complex.neg_re]
     rw [hodd]
     simp
-
-
 lemma imPart_mem_localizedCore {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1) :
     imPart g ∈ RHLean.localizedCore 1 := by
   obtain ⟨⟨hcd, -, hodd⟩, hsupp⟩ := hg
@@ -3883,18 +3059,12 @@ lemma imPart_mem_localizedCore {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCor
     simp only [imPart, map_neg, Complex.neg_im]
     rw [hodd]
     simp
-
-
-
-
 lemma core_bound {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1) :
     ∃ B : ℝ, 0 ≤ B ∧ ∀ x ∈ Set.Icc (-1 : ℝ) 1, ‖g x‖ ≤ B := by
   obtain ⟨⟨hcd, -, -⟩, -⟩ := hg
   obtain ⟨B, hB⟩ := (isCompact_Icc (a := (-1 : ℝ)) (b := 1)).exists_bound_of_continuousOn
     hcd.continuous.continuousOn
   exact ⟨B, le_trans (norm_nonneg _) (hB 0 ⟨by norm_num, by norm_num⟩), hB⟩
-
-
 lemma core_lipschitz {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ x ∈ Set.Icc (-1 : ℝ) 1, ∀ y ∈ Set.Icc (-1 : ℝ) 1,
       ‖g x - g y‖ ≤ C * ‖x - y‖ := by
@@ -3908,48 +3078,34 @@ lemma core_lipschitz {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1) :
     fun z _ => (hcd.differentiable (by simp)).differentiableAt
   have h := Convex.norm_image_sub_le_of_norm_deriv_le hdiff hC (convex_Icc (-1 : ℝ) 1) hy hx
   simpa only [norm_sub_rev] using h
-
 lemma continuous_rePart {g : ℝ → ℂ} (hg : Continuous g) : Continuous (rePart g) :=
   Complex.continuous_ofReal.comp (Complex.continuous_re.comp hg)
-
 lemma continuous_imPart {g : ℝ → ℂ} (hg : Continuous g) : Continuous (imPart g) :=
   Complex.continuous_ofReal.comp (Complex.continuous_im.comp hg)
-
 lemma rePart_bound {g : ℝ → ℂ} {B : ℝ}
     (hB : ∀ x ∈ Set.Icc (-1 : ℝ) 1, ‖g x‖ ≤ B) :
     ∀ x ∈ Set.Icc (-1 : ℝ) 1, ‖rePart g x‖ ≤ B := by
   intro x hx
   rw [rePart_apply, norm_ofReal_eq_abs]
   exact le_trans (Complex.abs_re_le_norm (g x)) (hB x hx)
-
 lemma imPart_bound {g : ℝ → ℂ} {B : ℝ}
     (hB : ∀ x ∈ Set.Icc (-1 : ℝ) 1, ‖g x‖ ≤ B) :
     ∀ x ∈ Set.Icc (-1 : ℝ) 1, ‖imPart g x‖ ≤ B := by
   intro x hx
   rw [imPart_apply, norm_ofReal_eq_abs]
   exact le_trans (Complex.abs_im_le_norm (g x)) (hB x hx)
-
-
-
-
 private lemma integrableOn_Ioo_of_continuous_bound {f : ℝ → ℝ} (hf : Continuous f)
     {C : ℝ} (hb : ∀ x ∈ Set.Ioo (-1 : ℝ) 1, ‖f x‖ ≤ C) :
     IntegrableOn f (Set.Ioo (-1 : ℝ) 1) :=
   IntegrableOn.of_bound (by rw [Real.volume_Ioo]; exact ENNReal.ofReal_lt_top)
     hf.aestronglyMeasurable C
     (by filter_upwards [ae_restrict_mem measurableSet_Ioo] with x hx; exact hb x hx)
-
-
 private lemma integrableOn_Ioo_of_continuous_bound_complex {f : ℝ → ℂ} (hf : Continuous f)
     {C : ℝ} (hb : ∀ x ∈ Set.Ioo (-1 : ℝ) 1, ‖f x‖ ≤ C) :
     IntegrableOn f (Set.Ioo (-1 : ℝ) 1) :=
   IntegrableOn.of_bound (by rw [Real.volume_Ioo]; exact ENNReal.ofReal_lt_top)
     hf.aestronglyMeasurable C
     (by filter_upwards [ae_restrict_mem measurableSet_Ioo] with x hx; exact hb x hx)
-
-
-
-
 theorem mass_re_im {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1) :
     (∫ x in Set.Ioo (-1 : ℝ) 1, ‖g x‖ ^ 2)
       = (∫ x in Set.Ioo (-1 : ℝ) 1, ‖rePart g x‖ ^ 2)
@@ -3977,9 +3133,6 @@ theorem mass_re_im {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1) :
     simp only [rePart, imPart]
     exact normSq_eq_re_im (g x)]
   rw [integral_add hu hv]
-
-
-
 lemma core_bound_all {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1) :
     ∃ B : ℝ, 0 ≤ B ∧ ∀ x : ℝ, ‖g x‖ ≤ B := by
   obtain ⟨B, hB0, hB⟩ := core_bound hg
@@ -3992,22 +3145,16 @@ lemma core_bound_all {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1) :
       exact hx ⟨le_of_lt hmem.1, le_of_lt hmem.2⟩
     rw [h0, norm_zero]
     exact hB0
-
 lemma rePart_bound_all {g : ℝ → ℂ} {B : ℝ} (hB : ∀ x : ℝ, ‖g x‖ ≤ B) :
     ∀ x : ℝ, ‖rePart g x‖ ≤ B := by
   intro x
   rw [rePart_apply, norm_ofReal_eq_abs]
   exact le_trans (Complex.abs_re_le_norm (g x)) (hB x)
-
 lemma imPart_bound_all {g : ℝ → ℂ} {B : ℝ} (hB : ∀ x : ℝ, ‖g x‖ ≤ B) :
     ∀ x : ℝ, ‖imPart g x‖ ≤ B := by
   intro x
   rw [imPart_apply, norm_ofReal_eq_abs]
   exact le_trans (Complex.abs_im_le_norm (g x)) (hB x)
-
-
-
-
 theorem potential_re_im {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1) :
     (∫ x in Set.Ioo (-1 : ℝ) 1, RHLean.rescaledPotential x * ‖g x‖ ^ 2)
       = (∫ x in Set.Ioo (-1 : ℝ) 1, RHLean.rescaledPotential x * ‖rePart g x‖ ^ 2)
@@ -4051,10 +3198,6 @@ theorem potential_re_im {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1) :
     simp only [rePart, imPart]
     ring]
   rw [integral_add hu hv]
-
-
-
-
 theorem arch_quot_integrable {f : ℝ → ℂ} {C : ℝ} (hC0 : 0 ≤ C) (hcont : Continuous f)
     (hC : ∀ x ∈ Set.Icc (-1 : ℝ) 1, ∀ y ∈ Set.Icc (-1 : ℝ) 1,
       ‖f x - f y‖ ≤ C * ‖x - y‖) :
@@ -4093,8 +3236,6 @@ theorem arch_quot_integrable {f : ℝ → ℂ} {C : ℝ} (hC0 : 0 ≤ C) (hcont 
             have h4 : ‖z.1 - z.2‖ ^ 2 ≤ 2 * ‖z.1 - z.2‖ := by nlinarith
             exact mul_le_mul_of_nonneg_left h4 (sq_nonneg C)
         _ = 2 * C ^ 2 * ‖z.1 - z.2‖ := by ring
-
-
 theorem arch_re_im {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1) :
     RHLean.archFormRescaled g
       = RHLean.archFormRescaled (rePart g) + RHLean.archFormRescaled (imPart g) := by
@@ -4135,21 +3276,15 @@ theorem arch_re_im {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1) :
     ring]
   rw [integral_add huint hvint]
   ring
-
-
-
 lemma measurable_gammaKernelRescaled_comp (a : ℝ) :
     Measurable (fun z : ℝ × ℝ => RHLean.gammaKernelRescaled a ‖z.1 - z.2‖) := by
   unfold RHLean.gammaKernelRescaled
   exact measurable_const.mul (RHLean.GateII.Collar.measurable_gammaKernel.comp
     (((continuous_fst.sub continuous_snd).norm.const_mul a).measurable))
-
 lemma continuous_mul_star_re {f : ℝ → ℂ} (hf : Continuous f) :
     Continuous (fun z : ℝ × ℝ => (f z.1 * star (f z.2)).re) :=
   Complex.continuous_re.comp ((hf.comp continuous_fst).mul
     (Complex.continuous_conj.comp (hf.comp continuous_snd)))
-
-
 lemma gammaKernelRescaled_bound {a : ℝ} (ha : 0 ≤ a) {z : ℝ}
     (hz : z ∈ Set.Icc 0 2) :
     |RHLean.gammaKernelRescaled a z| ≤ |a| * (Real.exp (2 * a) / 2 + Real.exp a / 4) := by
@@ -4161,8 +3296,6 @@ lemma gammaKernelRescaled_bound {a : ℝ} (ha : 0 ≤ a) {z : ℝ}
   unfold RHLean.gammaKernelRescaled
   rw [abs_mul]
   exact mul_le_mul_of_nonneg_left hb (abs_nonneg a)
-
-
 theorem gamma_re_im {a : ℝ} (ha : 0 ≤ a) {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1) :
     RHLean.gammaFormRescaled a g
       = RHLean.gammaFormRescaled a (rePart g) + RHLean.gammaFormRescaled a (imPart g) := by
@@ -4228,10 +3361,6 @@ theorem gamma_re_im {a : ℝ} (ha : 0 ≤ a) {g : ℝ → ℂ} (hg : g ∈ RHLea
     simp only [rePart, imPart]
     ring]
   rw [integral_add huint hvint]
-
-
-
-
 theorem polar_re_im {a : ℝ} {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1) :
     RHLean.polarFormRescaled a g
       = RHLean.polarFormRescaled a (rePart g) + RHLean.polarFormRescaled a (imPart g) := by
@@ -4309,16 +3438,10 @@ theorem polar_re_im {a : ℝ} {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore
   unfold RHLean.polarFormRescaled
   rw [hinner, hreal_u, hreal_v, hnorm]
   ring
-
-
-
-
 private lemma integral_re_of_integrableOn {f : ℝ → ℂ}
     (hf : IntegrableOn f (Set.Ioo (-1 : ℝ) 1)) :
     (∫ x in Set.Ioo (-1 : ℝ) 1, f x).re = ∫ x in Set.Ioo (-1 : ℝ) 1, (f x).re :=
   (integral_re hf).symm
-
-
 theorem shift_re_im {a : ℝ} {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1) :
     RHLean.shiftFormRescaled a g
       = RHLean.shiftFormRescaled a (rePart g) + RHLean.shiftFormRescaled a (imPart g) := by
@@ -4385,10 +3508,6 @@ theorem shift_re_im {a : ℝ} {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore
     hinner_re_sub (-1 + RHLean.shiftLengthRescaled a n) 1 (RHLean.shiftLengthRescaled a n)]
   simp only [Complex.add_re]
   ring
-
-
-
-
 theorem localizedFormRescaled_re_im {a : ℝ} (ha : 0 < a) {g : ℝ → ℂ}
     (hg : g ∈ RHLean.localizedCore 1) :
     RHLean.localizedFormRescaled a g
@@ -4398,16 +3517,10 @@ theorem localizedFormRescaled_re_im {a : ℝ} (ha : 0 < a) {g : ℝ → ℂ}
   rw [arch_re_im hg, mass_re_im hg, potential_re_im hg, gamma_re_im ha.le hg,
     polar_re_im hg, shift_re_im hg]
   ring
-
-
-
 def RealPartDensity (a : ℝ) : Prop :=
   ∀ f : ℝ → ℂ, f ∈ RHLean.localizedCore 1 → (∀ x, (f x).im = 0) → ∀ ε : ℝ, 0 < ε →
     ∃ p : Polynomial ℝ, IsOddPoly p ∧
       |RHLean.localizedFormRescaled a f - polyForm a p| ≤ ε
-
-
-
 theorem legendreDensity_of_realPartDensity {a : ℝ} (ha : 0 < a)
     (h : RealPartDensity a) : LegendreDensity a := by
   intro g hg ε hε
@@ -4426,89 +3539,28 @@ theorem legendreDensity_of_realPartDensity {a : ℝ} (ha : 0 < a)
           + |RHLean.localizedFormRescaled a (imPart g) - polyForm a q| := abs_add_le _ _
     _ ≤ ε / 2 + ε / 2 := add_le_add hp hq
     _ = ε := by ring
-
-
 theorem localPSDRescaled_of_polynomialPositivity_realPartDensity {a : ℝ} (ha : 0 < a)
     (hpos : PolynomialPositivity a) (h : RealPartDensity a) :
     RHLean.LocalPSDRescaled a :=
   localPSDRescaled_of_polynomialPositivity hpos (legendreDensity_of_realPartDensity ha h)
-
-
-
-
 theorem physicalTarget_of_polynomialPositivity_realPartDensity
     (hpos : PolynomialPositivity (RHLean.endpoint 7))
     (h : RealPartDensity (RHLean.endpoint 7)) : Y7Target.Y7PhysicalTarget :=
   physicalTarget_of_polynomialPositivity hpos
     (legendreDensity_of_realPartDensity (by unfold RHLean.endpoint; positivity) h)
-
 end Y7Density
-
-
-#print axioms Y7Density.mass_re_im
-#print axioms Y7Density.potential_re_im
-#print axioms Y7Density.arch_quot_integrable
-#print axioms Y7Density.arch_re_im
-#print axioms Y7Density.gammaKernelRescaled_bound
-#print axioms Y7Density.gamma_re_im
-#print axioms Y7Density.polar_re_im
-#print axioms Y7Density.shift_re_im
-#print axioms Y7Density.localizedFormRescaled_re_im
-#print axioms Y7Density.legendreDensity_of_realPartDensity
-#print axioms Y7Density.localPSDRescaled_of_polynomialPositivity_realPartDensity
-#print axioms Y7Density.physicalTarget_of_polynomialPositivity_realPartDensity
-
 end
-
 end Inline_Y7_Split
-
-
-
 section Inline_Y7_RhoIdentity
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open Polynomial
 open scoped BigOperators
-
 namespace Y7Density
-
-
 def expTrunc (c : ℝ) (N : ℕ) : Polynomial ℝ :=
   ∑ k ∈ Finset.range N, Polynomial.C (c ^ k / ((k.factorial : ℕ) : ℝ)) * Polynomial.X ^ k
-
-
 def rhoTrunc (M : ℕ) : Polynomial ℝ :=
   ∑ m ∈ Finset.range (M + 1),
     Polynomial.C ((Y7Chain.rhoCoeff m : ℚ) : ℝ) * Polynomial.X ^ m
-
-
-
 lemma coeff_expTrunc_self {c : ℝ} {N k : ℕ} (hk : k < N) :
     (expTrunc c N).coeff k = c ^ k / ((k.factorial : ℕ) : ℝ) := by
   rw [expTrunc, Polynomial.finsetSum_coeff]
@@ -4518,7 +3570,6 @@ lemma coeff_expTrunc_self {c : ℝ} {N k : ℕ} (hk : k < N) :
     rw [Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, if_neg (by omega), mul_zero]
   · intro hk'
     exact absurd (Finset.mem_range.mpr hk) hk'
-
 lemma coeff_expTrunc_eq_zero {c : ℝ} {N k : ℕ} (hk : N ≤ k) :
     (expTrunc c N).coeff k = 0 := by
   rw [expTrunc, Polynomial.finsetSum_coeff]
@@ -4526,7 +3577,6 @@ lemma coeff_expTrunc_eq_zero {c : ℝ} {N k : ℕ} (hk : N ≤ k) :
   intro m hm
   rw [Finset.mem_range] at hm
   rw [Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, if_neg (by omega), mul_zero]
-
 lemma coeff_rhoTrunc_self {M m : ℕ} (hm : m ≤ M) :
     (rhoTrunc M).coeff m = ((Y7Chain.rhoCoeff m : ℚ) : ℝ) := by
   rw [rhoTrunc, Polynomial.finsetSum_coeff]
@@ -4536,7 +3586,6 @@ lemma coeff_rhoTrunc_self {M m : ℕ} (hm : m ≤ M) :
     rw [Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, if_neg (by omega), mul_zero]
   · intro hm'
     exact absurd (Finset.mem_range.mpr (by omega)) hm'
-
 lemma coeff_rhoTrunc_eq_zero {M m : ℕ} (hm : M < m) :
     (rhoTrunc M).coeff m = 0 := by
   rw [rhoTrunc, Polynomial.finsetSum_coeff]
@@ -4544,20 +3593,11 @@ lemma coeff_rhoTrunc_eq_zero {M m : ℕ} (hm : M < m) :
   intro k hk
   rw [Finset.mem_range] at hk
   rw [Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, if_neg (by omega), mul_zero]
-
-
-
-
 def rhoProduct (M : ℕ) : Polynomial ℝ :=
   (1 + Polynomial.C 2 * Polynomial.X * rhoTrunc M) * (expTrunc 2 (M + 3) - 1)
     - Polynomial.C 2 * Polynomial.X * expTrunc (3 / 2) (M + 3)
-
-
-
 def RhoCoeffConsistency : Prop :=
   ∀ M : ℕ, ∀ n ≤ M + 2, (rhoProduct M).coeff n = 0
-
-
 theorem rhoProduct_zero : rhoProduct 0 = Polynomial.C (-5 / 4) * Polynomial.X ^ 3 := by
   unfold rhoProduct rhoTrunc expTrunc
   norm_num [Finset.sum_range_succ, Y7Chain.rhoCoeff_zero]
@@ -4566,12 +3606,9 @@ theorem rhoProduct_zero : rhoProduct 0 = Polynomial.C (-5 / 4) * Polynomial.X ^ 
   simp only [Polynomial.eval_mul, Polynomial.eval_sub, Polynomial.eval_add, Polynomial.eval_pow,
     Polynomial.eval_X, Polynomial.eval_C, Polynomial.eval_one, Polynomial.eval_neg]
   ring
-
 theorem rhoProduct_zero_coeff {n : ℕ} (hn : n ≤ 2) : (rhoProduct 0).coeff n = 0 := by
   rw [rhoProduct_zero, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow,
     if_neg (by omega), mul_zero]
-
-
 theorem rhoProduct_one :
     rhoProduct 1 = Polynomial.C (-13 / 24) * Polynomial.X ^ 4
       + Polynomial.C (-1 / 18) * Polynomial.X ^ 5 := by
@@ -4582,16 +3619,11 @@ theorem rhoProduct_one :
   simp only [Polynomial.eval_mul, Polynomial.eval_sub, Polynomial.eval_add, Polynomial.eval_pow,
     Polynomial.eval_X, Polynomial.eval_C, Polynomial.eval_one, Polynomial.eval_neg]
   ring
-
 theorem rhoProduct_one_coeff {n : ℕ} (hn : n ≤ 3) : (rhoProduct 1).coeff n = 0 := by
   rw [rhoProduct_one, Polynomial.coeff_add, Polynomial.coeff_C_mul, Polynomial.coeff_C_mul,
     Polynomial.coeff_X_pow, Polynomial.coeff_X_pow,
     if_neg (by omega : ¬ n = 4), if_neg (by omega : ¬ n = 5)]
   ring
-
-
-
-
 theorem rhoProduct_succ (M : ℕ) :
     rhoProduct (M + 1) = rhoProduct M
       + Polynomial.X ^ (M + 2) *
@@ -4622,17 +3654,8 @@ theorem rhoProduct_succ (M : ℕ) :
   simp only [Polynomial.eval_mul, Polynomial.eval_sub, Polynomial.eval_add, Polynomial.eval_pow,
     Polynomial.eval_X, Polynomial.eval_C, Polynomial.eval_one, Polynomial.eval_neg]
   ring
-
-
-
-
-
-
-
 def GammaTaylorRemainderLeaf (M : ℕ) (a ε : ℝ) : Prop :=
   ∀ t ∈ Set.Icc 0 (2 * a), |RHLean.gammaKernel t - (rhoTrunc M).eval t| ≤ ε
-
-
 noncomputable def rhoQ (M : ℕ) : Polynomial ℝ :=
   Polynomial.C (2 * ((Y7Chain.rhoCoeff (M + 1) : ℚ) : ℝ)) * (expTrunc 2 (M + 4) - 1)
     + (1 + Polynomial.C 2 * Polynomial.X * rhoTrunc M)
@@ -4640,13 +3663,9 @@ noncomputable def rhoQ (M : ℕ) : Polynomial ℝ :=
         * Polynomial.X
     - Polynomial.C (2 * ((((3 / 2 : ℝ) ^ (M + 3)) / (((M + 3).factorial : ℕ) : ℝ))))
         * Polynomial.X ^ 2
-
-
 theorem rhoProduct_succ' (M : ℕ) :
     rhoProduct (M + 1) = rhoProduct M + Polynomial.X ^ (M + 2) * rhoQ M :=
   rhoProduct_succ M
-
-
 theorem rhoQ_coeff_zero (M : ℕ) : (rhoQ M).coeff 0 = 0 := by
   unfold rhoQ
   have hA : (Polynomial.C (2 * ((Y7Chain.rhoCoeff (M + 1) : ℚ) : ℝ))
@@ -4667,9 +3686,6 @@ theorem rhoQ_coeff_zero (M : ℕ) : (rhoQ M).coeff 0 = 0 := by
       Polynomial.coeff_mul_X_zero]
   rw [Polynomial.coeff_sub, Polynomial.coeff_add, hA, hB, hC]
   ring
-
-
-
 theorem rhoCoeff_recurrence (M : ℕ) :
     2 * ((Y7Chain.rhoCoeff M : ℚ) : ℝ)
         + (∑ j ∈ Finset.Icc 2 (M + 1),
@@ -4695,9 +3711,6 @@ theorem rhoCoeff_recurrence (M : ℕ) :
     · simp
   rw [hS] at h
   linarith [h]
-
-
-
 theorem rhoCoeff_recurrence' (M : ℕ) :
     2 * ((Y7Chain.rhoCoeff M : ℚ) : ℝ)
         + (∑ j ∈ Finset.Icc 2 (M + 1),
@@ -4731,8 +3744,6 @@ theorem rhoCoeff_recurrence' (M : ℕ) :
       · rfl
   rw [hS] at h
   exact h
-
-
 theorem rhoProduct_top (M : ℕ) : (rhoProduct M).coeff (M + 2) = 0 := by
   have hBcoeff : ∀ j : ℕ, 1 ≤ j → j ≤ M + 2 →
       (expTrunc 2 (M + 3) - 1).coeff j = (2 : ℝ) ^ j / ((j.factorial : ℕ) : ℝ) := by
@@ -4814,9 +3825,6 @@ theorem rhoProduct_top (M : ℕ) : (rhoProduct M).coeff (M + 2) = 0 := by
     ring
   rw [hfac]
   linarith [hrec]
-
-
-
 theorem rho_coeff_consistency : RhoCoeffConsistency := by
   intro M
   induction M with
@@ -4835,66 +3843,14 @@ theorem rho_coeff_consistency : RhoCoeffConsistency := by
           ring
         · rw [ih n hnle]
           ring
-
 end Y7Density
-
-
-#print axioms Y7Density.coeff_expTrunc_self
-#print axioms Y7Density.coeff_expTrunc_eq_zero
-#print axioms Y7Density.coeff_rhoTrunc_self
-#print axioms Y7Density.coeff_rhoTrunc_eq_zero
-#print axioms Y7Density.rhoProduct_zero
-#print axioms Y7Density.rhoProduct_zero_coeff
-#print axioms Y7Density.rhoProduct_one
-#print axioms Y7Density.rhoProduct_one_coeff
-#print axioms Y7Density.rhoProduct_succ
-#print axioms Y7Density.rhoQ_coeff_zero
-#print axioms Y7Density.rhoCoeff_recurrence
-#print axioms Y7Density.rhoCoeff_recurrence'
-#print axioms Y7Density.rhoProduct_top
-#print axioms Y7Density.rho_coeff_consistency
-
 end
-
 end Inline_Y7_RhoIdentity
-
-
-
 section Inline_Y7_TaylorRemainder
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open Complex
 open scoped BigOperators Topology
-
 namespace Y7Density
-
-
-
-
-
-
-
-
 theorem norm_taylor_remainder_le {f : ℂ → ℂ} {R C r : ℝ} (hR : 0 < R) (hC : 0 ≤ C)
     (hf : DiffContOnCl ℂ f (Metric.ball 0 R))
     (hCb : ∀ z ∈ Metric.sphere 0 R, ‖f z‖ ≤ C)
@@ -4909,12 +3865,10 @@ theorem norm_taylor_remainder_le {f : ℂ → ℂ} {R C r : ℝ} (hR : 0 < R) (h
     exact lt_of_le_of_lt hz hr
   have hsum := Complex.hasSum_taylorSeries_on_ball (f := f) (c := 0) (r := R)
     hf.differentiableOn hball
-
   have hsum' : HasSum
       (fun n : ℕ => (n.factorial : ℂ)⁻¹ * (z ^ n * iteratedDeriv n f 0)) (f z) := by
     simpa only [sub_zero, smul_eq_mul] using hsum
   have htail := (hasSum_nat_add_iff' N).2 hsum'
-
   have hcau : ∀ n : ℕ,
       ‖(n.factorial : ℂ)⁻¹ * (z ^ n * iteratedDeriv n f 0)‖
         ≤ C * (r / R) ^ n := by
@@ -4949,13 +3903,13 @@ theorem norm_taylor_remainder_le {f : ℂ → ℂ} {R C r : ℝ} (hR : 0 < R) (h
       = ‖∑' n : ℕ, ((n + N).factorial : ℂ)⁻¹
           * (z ^ (n + N) * iteratedDeriv (n + N) f 0)‖ := by
         rw [← htail.tsum_eq]
-    _ ≤ ∑'
+    _ ≤ ∑' n : ℕ, ‖((n + N).factorial : ℂ)⁻¹
           * (z ^ (n + N) * iteratedDeriv (n + N) f 0)‖ :=
         norm_tsum_le_tsum_norm hsumm_norm
     _ ≤ ∑' n : ℕ, C * (r / R) ^ (n + N) :=
         hsumm_norm.tsum_le_tsum (fun n => hcau (n + N)) hsumm_geom
     _ = C * (r / R) ^ N / (1 - r / R) := by
-        rw [show (∑'
+        rw [show (∑' n : ℕ, C * (r / R) ^ (n + N))
             = (C * (r / R) ^ N) * ∑' n : ℕ, (r / R) ^ n from by
           rw [← tsum_mul_left]
           apply tsum_congr
@@ -4965,20 +3919,8 @@ theorem norm_taylor_remainder_le {f : ℂ → ℂ} {R C r : ℝ} (hR : 0 < R) (h
         rw [tsum_geometric_of_lt_one hq0 hq1]
         rw [div_eq_mul_inv]
         ring
-
 end Y7Density
-
 namespace Y7Density
-
-
-
-
-
-
-
-
-
-
 private lemma sin_sq_sub_sq_antitone {R : ℝ} (hR0 : 0 ≤ R) :
     ∀ y ∈ Set.Icc 0 R, Real.sin R ^ 2 ≤ R ^ 2 - y ^ 2 + Real.sin y ^ 2 := by
   have hanti : AntitoneOn (fun y : ℝ => R ^ 2 - y ^ 2 + Real.sin y ^ 2)
@@ -5011,9 +3953,6 @@ private lemma sin_sq_sub_sq_antitone {R : ℝ} (hR0 : 0 ≤ R) :
   have h := hanti hy ⟨hR0, le_rfl⟩ hy.2
   simp only at h
   linarith
-
-
-
 lemma sinh_re (z : ℂ) :
     (Complex.sinh z).re = Real.sinh z.re * Real.cos z.im := by
   have h : (2 : ℂ) * Complex.sinh z = Complex.exp z - Complex.exp (-z) :=
@@ -5028,9 +3967,6 @@ lemma sinh_re (z : ℂ) :
   rw [hE] at h2
   ring_nf at h2
   linarith
-
-
-
 lemma sinh_im (z : ℂ) :
     (Complex.sinh z).im = Real.cosh z.re * Real.sin z.im := by
   have h : (2 : ℂ) * Complex.sinh z = Complex.exp z - Complex.exp (-z) :=
@@ -5045,15 +3981,10 @@ lemma sinh_im (z : ℂ) :
   rw [hE] at h2
   ring_nf at h2
   linarith
-
-
 lemma normSq_sinh (z : ℂ) :
     Complex.normSq (Complex.sinh z) = Real.sinh z.re ^ 2 + Real.sin z.im ^ 2 := by
   rw [Complex.normSq_apply, sinh_re z, sinh_im z]
   nlinarith [Real.cosh_sq z.re, Real.sin_sq_add_cos_sq z.im]
-
-
-
 theorem sin_le_norm_sinh {R : ℝ} (hR0 : 0 ≤ R) (hR : R < Real.pi) {z : ℂ}
     (hz : ‖z‖ = R) : Real.sin R ≤ ‖Complex.sinh z‖ := by
   have hnormSq : z.re ^ 2 + z.im ^ 2 = R ^ 2 := by
@@ -5084,15 +4015,11 @@ theorem sin_le_norm_sinh {R : ℝ} (hR0 : 0 ≤ R) (hR : R < Real.pi) {z : ℂ}
             exact sq_le_sq.mpr h1
           linarith
       _ = Complex.normSq (Complex.sinh z) := (normSq_sinh z).symm
-  have hsq'
+  have hsq' : Real.sin R ^ 2 ≤ ‖Complex.sinh z‖ ^ 2 := by
     rwa [Complex.normSq_eq_norm_sq] at hsq
   have := (sq_le_sq.mp hsq')
   rwa [abs_of_nonneg (Real.sin_nonneg_of_nonneg_of_le_pi hR0 hR.le),
     abs_of_nonneg (norm_nonneg _)] at this
-
-
-
-
 theorem norm_gammaFull_le {R : ℝ} (hR0 : 0 < R) (hR : R < Real.pi) {z : ℂ}
     (hz : ‖z‖ = R) :
     ‖gammaFull z‖ ≤ Real.exp (R / 2) / (2 * Real.sin R) + 1 / (2 * R) := by
@@ -5120,80 +4047,17 @@ theorem norm_gammaFull_le {R : ℝ} (hR0 : 0 < R) (hR : R < Real.pi) {z : ℂ}
             _ ≤ Real.exp (R / 2) / (2 * Real.sin R) :=
                 div_le_div_of_nonneg_left (Real.exp_pos _).le (by linarith) hden
         exact add_le_add h1 le_rfl
-
 end Y7Density
-
-
-#print axioms Y7Density.norm_taylor_remainder_le
-#print axioms Y7Density.sinh_re
-#print axioms Y7Density.sinh_im
-#print axioms Y7Density.normSq_sinh
-#print axioms Y7Density.sin_le_norm_sinh
-#print axioms Y7Density.norm_gammaFull_le
-
 end
-
 end Inline_Y7_TaylorRemainder
-
-
-
 section Inline_Y7_GammaCoeff
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open Complex
 open scoped BigOperators Topology
-
 namespace Y7Density
-
-
-
-
 noncomputable def taylorCoeff (f : ℂ → ℂ) (n : ℕ) : ℂ :=
   (((n.factorial : ℕ) : ℂ))⁻¹ * iteratedDeriv n f 0
-
-
 noncomputable def gammaCoeff (n : ℕ) : ℂ := taylorCoeff gammaExt n
-
-
-
-
-
-
-
 theorem gammaExt_functional_identity :
     (fun z : ℂ => (1 + 2 * z * gammaExt z) * (Complex.exp (2 * z) - 1))
       =ᶠ[𝓝 (0 : ℂ)] (fun z : ℂ => 2 * z * Complex.exp (3 * z / 2)) := by
@@ -5211,62 +4075,45 @@ theorem gammaExt_functional_identity :
       sinh_ne_zero_of_norm_lt_pi (norm_pos_iff.mpr hz0) (lt_trans hnorm h14)
     rw [gammaExt_of_ne hz0]
     exact gammaFull_functional_identity hz0 hsinh
-
-
-
 theorem analyticAt_gammaExt_zero : AnalyticAt ℂ gammaExt 0 :=
   hasFPowerSeriesOnBall_gammaExt.analyticAt
-
-
 theorem contDiffAt_gammaExt_zero (n : WithTop ℕ∞) : ContDiffAt ℂ n gammaExt 0 :=
   analyticAt_gammaExt_zero.contDiffAt
-
-
 theorem iteratedDeriv_functional_identity (n : ℕ) :
     iteratedDeriv n (fun z : ℂ => (1 + 2 * z * gammaExt z) * (Complex.exp (2 * z) - 1)) 0
       = iteratedDeriv n (fun z : ℂ => 2 * z * Complex.exp (3 * z / 2)) 0 :=
   Filter.EventuallyEq.iteratedDeriv_eq n gammaExt_functional_identity
-
-
-
 lemma taylorCoeff_zero (f : ℂ → ℂ) : taylorCoeff f 0 = f 0 := by
   unfold taylorCoeff
   simp
-
 lemma taylorCoeff_add {f g : ℂ → ℂ} {n : ℕ}
     (hf : ContDiffAt ℂ n f 0) (hg : ContDiffAt ℂ n g 0) :
     taylorCoeff (f + g) n = taylorCoeff f n + taylorCoeff g n := by
   unfold taylorCoeff
   rw [iteratedDeriv_add hf hg]
   ring
-
 lemma taylorCoeff_sub {f g : ℂ → ℂ} {n : ℕ}
     (hf : ContDiffAt ℂ n f 0) (hg : ContDiffAt ℂ n g 0) :
     taylorCoeff (f - g) n = taylorCoeff f n - taylorCoeff g n := by
   unfold taylorCoeff
   rw [iteratedDeriv_sub hf hg]
   ring
-
 lemma taylorCoeff_const_mul (c : ℂ) (f : ℂ → ℂ) (n : ℕ) :
     taylorCoeff (fun z => c * f z) n = c * taylorCoeff f n := by
   unfold taylorCoeff
   rw [iteratedDeriv_const_mul_field]
   ring
-
 lemma taylorCoeff_const (c : ℂ) (n : ℕ) :
     taylorCoeff (fun _ : ℂ => c) n = if n = 0 then c else 0 := by
   unfold taylorCoeff
   rw [iteratedDeriv_const]
   by_cases hn : n = 0 <;> simp [hn]
-
 lemma taylorCoeff_id (n : ℕ) : taylorCoeff id n = if n = 1 then 1 else 0 := by
   unfold taylorCoeff
   rw [iteratedDeriv_id]
   by_cases h0 : n = 0
   · simp [h0]
   · by_cases h1 : n = 1 <;> simp [h0, h1]
-
-
 lemma iteratedDeriv_exp_eq (n : ℕ) : iteratedDeriv n Complex.exp = Complex.exp := by
   induction n with
   | zero => simp
@@ -5274,7 +4121,6 @@ lemma iteratedDeriv_exp_eq (n : ℕ) : iteratedDeriv n Complex.exp = Complex.exp
       rw [iteratedDeriv_succ, ih]
       funext z
       exact (Complex.hasDerivAt_exp z).deriv
-
 lemma taylorCoeff_exp (c : ℂ) (n : ℕ) :
     taylorCoeff (fun z : ℂ => Complex.exp (c * z)) n =
       c ^ n / (((n.factorial : ℕ) : ℂ)) := by
@@ -5283,8 +4129,6 @@ lemma taylorCoeff_exp (c : ℂ) (n : ℕ) :
     (by fun_prop : ContDiff ℂ n Complex.exp) c]
   simp only [mul_zero, iteratedDeriv_exp_eq, Complex.exp_zero, mul_one]
   rw [div_eq_inv_mul]
-
-
 lemma taylorCoeff_mul {f g : ℂ → ℂ} {n : ℕ}
     (hf : ContDiffAt ℂ n f 0) (hg : ContDiffAt ℂ n g 0) :
     taylorCoeff (f * g) n
@@ -5307,10 +4151,6 @@ lemma taylorCoeff_mul {f g : ℂ → ℂ} {n : ℕ}
     exact_mod_cast Nat.factorial_ne_zero (n - i)
   rw [← hfac]
   field_simp
-
-
-
-
 lemma taylorCoeff_gammaPoly (n : ℕ) :
     taylorCoeff (fun z : ℂ => 1 + 2 * z * gammaExt z) n
       = if n = 0 then 1 else 2 * gammaCoeff (n - 1) := by
@@ -5345,8 +4185,6 @@ lemma taylorCoeff_gammaPoly (n : ℕ) :
         ((contDiffAt_const.mul contDiffAt_id).mul (contDiffAt_gammaExt_zero n))]
     rw [hadd, h1, h2, h3]
     simp [hn]
-
-
 lemma taylorCoeff_expTwoSubOne (n : ℕ) :
     taylorCoeff (fun z : ℂ => Complex.exp (2 * z) - 1) n
       = if n = 0 then 0 else (2 : ℂ) ^ n / (((n.factorial : ℕ) : ℂ)) := by
@@ -5365,37 +4203,26 @@ lemma taylorCoeff_expTwoSubOne (n : ℕ) :
         contDiffAt_const]
     rw [hsub, taylorCoeff_exp, taylorCoeff_const]
     simp [hn]
-
 lemma taylorCoeff_gammaPoly_succ (j : ℕ) :
     taylorCoeff (fun z : ℂ => 1 + 2 * z * gammaExt z) (j + 1) = 2 * gammaCoeff j := by
   rw [taylorCoeff_gammaPoly]
   simp
-
 lemma taylorCoeff_expTwoSubOne_succ (k : ℕ) :
     taylorCoeff (fun z : ℂ => Complex.exp (2 * z) - 1) (k + 1)
       = (2 : ℂ) ^ (k + 1) / (((k + 1).factorial : ℕ) : ℂ) := by
   rw [taylorCoeff_expTwoSubOne]
   simp
-
-
-
-
 theorem taylorCoeff_functional_identity (n : ℕ) :
     taylorCoeff (fun z : ℂ => (1 + 2 * z * gammaExt z) * (Complex.exp (2 * z) - 1)) n
       = taylorCoeff (fun z : ℂ => 2 * z * Complex.exp (3 * z / 2)) n := by
   unfold taylorCoeff
   rw [iteratedDeriv_functional_identity]
-
 lemma taylorCoeff_two_mul_id (n : ℕ) :
     taylorCoeff (fun z : ℂ => 2 * z) n = if n = 1 then 2 else 0 := by
   have h : taylorCoeff (fun z : ℂ => 2 * z) n = 2 * taylorCoeff id n := by
     simpa using taylorCoeff_const_mul (2 : ℂ) id n
   rw [h, taylorCoeff_id]
   by_cases hn : n = 1 <;> simp [hn]
-
-
-
-
 lemma taylorCoeff_gammaLHS (m : ℕ) :
     taylorCoeff (fun z : ℂ => (1 + 2 * z * gammaExt z) * (Complex.exp (2 * z) - 1)) (m + 2)
       = (2 : ℂ) ^ (m + 2) / (((m + 2).factorial : ℕ) : ℂ)
@@ -5433,9 +4260,6 @@ lemma taylorCoeff_gammaLHS (m : ℕ) :
     ring
   rw [hF0, hFlast, Finset.sum_congr rfl hFj, ← Finset.mul_sum]
   ring
-
-
-
 lemma taylorCoeff_gammaRHS (m : ℕ) :
     taylorCoeff (fun z : ℂ => 2 * z * Complex.exp (3 * z / 2)) (m + 2)
       = 2 * (3 / 2 : ℂ) ^ (m + 1) / (((m + 1).factorial : ℕ) : ℂ) := by
@@ -5464,19 +4288,12 @@ lemma taylorCoeff_gammaRHS (m : ℕ) :
     simp [hi1]
   · intro hmem
     exact absurd (Finset.mem_range.mpr (by omega)) hmem
-
-
-
 theorem gammaCoeff_raw (m : ℕ) :
     (2 : ℂ) ^ (m + 2) / (((m + 2).factorial : ℕ) : ℂ)
       + 2 * ∑ j ∈ Finset.range (m + 1),
           gammaCoeff j * ((2 : ℂ) ^ (m + 1 - j) / (((m + 1 - j).factorial : ℕ) : ℂ))
       = 2 * (3 / 2 : ℂ) ^ (m + 1) / (((m + 1).factorial : ℕ) : ℂ) := by
   rw [← taylorCoeff_gammaLHS m, taylorCoeff_functional_identity, taylorCoeff_gammaRHS]
-
-
-
-
 theorem gammaCoeff_recurrence (m : ℕ) :
     2 * gammaCoeff m
       + ∑ j ∈ Finset.Icc 2 (m + 1),
@@ -5525,11 +4342,6 @@ theorem gammaCoeff_recurrence (m : ℕ) :
     ring
   rw [hA] at h
   linear_combination (1 / 2 : ℂ) * h
-
-
-
-
-
 theorem taylorCoeff_gammaExt_eq_rhoCoeff (m : ℕ) :
     taylorCoeff gammaExt m = ((Y7Chain.rhoCoeff m : ℚ) : ℂ) := by
   change gammaCoeff m = ((Y7Chain.rhoCoeff m : ℚ) : ℂ)
@@ -5560,26 +4372,15 @@ theorem taylorCoeff_gammaExt_eq_rhoCoeff (m : ℕ) :
     have h1 : 2 * gammaCoeff m = 2 * ((Y7Chain.rhoCoeff m : ℚ) : ℂ) :=
       add_right_cancel (hγ.trans (by rw [← hsum] at hρ; exact hρ.symm))
     exact mul_left_cancel₀ (by norm_num : (2 : ℂ) ≠ 0) h1
-
-
-
-
-
 theorem taylorCoeff_gammaFull_eq_rhoCoeff (n : ℕ) :
     taylorCoeff gammaExt n = ((Y7Chain.rhoCoeff n : ℚ) : ℂ) :=
   taylorCoeff_gammaExt_eq_rhoCoeff n
-
-
-
-
 lemma gammaExt_ofReal_re (t : ℝ) :
     (gammaExt (t : ℂ)).re = RHLean.gammaKernel t := by
   rcases eq_or_ne t 0 with rfl | ht
   · simp [gammaExt, RHLean.gammaKernel]
   · rw [gammaExt_of_ne (by exact_mod_cast ht : (t : ℂ) ≠ 0)]
     exact gammaFull_ofReal_re ht
-
-
 lemma iteratedDeriv_gammaExt_eq (n : ℕ) :
     iteratedDeriv n gammaExt 0
       = (((n.factorial : ℕ) : ℂ)) * ((Y7Chain.rhoCoeff n : ℚ) : ℂ) := by
@@ -5590,9 +4391,6 @@ lemma iteratedDeriv_gammaExt_eq (n : ℕ) :
   have h' := congrArg (fun x : ℂ => (((n.factorial : ℕ) : ℂ)) * x) h
   rw [← mul_assoc, mul_inv_cancel₀ hnf, one_mul] at h'
   exact h'
-
-
-
 lemma taylorSum_gammaExt (t : ℝ) :
     (∑ n ∈ Finset.range (241),
         (((n.factorial : ℕ) : ℂ))⁻¹ * ((t : ℂ) ^ n * iteratedDeriv n gammaExt 0))
@@ -5614,7 +4412,6 @@ lemma taylorSum_gammaExt (t : ℝ) :
   have hnf : (((n.factorial : ℕ) : ℂ)) ≠ 0 := by
     exact_mod_cast Nat.factorial_ne_zero n
   field_simp
-
 lemma gammaM_nonneg : 0 ≤ Y7Chain.gammaM (14 / 5) := by
   unfold Y7Chain.gammaM
   have hR : (0 : ℝ) < 14 / 5 := by norm_num
@@ -5627,11 +4424,6 @@ lemma gammaM_nonneg : 0 ≤ Y7Chain.gammaM (14 / 5) := by
     div_pos (Real.exp_pos _) (mul_pos two_pos hs)
   have h2 : 0 < 1 / (2 * ((14 : ℝ) / 5)) := by positivity
   exact le_of_lt (add_pos h1 h2)
-
-
-
-
-
 theorem gammaTaylorRemainderLeaf_240 {a : ℝ} (ha0 : 0 ≤ a)
     (ha : 2 * a < (14 : ℝ) / 5) :
     GammaTaylorRemainderLeaf 240 a
@@ -5682,10 +4474,6 @@ theorem gammaTaylorRemainderLeaf_240 {a : ℝ} (ha0 : 0 ≤ a)
         Complex.abs_re_le_norm _
     _ ≤ Y7Chain.gammaM (14 / 5) * (2 * a / (14 / 5)) ^ 241
           / (1 - 2 * a / (14 / 5)) := hrem
-
-
-
-
 theorem gammaTaylorRemainderLeaf_240_epsilonGamma {a : ℝ} (ha0 : 0 ≤ a)
     (ha : 2 * a < (14 : ℝ) / 5) (ha1 : 1 ≤ 2 * a) :
     GammaTaylorRemainderLeaf 240 a (Y7Chain.epsilonGamma a) := by
@@ -5707,91 +4495,19 @@ theorem gammaTaylorRemainderLeaf_240_epsilonGamma {a : ℝ} (ha0 : 0 ≤ a)
     _ = Y7Chain.epsilonGamma a := by
       unfold Y7Chain.epsilonGamma
       ring
-
 end Y7Density
-
-
-#print axioms Y7Density.gammaExt_functional_identity
-#print axioms Y7Density.analyticAt_gammaExt_zero
-#print axioms Y7Density.iteratedDeriv_functional_identity
-#print axioms Y7Density.taylorCoeff_add
-#print axioms Y7Density.taylorCoeff_sub
-#print axioms Y7Density.taylorCoeff_const_mul
-#print axioms Y7Density.taylorCoeff_const
-#print axioms Y7Density.taylorCoeff_id
-#print axioms Y7Density.iteratedDeriv_exp_eq
-#print axioms Y7Density.taylorCoeff_exp
-#print axioms Y7Density.taylorCoeff_mul
-#print axioms Y7Density.taylorCoeff_gammaPoly
-#print axioms Y7Density.taylorCoeff_expTwoSubOne
-#print axioms Y7Density.taylorCoeff_gammaPoly_succ
-#print axioms Y7Density.taylorCoeff_expTwoSubOne_succ
-#print axioms Y7Density.taylorCoeff_functional_identity
-#print axioms Y7Density.taylorCoeff_two_mul_id
-#print axioms Y7Density.taylorCoeff_gammaLHS
-#print axioms Y7Density.taylorCoeff_gammaRHS
-#print axioms Y7Density.gammaCoeff_raw
-#print axioms Y7Density.gammaCoeff_recurrence
-#print axioms Y7Density.taylorCoeff_gammaExt_eq_rhoCoeff
-#print axioms Y7Density.taylorCoeff_gammaFull_eq_rhoCoeff
-#print axioms Y7Density.gammaExt_ofReal_re
-#print axioms Y7Density.iteratedDeriv_gammaExt_eq
-#print axioms Y7Density.taylorSum_gammaExt
-#print axioms Y7Density.gammaM_nonneg
-#print axioms Y7Density.gammaTaylorRemainderLeaf_240
-#print axioms Y7Density.gammaTaylorRemainderLeaf_240_epsilonGamma
-
 end
-
 end Inline_Y7_GammaCoeff
-
-
-
-
-
-
-
-
-
-
-
-
 section Inline_ChebyshevElementary
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-blueprint_comment
-
+blueprint_comment /--
+\section{Chebyshev's estimates}\label{chebyshev-estimates-sec}
+We record Chebyshev's estimates on $\psi$. The material here is adapted from the presentation of Diamond \cite{diamond}. -/
 namespace Chebyshev
-
 open Real Finsupp Finset
 open ArithmeticFunction hiding log
 open LogTables
-
-
-
 namespace LogBounds
-
 theorem log_1p_2_5_lt : Real.log (1 + 2 / 5) < (0.3364726 : ℝ) := by
   have hx : |(-(2 / 5) : ℝ)| < 1 := by norm_num
   have h := Real.abs_log_sub_add_sum_range_le (x := (-(2 / 5) : ℝ)) hx 20
@@ -5808,14 +4524,12 @@ theorem log_1p_2_5_lt : Real.log (1 + 2 / 5) < (0.3364726 : ℝ) := by
       Nat.cast_one, zero_add]
     norm_num
   linarith
-
 theorem log_7_lt : Real.log 7 < (1.945911 : ℝ) := by
   have hfac : Real.log 7 = Real.log (1 + 2 / 5) + Real.log 5 := by
     rw [← Real.log_mul (by norm_num) (by norm_num)]
     norm_num
   rw [hfac]
   linarith [log_1p_2_5_lt, Real.log_five_lt_d9]
-
 theorem log_1p_1_10_lt : Real.log (1 + 1 / 10) < (0.0953102 : ℝ) := by
   have hx : |(-(1 / 10) : ℝ)| < 1 := by norm_num
   have h := Real.abs_log_sub_add_sum_range_le (x := (-(1 / 10) : ℝ)) hx 10
@@ -5832,7 +4546,6 @@ theorem log_1p_1_10_lt : Real.log (1 + 1 / 10) < (0.0953102 : ℝ) := by
       Nat.cast_one, zero_add]
     norm_num
   linarith
-
 theorem log_11_lt : Real.log 11 < (2.397896 : ℝ) := by
   have hfac : Real.log 11 = Real.log (1 + 1 / 10) + Real.log 2 + Real.log 5 := by
     rw [← Real.log_mul (by norm_num) (by norm_num),
@@ -5840,7 +4553,6 @@ theorem log_11_lt : Real.log 11 < (2.397896 : ℝ) := by
     norm_num
   rw [hfac]
   linarith [log_1p_1_10_lt, Real.log_two_lt_d9, Real.log_five_lt_d9]
-
 theorem log_1p_3_10_lt : Real.log (1 + 3 / 10) < (0.2623645 : ℝ) := by
   have hx : |(-(3 / 10) : ℝ)| < 1 := by norm_num
   have h := Real.abs_log_sub_add_sum_range_le (x := (-(3 / 10) : ℝ)) hx 24
@@ -5857,7 +4569,6 @@ theorem log_1p_3_10_lt : Real.log (1 + 3 / 10) < (0.2623645 : ℝ) := by
       Nat.cast_one, zero_add]
     norm_num
   linarith
-
 theorem log_13_lt : Real.log 13 < (2.564950 : ℝ) := by
   have hfac : Real.log 13 = Real.log (1 + 3 / 10) + Real.log 2 + Real.log 5 := by
     rw [← Real.log_mul (by norm_num) (by norm_num),
@@ -5865,7 +4576,6 @@ theorem log_13_lt : Real.log 13 < (2.564950 : ℝ) := by
     norm_num
   rw [hfac]
   linarith [log_1p_3_10_lt, Real.log_two_lt_d9, Real.log_five_lt_d9]
-
 theorem log_1p_1_16_lt : Real.log (1 + 1 / 16) < (0.0606250 : ℝ) := by
   have hx : |(-(1 / 16) : ℝ)| < 1 := by norm_num
   have h := Real.abs_log_sub_add_sum_range_le (x := (-(1 / 16) : ℝ)) hx 8
@@ -5882,7 +4592,6 @@ theorem log_1p_1_16_lt : Real.log (1 + 1 / 16) < (0.0606250 : ℝ) := by
       Nat.cast_one, zero_add]
     norm_num
   linarith
-
 theorem log_17_lt : Real.log 17 < (2.833214 : ℝ) := by
   have hfac : Real.log 17 = Real.log (1 + 1 / 16) + 4 * Real.log 2 := by
     rw [show (17 : ℝ) = (1 + 1 / 16) * 2 ^ 4 by norm_num,
@@ -5890,7 +4599,6 @@ theorem log_17_lt : Real.log 17 < (2.833214 : ℝ) := by
     norm_num
   rw [hfac]
   linarith [log_1p_1_16_lt, Real.log_two_lt_d9]
-
 theorem log_1p_3_16_lt : Real.log (1 + 3 / 16) < ((0.17185027 : ℝ) : ℝ) := by
   have hx : |(-(3 / 16) : ℝ)| < 1 := by norm_num
   have h := Real.abs_log_sub_add_sum_range_le (x := (-(3 / 16) : ℝ)) hx 16
@@ -5907,7 +4615,6 @@ theorem log_1p_3_16_lt : Real.log (1 + 3 / 16) < ((0.17185027 : ℝ) : ℝ) := b
       Nat.cast_one, zero_add]
     norm_num
   linarith
-
 theorem log_19_lt : Real.log 19 < (2.944439 : ℝ) := by
   have hfac : Real.log 19 = Real.log (1 + 3 / 16) + 4 * Real.log 2 := by
     rw [show (19 : ℝ) = (1 + 3 / 16) * 2 ^ 4 by norm_num,
@@ -5915,7 +4622,6 @@ theorem log_19_lt : Real.log 19 < (2.944439 : ℝ) := by
     norm_num
   rw [hfac]
   linarith [log_1p_3_16_lt, Real.log_two_lt_d9]
-
 theorem log_1p_3_20_lt : Real.log (1 + 3 / 20) < (0.1397625 : ℝ) := by
   have hx : |(-(3 / 20) : ℝ)| < 1 := by norm_num
   have h := Real.abs_log_sub_add_sum_range_le (x := (-(3 / 20) : ℝ)) hx 12
@@ -5932,7 +4638,6 @@ theorem log_1p_3_20_lt : Real.log (1 + 3 / 20) < (0.1397625 : ℝ) := by
       Nat.cast_one, zero_add]
     norm_num
   linarith
-
 theorem log_23_lt : Real.log 23 < (3.135495 : ℝ) := by
   have hfac : Real.log 23 = Real.log (1 + 3 / 20) + 2 * Real.log 2 + Real.log 5 := by
     rw [show (23 : ℝ) = (1 + 3 / 20) * 2 ^ 2 * 5 by norm_num,
@@ -5941,7 +4646,6 @@ theorem log_23_lt : Real.log 23 < (3.135495 : ℝ) := by
     norm_num
   rw [hfac]
   linarith [log_1p_3_20_lt, Real.log_two_lt_d9, Real.log_five_lt_d9]
-
 theorem log_1p_4_25_lt : Real.log (1 + 4 / 25) < (0.1484201 : ℝ) := by
   have hx : |(-(4 / 25) : ℝ)| < 1 := by norm_num
   have h := Real.abs_log_sub_add_sum_range_le (x := (-(4 / 25) : ℝ)) hx 12
@@ -5958,7 +4662,6 @@ theorem log_1p_4_25_lt : Real.log (1 + 4 / 25) < (0.1484201 : ℝ) := by
       Nat.cast_one, zero_add]
     norm_num
   linarith
-
 theorem log_29_lt : Real.log 29 < (3.367296 : ℝ) := by
   have hfac : Real.log 29 = Real.log (1 + 4 / 25) + 2 * Real.log 5 := by
     rw [show (29 : ℝ) = (1 + 4 / 25) * 5 ^ 2 by norm_num,
@@ -5966,24 +4669,21 @@ theorem log_29_lt : Real.log 29 < (3.367296 : ℝ) := by
     norm_num
   rw [hfac]
   linarith [log_1p_4_25_lt, Real.log_five_lt_d9]
-
 end LogBounds
-
 attribute [local fun_prop] DifferentiableAt.differentiableWithinAt
-
 @[blueprint
   "cheby-def-T"
-  (title := "
-  (statement := )]
+  (title := "The function $T$")
+  (statement := /-- $T(x) := \sum_{n \leq x} \log n$. -/)]
 noncomputable def T (x : ℝ) : ℝ :=
   ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, log n
-
 @[blueprint
   "cheby-T-upper"
-  (title := "
-  (statement := )
-  (proof :=
-)
+  (title := "Upper bound on $T$")
+  (statement := /-- For $x \geq 1$, we have $T(x) \leq x \log x - x + 1 + \log x$. -/)
+  (proof := /-- Upper bound $\log n$ by $\int_n^{n+1} \log t\ dt$ for $n < x-1$ and by $\log x$ for $x-1 < n \leq x$ to bound
+  $$T(x) \leq \int_1^x \log t\ dt + \log x$$
+  giving the claim. -/)
   (latexEnv := "lemma")
   (discussion := 831)]
 theorem T.le (x : ℝ) (hx : 1 ≤ x) : T x ≤ x * log x - x + 1 + log x := by
@@ -6015,15 +4715,14 @@ theorem T.le (x : ℝ) (hx : 1 ≤ x) : T x ≤ x * log x - x + 1 + log x := by
   have : (⌊x⌋₊ : ℝ) * log ⌊x⌋₊ - ⌊x⌋₊ ≤ x * log x - x := by
     exact h2 (Set.mem_Ici.mpr h1) (Set.mem_Ici.mpr hx) <| Nat.floor_le (by grind)
   linarith [log_le_log (by positivity) <| Nat.floor_le (by linarith)]
-
 @[blueprint
-  "
+  "cheby-T-lower"
   (title := "Lower bound on $T$")
   (statement := /-- For $x \geq 1$, we have $T(x) \geq x \log x - x + 1 - \log x$. -/)
   (proof := /-- Drop the $n=1$ term. Lower bound $\log n$ by $\int_{n-1}^{n} \log t\ dt$ for $2 \leq n < x$ to bound
   $$T(x) \geq \int_1^{\lfloor x \rfloor} \log t\ dt \geq \int_1^x \log t\ dt - \log x $$
   giving the claim. -/)
-  (latexEnv := "
+  (latexEnv := "lemma")
   (discussion := 832)]
 theorem T.ge (x : ℝ) (hx : 1 ≤ x) : T x ≥ x * log x - x + 1 - log x := by
   have hone_le_floor : 1 ≤ ⌊x⌋₊ := Nat.one_le_iff_ne_zero.mpr (Nat.floor_pos.mpr hx).ne'
@@ -6051,12 +4750,11 @@ theorem T.ge (x : ℝ) (hx : 1 ≤ x) : T x ≥ x * log x - x + 1 - log x := by
       _ ≤ (x * log x - x + 1) - ∫ t in (⌊x⌋₊ : ℝ)..x, log t := by grind
       _ = ⌊x⌋₊ * log ⌊x⌋₊ - ⌊x⌋₊ + 1 := by grind [integral_log]
   linarith
-
 @[blueprint
   "cheby-T-Lambda"
-  (title := "
-  (statement := )
-  (proof := )
+  (title := "Relating $T$ and von Mangoldt")
+  (statement := /-- For $x \geq 0$, we have $T(x) = \sum_{n \leq x} \Lambda(n) \lfloor x/n \rfloor$. -/)
+  (proof := /-- This follows from the identity $\log n = \sum_{d|n} \Lambda(d)$ and rearranging sums. -/)
   (latexEnv := "lemma")
   (discussion := 833)]
 theorem T.eq_sum_Lambda (x : ℝ) : T x = ∑ n ∈ Icc 1 ⌊x⌋₊, Λ n * ⌊x / n⌋₊ := by
@@ -6064,19 +4762,17 @@ theorem T.eq_sum_Lambda (x : ℝ) : T x = ∑ n ∈ Icc 1 ⌊x⌋₊, Λ n * ⌊
   simp_rw [← log_apply, ← vonMangoldt_mul_zeta]
   rw [← Ioc_eq_Icc, sum_Ioc_mul_zeta_eq_sum]
   simp [Nat.floor_div_natCast]
-
 @[blueprint
-  "
+  "cheby-E"
   (title := "$E$ function")
   (statement := /-- If $\nu : \N \to \R$, let $E: \R \to \R$ denote the function $E(x):= \sum_m \nu(m) \lfloor x / m \rfloor$. -/)]
 noncomputable def E (ν : ℕ →₀ ℝ) (x : ℝ) : ℝ := ν.sum (fun m w ↦ w * ⌊ x / m ⌋₊)
-
 @[blueprint
-  "
+  "cheby-T-E"
   (title := "Relating a weighted sum of $T$ to an $E$-weighted sum of von Mangoldt")
   (statement := /-- If $\nu : \N \to \R$ is finitely supported, then
 $$ \sum_m \nu(m) T(x/m) = \sum_{n \leq x} E(x/n) \Lambda(n).$$ -/)
-  (latexEnv := "
+  (latexEnv := "lemma")
   (discussion := 834)]
 theorem T.weighted_eq_sum (ν : ℕ →₀ ℝ) (x : ℝ) : ν.sum (fun m w ↦ w * T (x/m)) = ∑ n ∈ Icc 1 ⌊x⌋₊, Λ n * E ν (x/n) := by
   simp_rw [T.eq_sum_Lambda, E, Finsupp.mul_sum]
@@ -6104,34 +4800,22 @@ theorem T.weighted_eq_sum (ν : ℕ →₀ ℝ) (x : ℝ) : ν.sum (fun m w ↦ 
     have := div_lt_iff₀ (by linarith)|>.mp this
     rwa [mul_comm] at this
   · grind
-
 open Finsupp in
 @[blueprint
   "cheby-nu"
-  (title := "
-  (statement := )]
+  (title := "Chebyshev's weight $\nu$")
+  (statement := /-- $\nu = e_1 - e_2 - e_3 - e_5 + e_{30}$, where $e_n$ is the Kronecker delta at $n$. -/)]
 noncomputable def ν : ℕ →₀ ℝ := single 1 1 - single 2 1 - single 3 1 - single 5 1 + single 30 1
-
-
 private lemma ν_support : ν.support = {1, 2, 3, 5, 30} := by
   norm_num [ν, Finset.ext_iff]; grind
-
-
-
-
 private lemma ν_sum_mul (f : ℕ → ℝ) :
     ν.sum (fun m w ↦ w * f m) = f 1 - f 2 - f 3 - f 5 + f 30 := by
   rw [ν, sum_add_index (by simp) (by intros; ring)]
   grind only [sum_single_index, sum_sub_index]
-
-
-
 private lemma E_nu_expand (y : ℝ) :
     E ν y = ⌊y⌋₊ - ⌊y / 2⌋₊ - ⌊y / 3⌋₊ - ⌊y / 5⌋₊ + ⌊y / 30⌋₊ := by
   rw [E, ν, sum_add_index' (by grind) (by grind)]
   grind [sum_single_index, sum_sub_index]
-
-
 private lemma floor_div_bounds {y : ℝ} (hy : 0 ≤ y) {k : ℕ} (hk : 1 ≤ k) :
     k * ⌊y / k⌋₊ ≤ ⌊y⌋₊ ∧ ⌊y⌋₊ < k * ⌊y / k⌋₊ + k := by
   have hk' : (0 : ℝ) < k := by exact_mod_cast hk
@@ -6146,22 +4830,20 @@ private lemma floor_div_bounds {y : ℝ} (hy : 0 ≤ y) {k : ℕ} (hk : 1 ≤ k)
     have hy_lt : y < (k : ℝ) * (⌊y / k⌋₊ + 1) := by linarith [(div_lt_iff₀ hk').mp hlt]
     have : (⌊y⌋₊ : ℝ) < (k : ℝ) * (⌊y / k⌋₊ + 1) := (Nat.floor_le hy).trans_lt hy_lt
     exact_mod_cast this
-
 @[blueprint
   "cheby-nu-cancel"
-  (title := "
-  (statement := )
-  (proof := )
+  (title := "Cancellation property of $\nu$")
+  (statement := /-- One has $\sum_n \nu(n)/n = 0$ -/)
+  (proof := /-- This follows from direct computation. -/)
   (latexEnv := "lemma")]
 theorem nu_sum_div_eq_zero : ν.sum (fun n w ↦ w / n) = 0 := by
   norm_num [ν, add_div, sum_add_index', sub_div, sum_sub_index]
-
 @[blueprint
-  "
+  "cheby-E-1"
   (title := "$E$ initially constant")
   (statement := /-- One has $E(x)=1$ for $1 \leq x < 6$. -/)
   (proof := /-- This follows from direct computation. -/)
-  (latexEnv := "
+  (latexEnv := "lemma")
   (discussion := 835)]
 theorem E_nu_eq_one (x : ℝ) (hx : x ∈ Set.Ico 1 6) : E ν x = 1 := by
   obtain ⟨h1, h6⟩ := hx
@@ -6175,12 +4857,11 @@ theorem E_nu_eq_one (x : ℝ) (hx : x ∈ Set.Ico 1 6) : E ν x = 1 := by
   push_cast at h2 h3 h5
   rw [show ⌊x⌋₊ = ⌊x / 2⌋₊ + ⌊x / 3⌋₊ + ⌊x / 5⌋₊ + 1 by omega]
   grind
-
 @[blueprint
   "cheby-E-periodic"
-  (title := "
-  (statement := )
-  (proof := )
+  (title := "$E$ is periodic")
+  (statement := /-- One has $E(x+30) = E(x)$. -/)
+  (proof := /-- This follows from direct computation. -/)
   (latexEnv := "lemma")]
 theorem E_nu_period (x : ℝ) (hx : x ≥ 0) : E ν (x + 30) = E ν x := by
   have h (k : ℝ) : (x + 30) / k = x / k + (30 / k) := by ring
@@ -6189,13 +4870,12 @@ theorem E_nu_period (x : ℝ) (hx : x ≥ 0) : E ν (x + 30) = E ν x := by
   repeat rw [Nat.floor_add_ofNat (by positivity)]
   rw [Nat.floor_add_one (by positivity)]
   grind
-
 @[blueprint
-  "
+  "cheby-E-val"
   (title := "$E$ lies between $0$ and $1$")
   (statement := /-- One has $0 \leq E(x) \leq 1$ for all $x \geq 0$. -/)
   (proof := /-- This follows from direct computation for $0 \leq x < 30$, and then by periodicity for larger $x$. -/)
-  (latexEnv := "
+  (latexEnv := "lemma")
   (discussion := 836)]
 theorem E_nu_bound (x : ℝ) (hx : x ≥ 0) : 0 ≤ E ν x ∧ E ν x ≤ 1 := by
   have : ∀ y, 0 ≤ y → y < 30 → 0 ≤ E ν y ∧ E ν y ≤ 1 := fun y hy0 hy30 ↦ by
@@ -6220,18 +4900,16 @@ theorem E_nu_bound (x : ℝ) (hx : x ≥ 0) : 0 ≤ E ν x ∧ E ν x ≤ 1 := b
     | zero => simp
     | succ n ih => simp [add_mul, ← add_assoc, E_nu_period _ (by linarith : y + n * 30 ≥ 0), ih]
   exact hxy ▸ this y hy.1 hy.2
-
 @[blueprint
   "cheby-U-def"
-  (title := "
-  (statement := )]
+  (title := "The $U$ function")
+  (statement := /-- We define $U(x) := \sum_m \nu(m) T(x/m)$. -/)]
 noncomputable def U (x : ℝ) : ℝ := ν.sum (fun m w ↦ w * T (x/m))
-
 @[blueprint
   "cheby-psi-lower"
-  (title := "
-  (statement := )
-  (proof := )
+  (title := "Lower bounding $\\psi$ by a weighted sum of $T$")
+  (statement := /-- For any $x > 0$, one has $\psi(x) \geq U(x)$. -/)
+  (proof := /-- Use Lemma \ref{cheby-T-E} and Lemma \ref{cheby-E-val}. -/)
   (latexEnv := "proposition")
   (discussion := 837)]
 theorem psi_ge_weighted (x : ℝ) (hx : x > 0) : ψ x ≥ U x := by
@@ -6240,13 +4918,12 @@ theorem psi_ge_weighted (x : ℝ) (hx : x > 0) : ψ x ≥ U x := by
   gcongr with i
   have := E_nu_bound (x / i) (div_nonneg hx.le (by simp))
   grw [this.2, mul_one]
-
 @[blueprint
-  "
+  "cheby-psi-diff"
   (title := "Upper bounding a difference of $\\psi$ by a weighted sum of $T$")
   (statement := /-- For any $x > 0$, one has $\psi(x) - \psi(x/6) \leq U(x)$. -/)
   (proof := /-- Use Lemma \ref{cheby-T-E}, Lemma \ref{cheby-E-val}, and Lemma \ref{cheby-E-1}. -/)
-  (latexEnv := "
+  (latexEnv := "proposition")
   (discussion := 838)]
 theorem psi_diff_le_weighted (x : ℝ) (hx : x > 0) : ψ x - ψ (x / 6) ≤ U x := by
   unfold U psi
@@ -6266,48 +4943,40 @@ theorem psi_diff_le_weighted (x : ℝ) (hx : x > 0) : ψ x - ψ (x / 6) ≤ U x 
     have := div_lt_iff₀ (by linarith)|>.mp this
     rwa [mul_comm] at this
   · exact E_nu_bound _ (div_nonneg hx.le (by simp))|>.1
-
 @[blueprint
   "a-def"
-  (title := "
-  (statement := )]
+  (title := "The constant $a$")
+  (statement := /-- We define $a := -\sum_m \nu(m) \log m / m$. -/)]
 noncomputable def a : ℝ := - ν.sum (fun m w ↦ w * log m / m)
-
 lemma a_simpl : a = (7/15) * Real.log 2 + (3/10) * Real.log 3 + (1/6) * Real.log 5 := by
   norm_num [a, Finsupp.sum, single_apply, ν_support]
   norm_num [Finset.sum, ν]
   grind [show (30 : ℝ) = 2 * 3 * 5 by ring, log_mul, log_mul]
-
 @[blueprint
   "a-val"
-  (title := "
-  (statement := )
+  (title := "Numerical value of $a$")
+  (statement := /-- We have $0.92129 \leq a \leq 0.92130$. -/)
   (latexEnv := "lemma")
   (discussion := 839)]
 theorem a_bound : a ∈ Set.Icc 0.92129 0.92130 := by
   norm_num [Chebyshev.a_simpl]
   constructor <;> nlinarith [KernelLog.log_2_gt, KernelLog.log_2_lt, KernelLog.log_3_gt,
     KernelLog.log_3_lt, KernelLog.log_5_gt, KernelLog.log_5_lt]
-
 noncomputable def e (x : ℝ) : ℝ :=
   (T x - (x * log x - x + 1))
-
 lemma U_bound.lemma_1 (x : ℝ) : T x = x * log x - x + 1 + (e x) := by
   unfold e
   ring
-
 lemma U_bound.lemma_2 (x : ℝ) (hx : 1 ≤ x) : |e x| ≤ log x := by
   rw [abs_le]
   unfold e
   constructor <;> linarith [T.ge x hx, T.le x hx]
-
 lemma U_bound.lemma_3 (x : ℝ) :
     U x = ν.sum (fun m w ↦ w * ((x / m) * (log (x / m))))
           - ν.sum (fun m w ↦ w * (x / m))
           + ν.sum (fun _m w ↦ w)
           + ν.sum (fun m w ↦ w * e (x / m)) := by
   simp [U, Finsupp.sum, U_bound.lemma_1, sub_eq_add_neg, add_mul, mul_comm, sum_add_distrib]
-
 lemma U_bound.lemma_4 (x : ℝ) (hx : 0 < x) :
     ν.sum (fun m w ↦ w * ((x / m) * log (x / m))) = a * x := by
   have hx0 : x ≠ 0 := ne_of_gt hx
@@ -6316,23 +4985,19 @@ lemma U_bound.lemma_4 (x : ℝ) (hx : 0 < x) :
   rw [ν_sum_mul (fun m ↦ (x / m) * log (x / m)), ha]
   simp [Real.log_div hx0]
   ring
-
 lemma U_bound.lemma_5 (x : ℝ) : ν.sum (fun m w ↦ w * (x / m)) = 0 := by
   rw [ν_sum_mul (fun m ↦ x / m)]; push_cast; ring
-
 lemma U_bound.lemma_6 : ν.sum (fun _ w ↦ w) = (-1 : ℝ) := by
   have := ν_sum_mul (fun _ ↦ (1 : ℝ)); simp at this; linarith
-
 lemma Finsupp.abs_sum_le (A : Type*) (ν : A →₀ ℝ) (g : A → ℝ → ℝ) : |ν.sum g| ≤ ν.sum |g| := by
   simp_rw [Finsupp.sum.eq_1]
   exact abs_sum_le_sum_abs (fun i ↦ g i (ν i)) ν.support
-
 @[blueprint
-  "
+  "U-bounds"
   (title := "Bounds for $U$")
   (statement := /-- For $x \geq 30$, we have $|U(x) - ax| \leq 5\log x - 5$. -/)
   (proof := /-- Use Lemma \ref{cheby-T-upper}, Lemma \ref{cheby-T-lower}, the definition of $a$, and the triangle inequality, also using that $\log(2)+\log(3)+\log(5)+\log(30) \geq 6$. -/)
-  (latexEnv := "
+  (latexEnv := "lemma")
   (discussion := 840)]
 theorem U_bound (x : ℝ) (hx : 30 ≤ x) : |U x - a * x| ≤ 5 * log x - 5 := by
   have hxpos : 0 < x := lt_of_lt_of_le (by norm_num) hx
@@ -6367,8 +5032,6 @@ theorem U_bound (x : ℝ) (hx : 30 ≤ x) : |U x - a * x| ≤ 5 * log x - 5 := b
     have hm_pos : (0 : ℝ) < m := by exact_mod_cast (hmem_of_supp m hm).1
     rw [← div_eq_mul_inv, Real.log_div (ne_of_gt hxpos) (ne_of_gt hm_pos)]; ring
   rw [hlog_split]
-
-
   have expand_sum : ∀ f : ℕ → ℝ → ℝ, (∀ n, f n 0 = 0) →
       ν.sum f = f 1 1 + f 2 (-1) + f 3 (-1) + f 5 (-1) + f 30 1 := by
     intro f hf
@@ -6389,35 +5052,31 @@ theorem U_bound (x : ℝ) (hx : 30 ≤ x) : |U x - a * x| ≤ 5 * log x - 5 := b
     linarith [KernelLog.log_2_gt, KernelLog.log_3_gt, KernelLog.log_5_gt,
       KernelLog.log_30_gt]
   grw [hgeq6]; rw [habs]; linarith
-
 @[blueprint
   "psi-lower"
-  (title := "
-  (statement := )
-  (proof := )
+  (title := "Lower bound for $\\psi$")
+  (statement := /-- For $x \geq 30$, we have $\psi(x) \geq ax - 5\log x - 1$. -/)
+  (proof := /-- Use Lemma \ref{U-bounds} and Proposition \ref{cheby-psi-lower}.-/)
   (latexEnv := "theorem")
   (discussion := 841)]
 theorem psi_lower (x : ℝ) (hx : 30 ≤ x) : ψ x ≥ a * x - 5 * log x + 5 := by
   have h2 := abs_sub_le_iff.mp (U_bound x hx)
   linarith [psi_ge_weighted x (by linarith), h2.1]
-
 @[blueprint
-  "
+  "psi-diff-upper"
   (title := "Upper bound for $\\psi$ difference")
   (statement := /-- For $x \geq 30$, we have $\psi(x) - \psi(x/6) \leq ax + 5\log x - 5$. -/)
   (proof := /-- Use Lemma \ref{U-bounds} and Proposition \ref{cheby-psi-upper}.-/)
-  (latexEnv := "
+  (latexEnv := "proposition")
   (discussion := 842)]
 theorem psi_diff_upper (x : ℝ) (hx : 30 ≤ x) : ψ x - ψ (x / 6) ≤ a * x + 5 * log x - 5 := by
   have h2 := abs_sub_le_iff.mp (U_bound x hx)
   linarith [psi_diff_le_weighted x (by linarith), h2.2]
-
-
 @[blueprint
   "psi-num"
-  (title := "
-  (statement := )
-  (proof := )
+  (title := "Numerical bound for $\\psi(x)$ for very small $x$")
+  (statement := /-- For $0 < x \leq 30$, we have $\psi(x) \leq 1.015 x$. -/)
+  (proof := /-- Numerical check (the maximum occurs at $x=19$).  One only needs to check the case when $x$ is a prime power.-/)
   (latexEnv := "sublemma")]
 theorem psi_num (x : ℝ) (hx : x > 0) (hx2 : x ≤ 30) : ψ x ≤ 1.015 * x := by
   suffices ∀ n ∈ Icc (0 : ℕ) 30, ψ n ≤ 1.015 * n by
@@ -6448,16 +5107,14 @@ theorem psi_num (x : ℝ) (hx : x > 0) (hx2 : x ≤ 30) : ψ x ≤ 1.015 * x := 
     try grw [LogBounds.log_17_lt]; try grw [LogBounds.log_19_lt]
     try grw [LogBounds.log_23_lt]; try grw [LogBounds.log_29_lt]
     norm_num
-
 @[blueprint
-  "
+  "psi-upper"
   (title := "Upper bound for $\\psi$")
   (statement := /-- For $x \geq 30$, we have $\psi(x) \leq 6ax/5 + (\log (x/5) / \log 6) (5 \log x - 5)$. -/)
   (proof := /-- Iterate Lemma \ref{psi-diff-upper} using Sublemma \ref{psi-num} .-/)
-  (latexEnv := "
+  (latexEnv := "theorem")
   (discussion := 843)]
 theorem psi_upper (x : ℝ) (hx : 30 ≤ x) : ψ x ≤ 6 * a * x / 5 + (log (x/5) / log 6) * (5 * log x - 5) := by
-
   have rpow_key : (30 : ℝ) * 6 ^ (log (x / 5) / log 6 - 1) = x := by
     rw [rpow_def_of_pos (by norm_num)]
     field_simp
@@ -6528,16 +5185,14 @@ theorem psi_upper (x : ℝ) (hx : 30 ≤ x) : ψ x ≤ 6 * a * x / 5 + (log (x/5
     · simp only [sub_nonneg, Nat.ofNat_pos, le_mul_iff_one_le_right]
       exact le_log_iff_exp_le (by linarith)|>.mpr (by linarith [exp_one_lt_three])
     · exact Nat.floor_le (by bound)
-
 open LeanCert.CertifiedBounds.Chebyshev in
 private theorem allChecks_11723 : checkAllPsiLeMulWith 11723 (111 / 100) 20 = true :=
   ChebyshevPsiKernel.allChecks_11723
-
 @[blueprint
   "psi-num-2"
-  (title := "
-  (statement := )
-  (proof := )
+  (title := "Numerical bound for $\\psi(x)$ for medium $x$")
+  (statement := /-- For $0 < x \leq 11723$, we have $\psi(x) \leq 1.11 x$. -/)
+  (proof := /-- Verified by brute-force: an $O(N)$ incremental checker confirms $\psi(N) \leq 1.11 N$ for every integer $N = 1, \ldots, 11723$ via \texttt{native\_decide}. The sparse checkpoint ladder originally described here is not needed. The real-variable case follows by monotonicity of $\psi$. -/)
   (latexEnv := "sublemma")]
 theorem psi_num_2 (x : ℝ) (hx : x > 0) (hx2 : x ≤ 11723) : ψ x ≤ 1.11 * x := by
   open LeanCert.CertifiedBounds.Chebyshev in
@@ -6556,18 +5211,16 @@ theorem psi_num_2 (x : ℝ) (hx : x > 0) (hx2 : x ≤ 11723) : ψ x ≤ 1.11 * x
     calc ψ (⌊x⌋₊ : ℝ) ≤ 111 / 100 * ⌊x⌋₊ := h1
       _ ≤ 111 / 100 * x := by gcongr; exact Nat.floor_le hnn
       _ = 1.11 * x := by norm_num
-
 lemma hlog_y (y : ℝ) (hy : 11723 < y) : log y ≤ log 11723 + (y / 11723 - 1) := by
   calc log y = log (11723 * (y / 11723)) := by rw [mul_div_cancel₀ _ (by positivity)]
     _ = log 11723 + log (y / 11723) := Real.log_mul (by norm_num) (by positivity)
     _ ≤ log 11723 + (y / 11723 - 1) := by grind [Real.log_le_sub_one_of_pos]
-
 @[blueprint
-  "
+  "psi-upper-clean"
   (title := "Clean upper bound for $\\psi$")
   (statement := /-- For $x > 0$, we have $\psi(x) \leq 1.11 x$. -/)
   (proof := /-- Strong induction on $x$.  For $x \leq 11723$ one can use Sublemma \ref{psi-num-2}.  Otherwise, we can use Proposition \ref{psi-diff-upper} and the triangle inequality. -/)
-  (latexEnv := "
+  (latexEnv := "theorem")
   (discussion := 844)]
 theorem psi_upper_clean (x : ℝ) (hx : x > 0) : ψ x ≤ 1.11 * x := by
   have hlog_large : ∀ y : ℝ, 11723 < y → 5 * log y - 5 ≤ (37 / 10000 : ℝ) * y := by
@@ -6604,68 +5257,19 @@ theorem psi_upper_clean (x : ℝ) (hx : x > 0) : ψ x ≤ 1.11 * x := by
   rw [psi_eq_psi_coe_floor x]
   calc ψ (⌊x⌋₊ : ℝ) ≤ 1.11 * ⌊x⌋₊ := hNat ⌊x⌋₊
     _ ≤ 1.11 * x := by nlinarith [Nat.floor_le hx.le]
-
 end Chebyshev
-
 end
-
 end Inline_ChebyshevElementary
-
-
-
 section Inline_GateII_ThetaElementary
-
 namespace RHLean.GateII
-
 namespace SA
-
-
 def X0 : ℕ := 3594641
-
 end SA
-
 end RHLean.GateII
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open Chebyshev
-
 namespace RHLean.GateII.Tail
-
 open RHLean.GateII.SA
-
-
 theorem X0_rpow_seven_sixteenths_ge :
     (700 : ℝ) ≤ (X0 : ℝ) ^ ((7 : ℝ) / 16) := by
   have h16 : (700 : ℝ) ^ 16 ≤ (X0 : ℝ) ^ 7 := by norm_num [X0]
@@ -6675,8 +5279,6 @@ theorem X0_rpow_seven_sixteenths_ge :
     ← Real.rpow_natCast, ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ (X0 : ℝ))] at h
   norm_num at h
   exact h
-
-
 theorem X0_rpow_fifteen_sixteenths_ge :
     (900000 : ℝ) ≤ (X0 : ℝ) ^ ((15 : ℝ) / 16) := by
   have h16 : (900000 : ℝ) ^ 16 ≤ (X0 : ℝ) ^ 15 := by norm_num [X0]
@@ -6686,9 +5288,6 @@ theorem X0_rpow_fifteen_sixteenths_ge :
     ← Real.rpow_natCast, ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ (X0 : ℝ))] at h
   norm_num at h
   exact h
-
-
-
 theorem log_budget {t : ℝ} (ht : (X0 : ℝ) ≤ t) :
     5 * Real.log t - 5 + 2 * Real.sqrt t * Real.log t
       ≤ (5129 / 100000 : ℝ) * t := by
@@ -6697,20 +5296,16 @@ theorem log_budget {t : ℝ} (ht : (X0 : ℝ) ≤ t) :
   have ht1 : (1 : ℝ) ≤ t := by
     have : (1 : ℝ) ≤ (X0 : ℝ) := by norm_num [X0]
     linarith
-
   have hlog : Real.log t ≤ 16 * t ^ ((1 : ℝ) / 16) := by
     have h := Real.log_le_rpow_div htpos.le (by norm_num : (0 : ℝ) < (1 : ℝ) / 16)
     rw [div_eq_mul_inv] at h
     norm_num at h
     nlinarith [h]
-
   have hsqrt : Real.sqrt t = t ^ ((1 : ℝ) / 2) := Real.sqrt_eq_rpow t
-
   have hneg1 : t ^ (-(15 : ℝ) / 16) ≤ (X0 : ℝ) ^ (-(15 : ℝ) / 16) :=
     Real.rpow_le_rpow_of_nonpos hX0pos ht (by norm_num)
   have hneg2 : t ^ (-(7 : ℝ) / 16) ≤ (X0 : ℝ) ^ (-(7 : ℝ) / 16) :=
     Real.rpow_le_rpow_of_nonpos hX0pos ht (by norm_num)
-
   have hsplit1 : t ^ ((1 : ℝ) / 16) = t * t ^ (-(15 : ℝ) / 16) := by
     rw [show ((1 : ℝ) / 16) = 1 + (-(15 : ℝ) / 16) by norm_num, Real.rpow_add htpos,
       Real.rpow_one]
@@ -6720,7 +5315,6 @@ theorem log_budget {t : ℝ} (ht : (X0 : ℝ) ≤ t) :
   have hsqrtt : Real.sqrt t * t ^ ((1 : ℝ) / 16) = t ^ ((9 : ℝ) / 16) := by
     rw [hsqrt, ← Real.rpow_add htpos]
     norm_num
-
   have hX15 : (X0 : ℝ) ^ (-(15 : ℝ) / 16) ≤ 1 / 900000 := by
     rw [show (-(15 : ℝ) / 16) = -((15 : ℝ) / 16) by ring, Real.rpow_neg hX0pos.le]
     simpa [one_div] using one_div_le_one_div_of_le (by norm_num : (0 : ℝ) < 900000)
@@ -6729,7 +5323,6 @@ theorem log_budget {t : ℝ} (ht : (X0 : ℝ) ≤ t) :
     rw [show (-(7 : ℝ) / 16) = -((7 : ℝ) / 16) by ring, Real.rpow_neg hX0pos.le]
     simpa [one_div] using one_div_le_one_div_of_le (by norm_num : (0 : ℝ) < 700)
       X0_rpow_seven_sixteenths_ge
-
   have h1 : 5 * Real.log t ≤ 80 * t * t ^ (-(15 : ℝ) / 16) := by
     calc 5 * Real.log t ≤ 5 * (16 * t ^ ((1 : ℝ) / 16)) := by nlinarith [hlog]
       _ = 80 * t * t ^ (-(15 : ℝ) / 16) := by rw [hsplit1]; ring
@@ -6753,9 +5346,6 @@ theorem log_budget {t : ℝ} (ht : (X0 : ℝ) ≤ t) :
   have hconst : (80 : ℝ) * (1 / 900000) + 32 * (1 / 700) ≤ 5129 / 100000 := by
     norm_num
   nlinarith
-
-
-
 theorem theta_abs_le_thirteen_hundredths :
     ∀ t : ℝ, (X0 : ℝ) ≤ t → |Chebyshev.theta t - t| ≤ (13 / 100 : ℝ) * t := by
   intro t ht
@@ -6774,7 +5364,6 @@ theorem theta_abs_le_thirteen_hundredths :
     Chebyshev.psi_sub_theta_le ht1
   have hlogb := log_budget ht
   have hlowtheta : (87 / 100 : ℝ) * t ≤ Chebyshev.theta t := by
-
     have hat : (0.92129 : ℝ) * t ≤ Chebyshev.a * t :=
       mul_le_mul_of_nonneg_right ha htpos.le
     have h1 : (0.92129 : ℝ) * t - 5 * Real.log t + 5 - 2 * Real.sqrt t * Real.log t
@@ -6789,36 +5378,16 @@ theorem theta_abs_le_thirteen_hundredths :
     nlinarith
   ·
     nlinarith
-
 end RHLean.GateII.Tail
-
 end
-
 end Inline_GateII_ThetaElementary
-
-
-
-
-
-
-
-
-
 section Inline_GateII_FprimeLayer
-
 namespace RHLean.GateII.Tail
-
 noncomputable section
-
-
 noncomputable def beta0 : ℝ := Real.log 2 + 1 / 2
-
 theorem beta0_pos : 0 < beta0 := by
   unfold beta0
   linarith [Real.log_pos (by norm_num : (1 : ℝ) < 2)]
-
-
-
 theorem log_le_of_taylor {p N : ℕ} {u : ℚ} (hp : 0 < p) (hu : 0 ≤ u)
     (h : (p : ℚ) ≤ ∑ k ∈ Finset.range N, u ^ k / (Nat.factorial k : ℚ)) :
     Real.log (p : ℝ) ≤ (u : ℝ) := by
@@ -6832,25 +5401,14 @@ theorem log_le_of_taylor {p N : ℕ} {u : ℚ} (hp : 0 < p) (hu : 0 ≤ u)
           exact_mod_cast h
     _ = ∑ k ∈ Finset.range N, ((u : ℝ)) ^ k / (Nat.factorial k : ℝ) := hcast
     _ ≤ Real.exp (u : ℝ) := Real.sum_le_exp_of_nonneg (by exact_mod_cast hu) N
-
-
 noncomputable def tailW (p : ℕ) : ℝ :=
   (Real.log (p : ℝ)) ^ 2 / ((p : ℝ) * (Real.log (p : ℝ) + beta0))
-
-
-
 noncomputable def Fprime (k : ℕ) : ℝ :=
   ∑ p ∈ (Nat.primesLE k).filter (fun p => 5 ≤ p), tailW p
-
-
-
 noncomputable def primeTailSet (k : ℕ) : Finset ℕ :=
   ((Nat.primesLE k).filter (fun p => 5 ≤ p)).filter (fun p => ¬ p ∣ k)
-
-
 noncomputable def primeDvdSet (k : ℕ) : Finset ℕ :=
   ((Nat.primesLE k).filter (fun p => 5 ≤ p)).filter (fun p => p ∣ k)
-
 theorem tailW_nonneg (p : ℕ) : 0 ≤ tailW p := by
   unfold tailW
   have hL : 0 ≤ Real.log (p : ℝ) := Real.log_natCast_nonneg p
@@ -6860,11 +5418,7 @@ theorem tailW_nonneg (p : ℕ) : 0 ≤ tailW p := by
     have hden : 0 < (p : ℝ) * (Real.log (p : ℝ) + beta0) :=
       mul_pos (by linarith) (by linarith [beta0_pos])
     exact div_nonneg (sq_nonneg _) hden.le
-
 theorem beta0_nonneg : 0 ≤ beta0 := le_of_lt beta0_pos
-
-
-
 theorem tailW_ge_of_log_ge {p : ℕ} (hp : 2 ≤ p) {u : ℝ} (hu : 0 ≤ u)
     (h : u ≤ Real.log (p : ℝ)) :
     u ^ 2 / ((p : ℝ) * (u + beta0)) ≤ tailW p := by
@@ -6885,27 +5439,19 @@ theorem tailW_ge_of_log_ge {p : ℕ} (hp : 2 ≤ p) {u : ℝ} (hu : 0 ≤ u)
     nlinarith [hcore, hpR.le]
   rw [div_le_div_iff₀ hden1 hden2]
   exact hkey
-
-
 theorem beta0_le_hi : beta0 ≤ (11931471808 / 10 ^ 10 : ℚ) := by
   unfold beta0
   have h := Real.log_two_lt_d9
   norm_num [show (11931471808 / 10 ^ 10 : ℚ) = (1.1931471808 : ℝ) by norm_num] at *
   linarith
-
-
 noncomputable def tailWLo (p : ℕ) (u : ℚ) : ℚ :=
   u ^ 2 / ((p : ℚ) * (u + 11931471808 / 10 ^ 10))
-
 theorem exp_one_le_hi : Real.exp 1 ≤ (((27182818286 / 10 ^ 10 : ℚ)) : ℝ) := by
   have h := Real.exp_one_lt_d9
   have h2 : (((27182818286 / 10 ^ 10 : ℚ)) : ℝ) = 2.7182818286 := by norm_num
   rw [h2]
   exact le_of_lt h
-
-
 @[reducible] def expHi (k : ℕ) : ℚ := (27182818286 / 10 ^ 10) ^ k
-
 theorem exp_natCast_le_expHi (k : ℕ) : Real.exp (k : ℝ) ≤ (expHi k : ℝ) := by
   have h1 : Real.exp (k : ℝ) = (Real.exp 1) ^ k := by
     rw [← Real.exp_nat_mul]
@@ -6917,14 +5463,9 @@ theorem exp_natCast_le_expHi (k : ℕ) : Real.exp (k : ℝ) ≤ (expHi k : ℝ) 
     rfl
   rw [h2]
   exact pow_le_pow_left₀ (Real.exp_pos 1).le exp_one_le_hi k
-
-
 @[reducible] def taylorUB1 (x : ℚ) (N : ℕ) : ℚ :=
   (∑ m ∈ Finset.range N, x ^ m / (Nat.factorial m : ℚ))
     + x ^ N * ((N : ℚ) + 1) / ((Nat.factorial N : ℚ) * (N : ℚ))
-
-
-
 theorem exp_le_expHi_mul {u : ℚ} {k N : ℕ} (hk : (k : ℚ) ≤ u) (hk1 : u ≤ (k : ℚ) + 1)
     (hN : 0 < N) :
     Real.exp (u : ℝ) ≤ (expHi k : ℝ) * (taylorUB1 (u - (k : ℚ)) N : ℝ) := by
@@ -6952,16 +5493,12 @@ theorem exp_le_expHi_mul {u : ℚ} {k N : ℕ} (hk : (k : ℚ) ≤ u) (hk1 : u �
     ring
   rw [hexp]
   exact mul_le_mul (exp_natCast_le_expHi k) hT (Real.exp_pos _).le (by unfold expHi; positivity)
-
-
 theorem log_lower_of_expHi {p N k : ℕ} {u : ℚ} (hp : 0 < p) (hk : (k : ℚ) ≤ u)
     (hk1 : u ≤ (k : ℚ) + 1) (hN : 0 < N)
     (hcheck : expHi k * taylorUB1 (u - (k : ℚ)) N ≤ (p : ℚ)) :
     (u : ℝ) ≤ Real.log (p : ℝ) := by
   rw [Real.le_log_iff_exp_le (by exact_mod_cast hp)]
   exact le_trans (exp_le_expHi_mul hk hk1 hN) (by exact_mod_cast hcheck)
-
-
 theorem tailWLo_le_tailW_core {p : ℕ} {u : ℚ} (hp2 : 2 ≤ p) (hu : 0 ≤ u)
     (hlog : (u : ℝ) ≤ Real.log (p : ℝ)) : (tailWLo p u : ℝ) ≤ tailW p := by
   have hp0 : 0 < p := by omega
@@ -6986,61 +5523,15 @@ theorem tailWLo_le_tailW_core {p : ℕ} {u : ℚ} (hp2 : 2 ≤ p) (hu : 0 ≤ u)
     _ ≤ (u : ℝ) ^ 2 / ((p : ℝ) * ((u : ℝ) + beta0)) :=
         div_le_div_of_nonneg_left (sq_nonneg _) hden0 hden
     _ ≤ tailW p := tailW_ge_of_log_ge hp2 (by exact_mod_cast hu) hlog
-
-
 end
-
 end RHLean.GateII.Tail
-
-
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open Finset
 open scoped BigOperators
-
 namespace RHLean.GateII.Tail
-
-
-
-
 @[reducible] def expHiN (k : ℕ) : ℕ := 271829 ^ k
-
-
 @[reducible] def expHiD (k : ℕ) : ℕ := 100000 ^ k
-
-
 @[reducible] def expHi2 (k : ℕ) : ℚ := (expHiN k : ℚ) / (expHiD k : ℚ)
-
-
 theorem exp_natCast_le_expHi2 (k : ℕ) : Real.exp (k : ℝ) ≤ (expHi2 k : ℝ) := by
   have hbase : Real.exp 1 ≤ (2.71829 : ℝ) := by
     exact le_of_lt (lt_trans Real.exp_one_lt_d9 (by norm_num))
@@ -7055,8 +5546,6 @@ theorem exp_natCast_le_expHi2 (k : ℕ) : Real.exp (k : ℝ) ≤ (expHi2 k : ℝ
     norm_num
   rw [h2]
   exact pow_le_pow_left₀ (Real.exp_pos 1).le hbase k
-
-
 theorem expHi_le_expHi2 (k : ℕ) : expHi k ≤ expHi2 k := by
   unfold expHi expHi2 expHiN expHiD
   have hb : (27182818286 / 10 ^ 10 : ℚ) ≤ 271829 / 100000 := by norm_num
@@ -7066,19 +5555,11 @@ theorem expHi_le_expHi2 (k : ℕ) : expHi k ≤ expHi2 k := by
     _ ≤ (271829 / 100000 : ℚ) ^ k := pow_le_pow_left₀ hb0 hb k
     _ = (271829 : ℚ) ^ k / (100000 : ℚ) ^ k := by rw [div_pow]
     _ = ((271829 ^ k : ℕ) : ℚ) / ((100000 ^ k : ℕ) : ℚ) := by push_cast; rfl
-
-
-
 @[reducible] def taylorN (a b N : ℕ) : ℕ :=
   N * (∑ m ∈ Finset.range N,
       a ^ m * b ^ (N - m) * (Nat.factorial N / Nat.factorial m))
     + a ^ N * (N + 1)
-
-
 @[reducible] def taylorD (b N : ℕ) : ℕ := b ^ N * Nat.factorial N * N
-
-
-
 theorem taylorUB1_div_eq (a b N : ℕ) (hb : 0 < b) (hN : 0 < N) :
     taylorUB1 ((a : ℚ) / b) N = (taylorN a b N : ℚ) / (taylorD b N : ℚ) := by
   unfold taylorUB1 taylorN taylorD
@@ -7132,11 +5613,6 @@ theorem taylorUB1_div_eq (a b N : ℕ) (hb : 0 < b) (hN : 0 < N) :
     ring
   · push_cast
     ring
-
-
-
-
-
 theorem hcheck_of_nat {p k N xnum b : ℕ} (hb : 0 < b) (hN : 0 < N)
     (h : expHiN k * taylorN xnum b N
       ≤ p * (expHiD k * taylorD b N)) :
@@ -7150,10 +5626,6 @@ theorem hcheck_of_nat {p k N xnum b : ℕ} (hb : 0 < b) (hN : 0 < N)
   rw [div_mul_div_comm]
   rw [div_le_iff₀ (mul_pos (by positivity) hbD)]
   exact_mod_cast h
-
-
-
-
 theorem hlo_of_nat {p a b lom : ℕ} (hb : 0 < b) (hp : 0 < p)
     (h : lom * b * p * (a * 10 ^ 10 + 11931471808 * b) ≤ a ^ 2 * 10 ^ 28) :
     ((lom : ℚ) / 10 ^ 18) ≤ tailWLo p ((a : ℚ) / b) := by
@@ -7170,12 +5642,6 @@ theorem hlo_of_nat {p a b lom : ℕ} (hb : 0 < b) (hp : 0 < p)
       ≤ ((a ^ 2 * 10 ^ 28 : ℕ) : ℚ) := by exact_mod_cast h
   push_cast at hQ
   nlinarith [hQ]
-
-
-
-
-
-
 structure LogRow where
   p : ℕ
   a : ℕ
@@ -7183,11 +5649,7 @@ structure LogRow where
   k : ℕ
   N : ℕ
   lom : ℕ
-
-
   t : ℕ := 0
-
-
 @[reducible] def LogRow.check (r : LogRow) : Bool :=
   decide (0 < r.b) && decide (0 < r.N) && decide (r.k * r.b ≤ r.a)
     && decide (r.a < (r.k + 1) * r.b)
@@ -7195,8 +5657,6 @@ structure LogRow where
         ≤ r.p * (expHiD r.k * taylorD r.b r.N))
     && decide (r.lom * r.b * r.p * (r.a * 10 ^ 10 + 11931471808 * r.b)
         ≤ r.a ^ 2 * 10 ^ 28)
-
-
 theorem LogRow.check_sound {r : LogRow} (h : r.check = true) :
     0 < r.b ∧ 0 < r.N ∧ r.k * r.b ≤ r.a ∧ r.a < (r.k + 1) * r.b ∧
       expHiN r.k * taylorN (r.a - r.k * r.b) r.b r.N
@@ -7205,11 +5665,7 @@ theorem LogRow.check_sound {r : LogRow} (h : r.check = true) :
   unfold LogRow.check at h
   simp only [Bool.and_eq_true, decide_eq_true_eq] at h
   tauto
-
-
 noncomputable def LogRow.u (r : LogRow) : ℚ := (r.a : ℚ) / r.b
-
-
 theorem LogRow.tailW_ge (r : LogRow) (h5 : 5 ≤ r.p)
     (h : r.check = true) :
     (r.lom : ℝ) / ((10 : ℝ) ^ 18) ≤ tailW r.p := by
@@ -7254,19 +5710,11 @@ theorem LogRow.tailW_ge (r : LogRow) (h5 : 5 ≤ r.p)
       = (((r.lom : ℚ) / 10 ^ 18 : ℚ) : ℝ) := by push_cast; ring
     _ ≤ (tailWLo r.p r.u : ℝ) := by exact_mod_cast hloR
     _ ≤ tailW r.p := tailWLo_le_tailW_core (by omega) (by exact_mod_cast hx) hu
-
-
-
-
-
 structure LogRowCert where
   row : LogRow
   hp : Nat.Prime row.p
   h5 : 5 ≤ row.p
   hcheck : row.check = true
-
-
-
 theorem Fprime_lower_of_rowCerts_aux (rows : List LogRowCert) (s : Finset ℕ)
     (hmem : ∀ r ∈ rows, r.row.p ∈ s)
     (hnd : (rows.map (fun r => r.row.p)).Nodup) :
@@ -7304,8 +5752,6 @@ theorem Fprime_lower_of_rowCerts_aux (rows : List LogRowCert) (s : Finset ℕ)
             + (rest.map (fun r => (r.row.lom : ℝ))).sum / ((10 : ℝ) ^ 18) := hsum_cons
         _ ≤ tailW r.row.p + ∑ p ∈ s.erase r.row.p, tailW p := add_le_add hrow ih'
         _ = ∑ p ∈ s, tailW p := hsplit.symm
-
-
 theorem Fprime_lower_of_rowCerts {K : ℕ} (rows : List LogRowCert)
     (hmem : ∀ r ∈ rows, r.row.p ≤ K)
     (hnd : (rows.map (fun r => r.row.p)).Nodup) :
@@ -7313,12 +5759,6 @@ theorem Fprime_lower_of_rowCerts {K : ℕ} (rows : List LogRowCert)
   Fprime_lower_of_rowCerts_aux rows ((Nat.primesLE K).filter (fun p => 5 ≤ p))
     (fun r hr => Finset.mem_filter.mpr
       ⟨Nat.mem_primesLE.mpr ⟨hmem r hr, r.hp⟩, r.h5⟩) hnd
-
-
-
-
-
-
 theorem Fprime_lower_of_rows_data_aux (rows : List LogRow) (s : Finset ℕ)
     (hmem : ∀ r ∈ rows, r.p ∈ s)
     (hnd : (rows.map (fun r => r.p)).Nodup)
@@ -7361,8 +5801,6 @@ theorem Fprime_lower_of_rows_data_aux (rows : List LogRow) (s : Finset ℕ)
             + (rest.map (fun r => (r.lom : ℝ))).sum / ((10 : ℝ) ^ 18) := hsum_cons
         _ ≤ tailW r.p + ∑ p ∈ s.erase r.p, tailW p := add_le_add hrow ih'
         _ = ∑ p ∈ s, tailW p := hsplit.symm
-
-
 theorem Fprime_lower_of_rows_data {K : ℕ} (rows : List LogRow)
     (hmem : ∀ r ∈ rows, r.p ≤ K)
     (hnd : (rows.map (fun r => r.p)).Nodup)
@@ -7373,26 +5811,11 @@ theorem Fprime_lower_of_rows_data {K : ℕ} (rows : List LogRow)
   Fprime_lower_of_rows_data_aux rows ((Nat.primesLE K).filter (fun p => 5 ≤ p))
     (fun r hr => Finset.mem_filter.mpr
       ⟨Nat.mem_primesLE.mpr ⟨hmem r hr, hprime r hr⟩, h5 r hr⟩) hnd hcheck hprime h5
-
 end RHLean.GateII.Tail
-
 end
-
 end Inline_GateII_FprimeLayer
-
 namespace RHLean.GateII.Tail
-
-
 def FprimeX0Bound : Prop := 11.045 ≤ Fprime 3594641
-
-
-
-
-
-
-
-
-
 theorem FprimeX0Bound_of_rows (rows : List LogRow)
     (hmem : ∀ r ∈ rows, r.p ≤ 3594641)
     (hnd : (rows.map (fun r => r.p)).Nodup)
@@ -7402,48 +5825,12 @@ theorem FprimeX0Bound_of_rows (rows : List LogRow)
     (hsum : (11.045 : ℝ) ≤ (rows.map (fun r => (r.lom : ℝ))).sum / ((10 : ℝ) ^ 18)) :
     FprimeX0Bound :=
   le_trans hsum (Fprime_lower_of_rows_data rows hmem hnd hcheck hprime h5)
-
 end RHLean.GateII.Tail
-
-
-
 section Inline_Y7_ApproxPoly
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory Polynomial
 open scoped BigOperators
-
 namespace Y7Density
-
-
-
-
-
 theorem exists_poly_uniform_approx_real {f : ℝ → ℝ} (hf : Continuous f)
     {b : ℝ} {ε : ℝ} (hε : 0 < ε) :
     ∃ p : Polynomial ℝ, ∀ x ∈ Set.Icc (-b) b, |p.eval x - f x| ≤ ε := by
@@ -7472,9 +5859,6 @@ theorem exists_poly_uniform_approx_real {f : ℝ → ℝ} (hf : Continuous f)
     have := h1.le
     simpa [F, Polynomial.toContinuousMapOn_apply, Real.dist_eq] using this
   simpa [abs_sub_comm] using h2
-
-
-
 theorem exists_odd_poly_uniform_approx {f : ℝ → ℝ} (hf : Continuous f)
     (hodd : ∀ x, f (-x) = -f x) {b : ℝ} {ε : ℝ} (hε : 0 < ε) :
     ∃ p : Polynomial ℝ, IsOddPoly p ∧ ∀ x ∈ Set.Icc (-b) b, |p.eval x - f x| ≤ ε := by
@@ -7513,8 +5897,6 @@ theorem exists_odd_poly_uniform_approx {f : ℝ → ℝ} (hf : Continuous f)
           exact div_le_div_of_nonneg_right htri (by norm_num)
       _ ≤ (ε + ε) / 2 := by linarith
       _ = ε := by ring
-
-
 theorem exists_odd_poly_l2_approx {f : ℝ → ℝ} (hf : Continuous f)
     (hodd : ∀ x, f (-x) = -f x) {b : ℝ} (hb : 0 ≤ b) {ε : ℝ} (hε : 0 < ε) :
     ∃ p : Polynomial ℝ, IsOddPoly p ∧
@@ -7551,57 +5933,20 @@ theorem exists_odd_poly_l2_approx {f : ℝ → ℝ} (hf : Continuous f)
           ring
         rw [hvol]
         ring
-
-
-
-
-
 theorem polynomialPositivity_endpoint_seven_of_matrixBlocks
     (h : MatrixBlocksPos (RHLean.endpoint 7)) :
     PolynomialPositivity (RHLean.endpoint 7) :=
   polynomialPositivity_of_matrixBlocks formMatrixRep_endpoint_seven h
-
 end Y7Density
-
-
-#print axioms Y7Density.exists_poly_uniform_approx_real
-#print axioms Y7Density.exists_odd_poly_uniform_approx
-#print axioms Y7Density.exists_odd_poly_l2_approx
-#print axioms Y7Density.polynomialPositivity_endpoint_seven_of_matrixBlocks
-
 end
-
 end Inline_Y7_ApproxPoly
-
-
-
 section Inline_Y7_DensityRoute
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory Polynomial
 open scoped BigOperators
-
 namespace Y7Density
-
-
 private noncomputable def antideriv (q : Polynomial ℝ) : Polynomial ℝ :=
   ∑ n ∈ q.support, Polynomial.C (q.coeff n / ((n : ℝ) + 1)) * Polynomial.X ^ (n + 1)
-
 private lemma derivative_antideriv (q : Polynomial ℝ) :
     Polynomial.derivative (antideriv q) = q := by
   rw [antideriv, Polynomial.derivative_sum]
@@ -7619,8 +5964,6 @@ private lemma derivative_antideriv (q : Polynomial ℝ) :
   rw [show (∑ n ∈ q.support, Polynomial.C (q.coeff n) * Polynomial.X ^ n)
       = q.sum (fun n a => Polynomial.C a * Polynomial.X ^ n) from rfl]
   exact Polynomial.sum_C_mul_X_pow_eq q
-
-
 lemma deriv_even_of_odd {f : ℝ → ℝ} (hdiff : ∀ x, HasDerivAt f (deriv f x) x)
     (hodd : ∀ x, f (-x) = -f x) (x : ℝ) : deriv f (-x) = deriv f x := by
   have hcomp : HasDerivAt (fun y : ℝ => f (-y)) (-(deriv f (-x))) x := by
@@ -7635,8 +5978,6 @@ lemma deriv_even_of_odd {f : ℝ → ℝ} (hdiff : ∀ x, HasDerivAt f (deriv f 
   rw [hfun] at hcomp
   have h := hcomp.unique hneg
   linarith
-
-
 theorem exists_odd_poly_c1_approx {f : ℝ → ℝ}
     (hdiff : ∀ x, HasDerivAt f (deriv f x) x) (hf' : Continuous (deriv f))
     (hodd : ∀ x, f (-x) = -f x) {b : ℝ} (hb : 0 ≤ b) {ε : ℝ} (hε : 0 < ε) :
@@ -7660,7 +6001,6 @@ theorem exists_odd_poly_c1_approx {f : ℝ → ℝ}
   set p1 : Polynomial ℝ := p0 + Polynomial.C c with hp1
   have hp1' : Polynomial.derivative p1 = q := by
     rw [hp1, Polynomial.derivative_add, Polynomial.derivative_C, add_zero, hp0']
-
   have hp1_sup : ∀ x ∈ Set.Icc (-b) b, |p1.eval x - f x| ≤ ε := by
     intro x hx
     have hderiv : ∀ t ∈ Set.uIcc (-b) x,
@@ -7698,7 +6038,6 @@ theorem exists_odd_poly_c1_approx {f : ℝ → ℝ}
       show (f x - p0.eval x) - (f (-b) - p0.eval (-b))
         = ∫ t in (-b)..x, (deriv f t - q.eval t) from hInt.symm]
     exact le_trans hbound hηvol
-
   refine ⟨Polynomial.C (1 / 2) * (p1 - p1.comp (-Polynomial.X)), ?_, ?_, ?_⟩
   · unfold IsOddPoly
     apply Polynomial.funext
@@ -7769,68 +6108,26 @@ theorem exists_odd_poly_c1_approx {f : ℝ → ℝ}
       _ ≤ (η + η) / 2 := by linarith
       _ = η := by ring
       _ ≤ ε := hηle
-
 end Y7Density
-
-
-#print axioms Y7Density.derivative_antideriv
-#print axioms Y7Density.deriv_even_of_odd
-#print axioms Y7Density.exists_odd_poly_c1_approx
-
 end
-
 end Inline_Y7_DensityRoute
-
-
-
 section Inline_Y7_RealDensity
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory
 open scoped BigOperators
-
 namespace Y7Density
-
-
-
-
 lemma integrableOn_Ioo_of_bound' {g : ℝ → ℂ} (hg : Continuous g)
     {C : ℝ} (hb : ∀ x ∈ Set.Ioo (-1 : ℝ) 1, ‖g x‖ ≤ C) :
     IntegrableOn g (Set.Ioo (-1 : ℝ) 1) :=
   IntegrableOn.of_bound (by rw [Real.volume_Ioo]; exact ENNReal.ofReal_lt_top)
     hg.aestronglyMeasurable C
     (by filter_upwards [ae_restrict_mem measurableSet_Ioo] with x hx; exact hb x hx)
-
-
 lemma integrableOn_Ioo_of_bound_real {g : ℝ → ℝ} (hg : Continuous g)
     {C : ℝ} (hb : ∀ x ∈ Set.Ioo (-1 : ℝ) 1, ‖g x‖ ≤ C) :
     IntegrableOn g (Set.Ioo (-1 : ℝ) 1) :=
   IntegrableOn.of_bound (by rw [Real.volume_Ioo]; exact ENNReal.ofReal_lt_top)
     hg.aestronglyMeasurable C
     (by filter_upwards [ae_restrict_mem measurableSet_Ioo] with x hx; exact hb x hx)
-
-
-
-
 lemma norm_le_of_close {f p : ℝ → ℂ} {B δ : ℝ}
     (hB : ∀ x ∈ Set.Icc (-1 : ℝ) 1, ‖f x‖ ≤ B)
     (hδ : ∀ x ∈ Set.Ioo (-1 : ℝ) 1, ‖p x - f x‖ ≤ δ) :
@@ -7841,9 +6138,6 @@ lemma norm_le_of_close {f p : ℝ → ℂ} {B δ : ℝ}
         have h := norm_add_le (f x) (p x - f x)
         simpa [sub_eq_add_neg, add_comm, add_left_comm, add_assoc] using h
     _ ≤ B + δ := add_le_add (hB x hx') (hδ x hx)
-
-
-
 lemma normSq_sub_le {f p : ℝ → ℂ} {B δ : ℝ}
     (hB : ∀ x ∈ Set.Icc (-1 : ℝ) 1, ‖f x‖ ≤ B)
     (hδ0 : 0 ≤ δ) (hδ : ∀ x ∈ Set.Ioo (-1 : ℝ) 1, ‖p x - f x‖ ≤ δ)
@@ -7863,11 +6157,6 @@ lemma normSq_sub_le {f p : ℝ → ℂ} {B δ : ℝ}
       = (‖f x‖ - ‖p x‖) * (‖f x‖ + ‖p x‖) by ring]
   rw [abs_mul, abs_of_nonneg h2']
   exact mul_le_mul h1 h2 h2' hδ0
-
-
-
-
-
 theorem mass_sub_le {f : ℝ → ℂ} (hf : f ∈ RHLean.localizedCore 1)
     {p : ℝ → ℂ} (hp : Continuous p) {B δ : ℝ}
     (hB : ∀ x ∈ Set.Icc (-1 : ℝ) 1, ‖f x‖ ≤ B)
@@ -7918,10 +6207,6 @@ theorem mass_sub_le {f : ℝ → ℂ} (hf : f ∈ RHLean.localizedCore 1)
           norm_num
         rw [hvol]
         ring
-
-
-
-
 lemma rescaledPotential_nonneg {x : ℝ} (hx : x ∈ Set.Ioo (-1 : ℝ) 1) :
     0 ≤ RHLean.rescaledPotential x := by
   unfold RHLean.rescaledPotential
@@ -7929,17 +6214,12 @@ lemma rescaledPotential_nonneg {x : ℝ} (hx : x ∈ Set.Ioo (-1 : ℝ) 1) :
   have h2 : 1 - x ^ 2 ≤ 1 := by nlinarith [sq_nonneg x]
   have h3 : Real.log (1 - x ^ 2) ≤ 0 := Real.log_nonpos (le_of_lt h1) h2
   linarith
-
-
 lemma integrableOn_rescaledPotential :
     IntegrableOn (fun x : ℝ => RHLean.rescaledPotential x) (Set.Ioo (-1 : ℝ) 1) := by
   have h : IntervalIntegrable (fun x : ℝ => RHLean.rescaledPotential x) volume (-1) 1 :=
     by simpa using Y7Matrix.intervalIntegrable_rescaledPotential_mul_pow 0
   exact (intervalIntegrable_iff_integrableOn_Ioo_of_le (show (-1 : ℝ) ≤ 1 by norm_num)
     (by simp [RHLean.rescaledPotential]) (by simp [RHLean.rescaledPotential])).mp h
-
-
-
 theorem potential_sub_le {f : ℝ → ℂ} (hf : f ∈ RHLean.localizedCore 1)
     {p : ℝ → ℂ} (hp : Continuous p) {B δ : ℝ}
     (hB : ∀ x ∈ Set.Icc (-1 : ℝ) 1, ‖f x‖ ≤ B)
@@ -8013,10 +6293,6 @@ theorem potential_sub_le {f : ℝ → ℂ} (hf : f ∈ RHLean.localizedCore 1)
         exact hkey x hx
     _ = δ * (2 * B + δ) * (∫ x in Set.Ioo (-1 : ℝ) 1, RHLean.rescaledPotential x) := by
         rw [integral_const_mul]
-
-
-
-
 theorem gamma_sub_le {a : ℝ} (ha : 0 ≤ a) {f : ℝ → ℂ} (hf : f ∈ RHLean.localizedCore 1)
     {p : ℝ → ℂ} (hp : Continuous p) {B δ : ℝ}
     (hB0 : 0 ≤ B) (hB : ∀ x ∈ Set.Icc (-1 : ℝ) 1, ‖f x‖ ≤ B)
@@ -8170,10 +6446,6 @@ theorem gamma_sub_le {a : ℝ} (ha : 0 ≤ a) {f : ℝ → ℂ} (hf : f ∈ RHLe
     _ = δ * (2 * B + δ) * (|a| * (Real.exp (2 * a) / 2 + Real.exp a / 4) * 4) := by
         rw [integral_const, smul_eq_mul, hμfin]
         ring
-
-
-
-
 theorem polar_sub_le {a : ℝ} (ha : 0 ≤ a) {f : ℝ → ℂ} (hf : f ∈ RHLean.localizedCore 1)
     {p : ℝ → ℂ} (hp : Continuous p) {B δ Ms : ℝ}
     (hB0 : 0 ≤ B) (hB : ∀ x ∈ Set.Icc (-1 : ℝ) 1, ‖f x‖ ≤ B)
@@ -8287,12 +6559,6 @@ theorem polar_sub_le {a : ℝ} (ha : 0 ≤ a) {f : ℝ → ℂ} (hf : f ∈ RHLe
       ≤ (2 * a) * ((2 * Ms * δ) * (2 * Ms * (2 * B + δ))) :=
         mul_le_mul_of_nonneg_left hsq (by linarith)
     _ = 2 * a * (2 * Ms * δ) * (2 * Ms * (2 * B + δ)) := by ring
-
-
-
-
-
-
 theorem arch_sub_le {f : ℝ → ℂ} (hf : f ∈ RHLean.localizedCore 1)
     {p : ℝ → ℂ} (hp : Continuous p) {B δ η Cf Cp : ℝ}
     (hB0 : 0 ≤ B) (hB : ∀ x ∈ Set.Icc (-1 : ℝ) 1, ‖f x‖ ≤ B)
@@ -8395,12 +6661,6 @@ theorem arch_sub_le {f : ℝ → ℂ} (hf : f ∈ RHLean.localizedCore 1)
         rw [integral_const, smul_eq_mul, hμfin]
         ring
     _ = η * (2 * B + 2 * (B + δ)) := by ring
-
-
-
-
-
-
 theorem shift_sub_le {a : ℝ} {f : ℝ → ℂ} (hf : f ∈ RHLean.localizedCore 1)
     {p : ℝ → ℂ} (hp : Continuous p) {B δ b : ℝ}
     (hB0 : 0 ≤ B) (hB : ∀ x : ℝ, ‖f x‖ ≤ B)
@@ -8609,7 +6869,6 @@ theorem shift_sub_le {a : ℝ} {f : ℝ → ℂ} (hf : f ∈ RHLean.localizedCor
         apply Finset.sum_congr rfl
         intro n hn
         ring
-
 lemma core_bound_global {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1) :
     ∃ B : ℝ, 0 ≤ B ∧ ∀ x : ℝ, ‖g x‖ ≤ B := by
   obtain ⟨B, hB0, hB⟩ := core_bound hg
@@ -8621,12 +6880,8 @@ lemma core_bound_global {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1) :
       exact hx (hg.2 h)
     rw [hz, norm_zero]
     exact hB0
-
-
 lemma norm_ofReal' (r : ℝ) : ‖((r : ℝ) : ℂ)‖ = |r| := by
   rw [Complex.norm_def, Complex.normSq_ofReal, ← sq, Real.sqrt_sq_eq_abs]
-
-
 lemma norm_sRescaled_le (a x : ℝ) (hx : |x| ≤ 1) :
     ‖RHLean.sRescaled a x‖ ≤ Real.sinh (|a| / 2) := by
   have h1 : |a * x / 2| ≤ |a| / 2 := by
@@ -8638,8 +6893,6 @@ lemma norm_sRescaled_le (a x : ℝ) (hx : |x| ≤ 1) :
   unfold RHLean.sRescaled
   rw [norm_ofReal', Real.abs_sinh]
   exact h3
-
-
 lemma poly_lipschitz (P : Polynomial ℝ) :
     ∃ Cp : ℝ, 0 ≤ Cp ∧ ∀ x ∈ Set.Icc (-1 : ℝ) 1, ∀ y ∈ Set.Icc (-1 : ℝ) 1,
       ‖(((P.eval x : ℝ)) : ℂ) - (((P.eval y : ℝ)) : ℂ)‖ ≤ Cp * ‖x - y‖ := by
@@ -8663,9 +6916,6 @@ lemma poly_lipschitz (P : Polynomial ℝ) :
         = (((P.eval x - P.eval y : ℝ)) : ℂ) by simp, norm_ofReal']
   rw [hcast]
   exact h'
-
-
-
 lemma sub_lipschitz_of_c1 {F : ℝ → ℝ} {P : Polynomial ℝ} {η : ℝ}
     (hF : ∀ x, HasDerivAt F (deriv F x) x)
     (hη0 : 0 ≤ η)
@@ -8703,8 +6953,6 @@ lemma sub_lipschitz_of_c1 {F : ℝ → ℝ} {P : Polynomial ℝ} {η : ℝ}
       ring, norm_ofReal']
   rw [hcast]
   exact h'
-
-
 lemma rePart_c1_data {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1)
     (hreal : ∀ x, (g x).im = 0) :
     (∀ x, HasDerivAt (fun x => (g x).re) (deriv (fun x => (g x).re) x) x) ∧
@@ -8731,8 +6979,6 @@ lemma rePart_c1_data {g : ℝ → ℂ} (hg : g ∈ RHLean.localizedCore 1)
   · intro x
     rw [hg.1.2.2 x]
     simp
-
-
 lemma abs_sum_six_le (x1 x2 x3 x4 x5 x6 : ℝ) :
     |x1 + x2 + x3 + x4 + x5 + x6|
       ≤ |x1| + |x2| + |x3| + |x4| + |x5| + |x6| := by
@@ -8742,14 +6988,11 @@ lemma abs_sum_six_le (x1 x2 x3 x4 x5 x6 : ℝ) :
   have h4 := abs_add_le (x1 + x2) x3
   have h5 := abs_add_le x1 x2
   linarith
-
-
 theorem realPartDensity_of_c1 (a : ℝ) (ha : 0 ≤ a) : RealPartDensity a := by
   intro f hf hreal ε hε
   obtain ⟨B, hB0, hBglob⟩ := core_bound_global hf
   have hB : ∀ x ∈ Set.Icc (-1 : ℝ) 1, ‖f x‖ ≤ B := fun x _ => hBglob x
   obtain ⟨Cf, hCf0, hlipf⟩ := core_lipschitz hf
-
   set b : ℝ := 1 + ∑ n ∈ RHLean.arithSupport a, |RHLean.shiftLengthRescaled a n| with hb_def
   have hb1 : 1 ≤ b := by
     rw [hb_def]
@@ -8764,7 +7007,6 @@ theorem realPartDensity_of_c1 (a : ℝ) (ha : 0 ≤ a) : RealPartDensity a := by
       Finset.single_le_sum (f := fun m => |RHLean.shiftLengthRescaled a m|)
         (fun m _ => abs_nonneg _) hn
     rw [hb_def]; linarith
-
   set Ms : ℝ := Real.sinh (|a| / 2) with hMs_def
   have hMs0 : 0 ≤ Ms := by
     rw [hMs_def]; exact Real.sinh_nonneg_iff.mpr (by positivity)
@@ -8772,7 +7014,6 @@ theorem realPartDensity_of_c1 (a : ℝ) (ha : 0 ≤ a) : RealPartDensity a := by
     intro x hx
     rw [hMs_def]
     exact norm_sRescaled_le a x (le_of_lt (abs_lt.mpr ⟨hx.1, hx.2⟩))
-
   set Vint : ℝ := ∫ x in Set.Ioo (-1 : ℝ) 1, RHLean.rescaledPotential x with hV_def
   have hVnn : 0 ≤ Vint := by
     rw [hV_def]
@@ -8802,7 +7043,6 @@ theorem realPartDensity_of_c1 (a : ℝ) (ha : 0 ≤ a) : RealPartDensity a := by
     have t5 : 0 ≤ 2 * (2 * B + 1) := by linarith
     have t6 : 0 ≤ (2 * B + 1) * Csum := mul_nonneg h2B1 hCsum0
     linarith [t1, t2, t3, t4, t5, t6]
-
   set eps : ℝ := min 1 (ε / (K + 1)) with heps_def
   have hK1pos : 0 < K + 1 := by linarith
   have heps0 : 0 < eps := by
@@ -8816,7 +7056,6 @@ theorem realPartDensity_of_c1 (a : ℝ) (ha : 0 ≤ a) : RealPartDensity a := by
       mul_le_mul_of_nonneg_left (by linarith) (div_nonneg hε.le hK1pos.le)
     rw [h2] at h3
     linarith
-
   obtain ⟨hc1, hc1cont, hc1odd⟩ := rePart_c1_data hf hreal
   obtain ⟨P, hPodd, hPsup, hPder⟩ :=
     exists_odd_poly_c1_approx (f := fun x => (f x).re) hc1 hc1cont hc1odd (b := b) hb0
@@ -8850,7 +7089,6 @@ theorem realPartDensity_of_c1 (a : ℝ) (ha : 0 ≤ a) : RealPartDensity a := by
     intro x hx y hy
     rw [hp_def]
     exact hCplip x hx y hy
-
   have hmass := mass_sub_le (f := f) hf (p := p) hp_cont hB heps0.le hδ
   have hpot := potential_sub_le (f := f) hf (p := p) hp_cont hB heps0.le hδ
   have hgamma := gamma_sub_le (a := a) ha (f := f) hf (p := p) hp_cont hB0 hB heps0.le hδ
@@ -8860,7 +7098,6 @@ theorem realPartDensity_of_c1 (a : ℝ) (ha : 0 ≤ a) : RealPartDensity a := by
     hCf0 hlipf hCp0 hplip heps0.le hlip_m
   have hshift := shift_sub_le (a := a) (f := f) hf (p := p) hp_cont hB0 hBglob
     heps0.le hb1 hδwide hr
-
   have h2B : 2 * B + eps ≤ 2 * B + 1 := by linarith
   have hmass_bd : |(∫ x in Set.Ioo (-1 : ℝ) 1, ‖f x‖ ^ 2)
         - (∫ x in Set.Ioo (-1 : ℝ) 1, ‖p x‖ ^ 2)| ≤ eps * ((2 * B + 1) * 2) := by
@@ -8912,7 +7149,6 @@ theorem realPartDensity_of_c1 (a : ℝ) (ha : 0 ≤ a) : RealPartDensity a := by
     calc eps * (2 * B + eps) * Csum = eps * ((2 * B + eps) * Csum) := by ring
       _ ≤ eps * ((2 * B + 1) * Csum) := mul_le_mul_of_nonneg_left
           (mul_le_mul_of_nonneg_right h2B hCsum0) heps0.le
-
   set Ad : ℝ := RHLean.archFormRescaled f - RHLean.archFormRescaled p with hAd_def
   set Pd : ℝ := RHLean.potentialFormRescaled f - RHLean.potentialFormRescaled p with hPd_def
   set Gd : ℝ := RHLean.gammaFormRescaled a f - RHLean.gammaFormRescaled a p with hGd_def
@@ -8950,80 +7186,25 @@ theorem realPartDensity_of_c1 (a : ℝ) (ha : 0 ≤ a) : RealPartDensity a := by
       ≤ eps * K
     linarith [habs, h1', h2', h3', h4', h5', h6', hKsum]
   exact ⟨P, hPodd, hfinal.trans hepsK⟩
-
-
 theorem realPartDensity_endpoint_seven : RealPartDensity (RHLean.endpoint 7) :=
   realPartDensity_of_c1 (RHLean.endpoint 7) (by unfold RHLean.endpoint; positivity)
-
-
-
-
 theorem y7PhysicalTarget_of_polynomialPositivity
     (hpos : PolynomialPositivity (RHLean.endpoint 7)) : Y7Target.Y7PhysicalTarget :=
   physicalTarget_of_polynomialPositivity_realPartDensity hpos realPartDensity_endpoint_seven
-
 end Y7Density
-
-
-#print axioms Y7Density.normSq_sub_le
-#print axioms Y7Density.mass_sub_le
-#print axioms Y7Density.integrableOn_rescaledPotential
-#print axioms Y7Density.potential_sub_le
-#print axioms Y7Density.gamma_sub_le
-#print axioms Y7Density.polar_sub_le
-#print axioms Y7Density.arch_sub_le
-#print axioms Y7Density.shift_sub_le
-#print axioms Y7Density.realPartDensity_of_c1
-#print axioms Y7Density.realPartDensity_endpoint_seven
-#print axioms Y7Density.y7PhysicalTarget_of_polynomialPositivity
-
 end
-
 end Inline_Y7_RealDensity
-
-
-
-
-
 section Inline_Y7_Approx
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 set_option maxHeartbeats 2000000
-
 open MeasureTheory
 open scoped BigOperators
-
 namespace Y7Approx
-
-
 noncomputable def sinhTerm (t : ℝ) (n : ℕ) : ℝ :=
   t ^ (2 * n + 1) / (((2 * n + 1).factorial : ℕ) : ℝ)
-
 lemma sinhTerm_nonneg (t : ℝ) (ht : 0 ≤ t) (n : ℕ) : 0 ≤ sinhTerm t n := by
   unfold sinhTerm
   exact div_nonneg (pow_nonneg ht _) (Nat.cast_nonneg _)
-
 lemma sinhTerm_succ (t : ℝ) (n : ℕ) :
     sinhTerm t (n + 1) = sinhTerm t n *
       (t ^ 2 / (((2 * n + 2) * (2 * n + 3) : ℕ) : ℝ)) := by
@@ -9039,8 +7220,6 @@ lemma sinhTerm_succ (t : ℝ) (n : ℕ) :
     ring
   rw [show 2 * (n + 1) + 1 = 2 * n + 3 by ring, hfact, hpow]
   field_simp
-
-
 lemma sinhTerm_tail_le (t : ℝ) (ht : 0 ≤ t) (n : ℕ) :
     sinhTerm t (n + 100) ≤
       (t ^ 201 / (((201).factorial : ℕ) : ℝ)) *
@@ -9078,8 +7257,6 @@ lemma sinhTerm_tail_le (t : ℝ) (ht : 0 ≤ t) (n : ℕ) :
         ring
       refine le_trans (le_of_eq ?_) (le_trans h1 (le_of_eq h2))
       rw [show n + 1 + 100 = (n + 100) + 1 by ring, sinhTerm_succ]
-
-
 theorem sinh_sub_partial_le (t : ℝ) (ht0 : 0 ≤ t) (ht : t ≤ 1 / 2) :
     Real.sinh t - ∑ d ∈ Finset.range 100, sinhTerm t d
       ≤ t ^ 201 / (((201).factorial : ℕ) : ℝ)
@@ -9108,8 +7285,6 @@ theorem sinh_sub_partial_le (t : ℝ) (ht0 : 0 ≤ t) (ht : t ≤ 1 / 2) :
     rw [hg.tsum_eq] at h
     simpa only [div_eq_mul_inv] using h
   exact htail
-
-
 theorem sinh_remainder_bound (a : ℝ) (ha0 : 0 ≤ a) (ha1 : a ≤ 1) :
     Real.sinh (a / 2) - Y7Chain.sinhTaylorFun a 1 100 ≤ Y7Chain.sinhRemainder a := by
   have h := sinh_sub_partial_le (a / 2) (by linarith) (by linarith)
@@ -9121,14 +7296,10 @@ theorem sinh_remainder_bound (a : ℝ) (ha0 : 0 ≤ a) (ha1 : a ≤ 1) :
     rw [show a * 1 / 2 = a / 2 by ring]
   rw [hbridge] at h
   simpa only [Y7Chain.sinhRemainder] using h
-
-
 lemma sinhTerm_neg (t : ℝ) (d : ℕ) : sinhTerm (-t) d = -sinhTerm t d := by
   unfold sinhTerm
   rw [Odd.neg_pow (show Odd (2 * d + 1) from ⟨d, by ring⟩)]
   ring
-
-
 lemma sinh_sub_partial_nonneg (t : ℝ) (ht0 : 0 ≤ t) :
     0 ≤ Real.sinh t - ∑ d ∈ Finset.range 100, sinhTerm t d := by
   have hsum : HasSum (sinhTerm t) (Real.sinh t) := Real.hasSum_sinh t
@@ -9136,9 +7307,6 @@ lemma sinh_sub_partial_nonneg (t : ℝ) (ht0 : 0 ≤ t) :
     (fun d _ => sinhTerm_nonneg t ht0 d)
   rw [hsum.tsum_eq] at h
   exact sub_nonneg.mpr h
-
-
-
 lemma sinhRemainder_mono (a t : ℝ) (ht0 : 0 ≤ t) (hta : t ≤ a / 2) (ha1 : a ≤ 1) :
     t ^ 201 / (((201).factorial : ℕ) : ℝ) / (1 - t ^ 2 / (202 * 203 : ℝ))
       ≤ (a / 2) ^ 201 / (((201).factorial : ℕ) : ℝ)
@@ -9168,9 +7336,6 @@ lemma sinhRemainder_mono (a t : ℝ) (ht0 : 0 ≤ t) (hta : t ≤ a / 2) (ha1 : 
     _ ≤ (a / 2) ^ 201 / (((201).factorial : ℕ) : ℝ)
           / (1 - (a / 2) ^ 2 / (202 * 203 : ℝ)) :=
         div_le_div_of_nonneg_left hB0 hden_pos hden_le
-
-
-
 theorem abs_sinh_sub_partial_le (a t : ℝ) (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
     (ht : |t| ≤ a / 2) :
     |Real.sinh t - ∑ d ∈ Finset.range 100, sinhTerm t d| ≤ Y7Chain.sinhRemainder a := by
@@ -9180,7 +7345,7 @@ theorem abs_sinh_sub_partial_le (a t : ℝ) (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
     rw [abs_of_nonneg (sinh_sub_partial_nonneg t ht0)]
     refine le_trans hle ?_
     simpa only [Y7Chain.sinhRemainder] using sinhRemainder_mono a t ht0 ht_le ha1
-  · have ht0'
+  · have ht0' : t < 0 := lt_of_not_ge ht0
     have hs0 : 0 ≤ -t := by linarith
     have hsa : -t ≤ a / 2 := by linarith [(abs_le.mp ht).1]
     have hle := sinh_sub_partial_le (-t) hs0 (by linarith [ha1, hsa])
@@ -9197,8 +7362,6 @@ theorem abs_sinh_sub_partial_le (a t : ℝ) (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
       ring
     rw [hodd, abs_neg]
     exact hbound
-
-
 theorem sinh_uniform_error_sq_le (a : ℝ) (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (x : ℝ)
     (hx : |x| ≤ 1) :
     ‖(RHLean.sRescaled a x) - ((Y7Chain.sinhTaylorFun a x 100 : ℝ) : ℂ)‖ ^ 2
@@ -9233,9 +7396,6 @@ theorem sinh_uniform_error_sq_le (a : ℝ) (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (x : 
   rw [hnorm]
   have h' := pow_le_pow_left₀ (abs_nonneg _) h 2
   rwa [sq_abs] at h'
-
-
-
 theorem sinh_l2_error_le (a : ℝ) (ha0 : 0 ≤ a) (ha1 : a ≤ 1) :
     (∫ x in Set.Ioo (-1 : ℝ) 1,
         ‖(RHLean.sRescaled a x) - ((Y7Chain.sinhTaylorFun a x 100 : ℝ) : ℂ)‖ ^ 2)
@@ -9271,9 +7431,6 @@ theorem sinh_l2_error_le (a : ℝ) (ha0 : 0 ≤ a) (ha1 : a ≤ 1) :
         rw [Real.volume_Ioo,
           ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 1 - (-1))]
         ring
-
-
-
 lemma abs_normSq_sub_le (u v : ℂ) :
     |‖u‖ ^ 2 - ‖v‖ ^ 2| ≤ (2 * ‖u‖ + ‖u - v‖) * ‖u - v‖ := by
   have h1 : ‖v‖ ≤ ‖u‖ + ‖u - v‖ := by
@@ -9286,16 +7443,11 @@ lemma abs_normSq_sub_le (u v : ℂ) :
       ≤ ‖u - v‖ * (2 * ‖u‖ + ‖u - v‖) :=
         mul_le_mul hrev hsum (by positivity) (norm_nonneg _)
     _ = (2 * ‖u‖ + ‖u - v‖) * ‖u - v‖ := by ring
-
-
-
 lemma abs_two_mul_abs_normSq_sub_le (a : ℝ) (ha : 0 ≤ a) (u v : ℂ) :
     |2 * a * (‖u‖ ^ 2 - ‖v‖ ^ 2)|
       ≤ 2 * a * ((2 * ‖u‖ + ‖u - v‖) * ‖u - v‖) := by
   rw [abs_mul, abs_of_nonneg (by positivity : (0 : ℝ) ≤ 2 * a)]
   exact mul_le_mul_of_nonneg_left (abs_normSq_sub_le u v) (by positivity)
-
-
 lemma normSq_sRescaled (a x : ℝ) :
     ‖RHLean.sRescaled a x‖ ^ 2 = (Real.cosh (a * x) - 1) / 2 := by
   have h2 : a * x = 2 * (a * x / 2) := by ring
@@ -9303,9 +7455,6 @@ lemma normSq_sRescaled (a x : ℝ) :
   simp only [RHLean.sRescaled, Complex.sq_norm, Complex.normSq_ofReal]
   conv_rhs => rw [h2, Real.cosh_two_mul]
   nlinarith [hcs]
-
-
-
 theorem integral_cosh_sub_one (a : ℝ) (ha : a ≠ 0) :
     (∫ x in (-1 : ℝ)..1, (Real.cosh (a * x) - 1) / 2) = Real.sinh a / a - 1 := by
   have hderiv : ∀ x ∈ Set.uIcc (-1 : ℝ) 1,
@@ -9333,34 +7482,21 @@ theorem integral_cosh_sub_one (a : ℝ) (ha : a ≠ 0) :
     field_simp [ha]
     ring
   rw [hcalc]
-
-
 theorem norm_sq_sRescaled_integral (a : ℝ) (ha : a ≠ 0) :
     (∫ x in Set.Ioo (-1 : ℝ) 1, ‖RHLean.sRescaled a x‖ ^ 2) = Real.sinh a / a - 1 := by
   simp_rw [normSq_sRescaled a]
   rw [← MeasureTheory.integral_Ioc_eq_integral_Ioo,
     ← intervalIntegral.integral_of_le (by norm_num : (-1 : ℝ) ≤ 1)]
   exact integral_cosh_sub_one a ha
-
-
-
-
 lemma sqrt_two_mul_sq (R : ℝ) (hR : 0 ≤ R) :
     Real.sqrt (2 * R ^ 2) = Real.sqrt 2 * R := by
   rw [show (2 : ℝ) * R ^ 2 = (Real.sqrt 2 * R) ^ 2 by
     rw [mul_pow, Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]]
   exact Real.sqrt_sq (mul_nonneg (Real.sqrt_nonneg _) hR)
-
-
-
-
 noncomputable def sTrunc (a x : ℝ) : ℂ :=
   ((Y7Chain.sinhTaylorFun a x 100 : ℝ) : ℂ)
-
-
 noncomputable def polarInnerApprox (a : ℝ) (g : ℝ → ℂ) : ℂ :=
   ∫ x in Set.Ioo (-1 : ℝ) 1, star (sTrunc a x) * g x
-
 private lemma memLp_two_of_continuous {f : ℝ → ℂ} (hf : Continuous f) :
     MemLp f 2 (volume.restrict (Set.Ioo (-1 : ℝ) 1)) := by
   have hcont : Continuous (fun x : ℝ => ‖f x‖ ^ 2) := hf.norm.pow 2
@@ -9368,7 +7504,6 @@ private lemma memLp_two_of_continuous {f : ℝ → ℂ} (hf : Continuous f) :
     hcont.integrableOn_Icc
   exact (memLp_two_iff_integrable_sq_norm hf.measurable.aestronglyMeasurable).mpr
     (hint.mono_set Set.Ioo_subset_Icc_self)
-
 private lemma l2_integral_mul_le {f g : ℝ → ℂ}
     (hf : MemLp f 2 (volume.restrict (Set.Ioo (-1 : ℝ) 1)))
     (hg : MemLp g 2 (volume.restrict (Set.Ioo (-1 : ℝ) 1))) :
@@ -9382,9 +7517,6 @@ private lemma l2_integral_mul_le {f g : ℝ → ℂ}
   simp_rw [Real.rpow_two] at h
   rw [← Real.sqrt_eq_rpow, ← Real.sqrt_eq_rpow] at h
   simpa using h
-
-
-
 theorem norm_polarInnerRescaled_le (a : ℝ) (g : ℝ → ℂ)
     (hg : MemLp g 2 (volume.restrict (Set.Ioo (-1 : ℝ) 1))) :
     ‖RHLean.polarInnerRescaled a g‖
@@ -9405,8 +7537,6 @@ theorem norm_polarInnerRescaled_le (a : ℝ) (g : ℝ → ℂ)
     _ ≤ Real.sqrt (∫ x in Set.Ioo (-1 : ℝ) 1, ‖RHLean.sRescaled a x‖ ^ 2)
         * Real.sqrt (∫ x in Set.Ioo (-1 : ℝ) 1, ‖g x‖ ^ 2) :=
         l2_integral_mul_le hf hg
-
-
 lemma sinhRemainder_nonneg (a : ℝ) (ha0 : 0 ≤ a) (ha1 : a ≤ 1) :
     0 ≤ Y7Chain.sinhRemainder a := by
   unfold Y7Chain.sinhRemainder
@@ -9417,14 +7547,9 @@ lemma sinhRemainder_nonneg (a : ℝ) (ha0 : 0 ≤ a) (ha1 : a ≤ 1) :
       rw [div_lt_one (by norm_num : (0 : ℝ) < 202 * 203)]
       nlinarith [ha0, ha1]
     linarith
-
 private instance enNRealHolderTriple_two_two :
     ENNReal.HolderTriple (2 : ENNReal) (2 : ENNReal) 1 := by
   simpa using Real.HolderConjugate.two_two.ennrealOfReal
-
-
-
-
 theorem norm_polarInner_sub_approx_le_raw (a : ℝ) (g : ℝ → ℂ)
     (hg : MemLp g 2 (volume.restrict (Set.Ioo (-1 : ℝ) 1))) :
     ‖RHLean.polarInnerRescaled a g - polarInnerApprox a g‖
@@ -9465,10 +7590,6 @@ theorem norm_polarInner_sub_approx_le_raw (a : ℝ) (g : ℝ → ℂ)
           ‖RHLean.sRescaled a x - sTrunc a x‖ ^ 2)
         * Real.sqrt (∫ x in Set.Ioo (-1 : ℝ) 1, ‖g x‖ ^ 2) :=
         l2_integral_mul_le hf hg
-
-
-
-
 theorem norm_polarInner_sub_approx_le (a : ℝ) (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
     (g : ℝ → ℂ) (hg : MemLp g 2 (volume.restrict (Set.Ioo (-1 : ℝ) 1))) :
     ‖RHLean.polarInnerRescaled a g - polarInnerApprox a g‖
@@ -9489,9 +7610,6 @@ theorem norm_polarInner_sub_approx_le (a : ℝ) (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
       _ = Real.sqrt 2 * Y7Chain.sinhRemainder a :=
           sqrt_two_mul_sq _ (sinhRemainder_nonneg a ha0 ha1)
   exact h.trans (mul_le_mul_of_nonneg_right hsqrt (Real.sqrt_nonneg _))
-
-
-
 private lemma abs_rankOne_sub_le (a S M r : ℝ) (u v : ℂ)
     (ha0 : 0 ≤ a) (hM : 0 ≤ M) (hr : 0 ≤ r)
     (hu : ‖u‖ ≤ Real.sqrt S * Real.sqrt M)
@@ -9535,10 +7653,6 @@ private lemma abs_rankOne_sub_le (a S M r : ℝ) (u v : ℂ)
           show (Real.sqrt M) * (Real.sqrt M) = M by
             rw [show (Real.sqrt M) * (Real.sqrt M) = (Real.sqrt M) ^ 2 by ring, hMs]]
         ring
-
-
-
-
 theorem abs_polarFormRescaled_sub_approx_le (a : ℝ) (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
     (g : ℝ → ℂ) (hg : MemLp g 2 (volume.restrict (Set.Ioo (-1 : ℝ) 1))) :
     |RHLean.polarFormRescaled a g - 2 * a * ‖polarInnerApprox a g‖ ^ 2|
@@ -9559,63 +7673,14 @@ theorem abs_polarFormRescaled_sub_approx_le (a : ℝ) (ha0 : 0 ≤ a) (ha1 : a �
       ha0 hM (sinhRemainder_nonneg a ha0 ha1) hCS1 hCS2
     unfold RHLean.polarFormRescaled Y7Chain.epsilonPolar
     exact h
-
 end Y7Approx
-
-
-#print axioms Y7Approx.sqrt_two_mul_sq
-#print axioms Y7Approx.sinhRemainder_nonneg
-#print axioms Y7Approx.norm_polarInnerRescaled_le
-#print axioms Y7Approx.norm_polarInner_sub_approx_le_raw
-#print axioms Y7Approx.norm_polarInner_sub_approx_le
-#print axioms Y7Approx.abs_polarFormRescaled_sub_approx_le
-#print axioms Y7Approx.normSq_sRescaled
-#print axioms Y7Approx.integral_cosh_sub_one
-#print axioms Y7Approx.norm_sq_sRescaled_integral
-#print axioms Y7Approx.sinh_sub_partial_le
-#print axioms Y7Approx.sinh_remainder_bound
-#print axioms Y7Approx.abs_sinh_sub_partial_le
-#print axioms Y7Approx.sinh_uniform_error_sq_le
-#print axioms Y7Approx.sinh_l2_error_le
-#print axioms Y7Approx.abs_normSq_sub_le
-#print axioms Y7Approx.abs_two_mul_abs_normSq_sub_le
-
 end
-
 end Inline_Y7_Approx
-
-
-
-
 section Inline_Y7_TailBounds
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 open MeasureTheory
 open scoped BigOperators
-
 namespace Y7Tail
-
-
-
 private lemma memLp_two_of_continuous {f : ℝ → ℂ} (hf : Continuous f) :
     MemLp f 2 (volume.restrict (Set.Ioo (-1 : ℝ) 1)) := by
   have hcont : Continuous (fun x : ℝ => ‖f x‖ ^ 2) := hf.norm.pow 2
@@ -9623,7 +7688,6 @@ private lemma memLp_two_of_continuous {f : ℝ → ℂ} (hf : Continuous f) :
     hcont.integrableOn_Icc
   exact (memLp_two_iff_integrable_sq_norm hf.measurable.aestronglyMeasurable).mpr
     (hint.mono_set Set.Ioo_subset_Icc_self)
-
 private lemma l2_integral_mul_le {f g : ℝ → ℂ}
     (hf : MemLp f 2 (volume.restrict (Set.Ioo (-1 : ℝ) 1)))
     (hg : MemLp g 2 (volume.restrict (Set.Ioo (-1 : ℝ) 1))) :
@@ -9637,10 +7701,6 @@ private lemma l2_integral_mul_le {f g : ℝ → ℂ}
   simp_rw [Real.rpow_two] at h
   rw [← Real.sqrt_eq_rpow, ← Real.sqrt_eq_rpow] at h
   simpa using h
-
-
-
-
 private lemma integral_phi_mul_phi_Ioo (m n : ℕ) :
     (∫ y in Set.Ioo (-1 : ℝ) 1,
         (Y7Legendre.phi m).eval y * (Y7Legendre.phi n).eval y) =
@@ -9648,7 +7708,6 @@ private lemma integral_phi_mul_phi_Ioo (m n : ℕ) :
   rw [← MeasureTheory.integral_Ioc_eq_integral_Ioo,
     ← intervalIntegral.integral_of_le (by norm_num : (-1 : ℝ) ≤ 1)]
   exact Y7Rodrigues.integral_phi_mul_phi_eq_ite m n
-
 lemma mass_legSum (s : Finset ℕ) (x : ℕ → ℝ) :
     (∫ y in Set.Ioo (-1 : ℝ) 1, ‖Y7Op.legSum x s y‖ ^ 2) = ∑ m ∈ s, x m ^ 2 := by
   rw [Y7Op.integral_normSq_legSum]
@@ -9663,9 +7722,6 @@ lemma mass_legSum (s : Finset ℕ) (x : ℕ → ℝ) :
     ring
   · intro hm'
     exact absurd hm hm'
-
-
-
 lemma normSq_sRescaled (a x : ℝ) :
     ‖RHLean.sRescaled a x‖ ^ 2 = (Real.cosh (a * x) - 1) / 2 := by
   have h2 : a * x = 2 * (a * x / 2) := by ring
@@ -9673,7 +7729,6 @@ lemma normSq_sRescaled (a x : ℝ) :
   simp only [RHLean.sRescaled, Complex.sq_norm, Complex.normSq_ofReal]
   conv_rhs => rw [h2, Real.cosh_two_mul]
   nlinarith [hcs]
-
 lemma integral_cosh_sub_one (a : ℝ) (ha : a ≠ 0) :
     (∫ x in (-1 : ℝ)..1, (Real.cosh (a * x) - 1) / 2) = Real.sinh a / a - 1 := by
   have hderiv : ∀ x ∈ Set.uIcc (-1 : ℝ) 1,
@@ -9702,15 +7757,12 @@ lemma integral_cosh_sub_one (a : ℝ) (ha : a ≠ 0) :
     field_simp [ha]
     ring
   rw [hcalc]
-
 lemma norm_sq_sRescaled_integral (a : ℝ) (ha : a ≠ 0) :
     (∫ x in Set.Ioo (-1 : ℝ) 1, ‖RHLean.sRescaled a x‖ ^ 2) = Real.sinh a / a - 1 := by
   simp_rw [normSq_sRescaled a]
   rw [← MeasureTheory.integral_Ioc_eq_integral_Ioo,
     ← intervalIntegral.integral_of_le (by norm_num : (-1 : ℝ) ≤ 1)]
   exact integral_cosh_sub_one a ha
-
-
 theorem polarFormRescaled_le_mass (a : ℝ) (ha0 : 0 ≤ a) (g : ℝ → ℂ)
     (hg : MemLp g 2 (volume.restrict (Set.Ioo (-1 : ℝ) 1))) :
     RHLean.polarFormRescaled a g
@@ -9752,11 +7804,6 @@ theorem polarFormRescaled_le_mass (a : ℝ) (ha0 : 0 ≤ a) (g : ℝ → ℂ)
         mul_le_mul_of_nonneg_left hsq (by positivity)
     _ = 2 * (Real.sinh a - a) * M := by
         field_simp [ha']
-
-
-
-
-
 theorem archFormRescaled_legSum_tail_ge (N : ℕ) (s : Finset ℕ) (x : ℕ → ℝ)
     (hs : ∀ m ∈ s, N ≤ m) :
     Y7Matrix.harmonicR N * (∫ y in Set.Ioo (-1 : ℝ) 1, ‖Y7Op.legSum x s y‖ ^ 2)
@@ -9779,20 +7826,12 @@ theorem archFormRescaled_legSum_tail_ge (N : ℕ) (s : Finset ℕ) (x : ℕ → 
           ring
         · intro hm'
           exact absurd hm hm'
-
-
-
 theorem potentialFormRescaled_nonneg (g : ℝ → ℂ) :
     0 ≤ RHLean.potentialFormRescaled g := by
   unfold RHLean.potentialFormRescaled
   apply integral_nonneg_of_ae
   filter_upwards [ae_restrict_mem measurableSet_Ioo] with x hx
   exact mul_nonneg (Y7Density.rescaledPotential_nonneg hx) (sq_nonneg _)
-
-
-
-
-
 lemma four_mul_gammaKernel {z : ℝ} (hz0 : 0 < z) :
     4 * (z / 2) * RHLean.gammaKernel z
       = (z / 2) / Real.sinh (z / 2) + (z / 2) / Real.cosh (z / 2) - 1 := by
@@ -9808,8 +7847,6 @@ lemma four_mul_gammaKernel {z : ℝ} (hz0 : 0 < z) :
   rw [RHLean.gammaKernel, if_neg hz, hs, he]
   field_simp [hz, hsinh, hcosh]
   ring
-
-
 private lemma one_add_three_mul_sub_exp_nonneg {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t ≤ 1) :
     0 ≤ 1 + 3 * t - Real.exp t := by
   have hderiv : ∀ u : ℝ,
@@ -9840,8 +7877,6 @@ private lemma one_add_three_mul_sub_exp_nonneg {t : ℝ} (ht0 : 0 ≤ t) (ht1 : 
   have ht : t ∈ Set.Icc (0 : ℝ) 1 := ⟨ht0, ht1⟩
   have := hmono h0 ht ht0
   simpa using this
-
-
 private lemma gammaBoundAux_mono :
     MonotoneOn (fun t : ℝ => 4 * t * Real.exp (3 * t) - Real.exp (4 * t) + 1)
       (Set.Icc 0 1) := by
@@ -9881,8 +7916,6 @@ private lemma gammaBoundAux_mono :
     have ht1 : t ≤ 1 := le_of_lt ht.2
     have := one_add_three_mul_sub_exp_nonneg (le_of_lt ht.1) ht1
     linarith
-
-
 private lemma exp_one_div_sinh_add_cosh {E : ℝ} (hE : 1 < E) :
     1 / ((E - E⁻¹) / 2) + 1 / ((E + E⁻¹) / 2) = 4 * E ^ 3 / (E ^ 4 - 1) := by
   have hE0 : E ≠ 0 := ne_of_gt (lt_trans zero_lt_one hE)
@@ -9895,8 +7928,6 @@ private lemma exp_one_div_sinh_add_cosh {E : ℝ} (hE : 1 < E) :
     linarith
   field_simp [hE0, h2, h4]
   ring
-
-
 theorem gammaKernel_nonneg_le_quarter {z : ℝ} (hz0 : 0 < z) (hz2 : z ≤ 2) :
     0 ≤ RHLean.gammaKernel z ∧ RHLean.gammaKernel z ≤ 1 / 4 := by
   set u : ℝ := z / 2 with hu
@@ -9906,7 +7937,6 @@ theorem gammaKernel_nonneg_le_quarter {z : ℝ} (hz0 : 0 < z) (hz2 : z ≤ 2) :
   rw [← hu] at hid
   have hsinh_pos : 0 < Real.sinh u := Real.sinh_pos_iff.mpr hu0
   have hcosh_pos : 0 < Real.cosh u := Real.cosh_pos u
-
   have hf : 0 ≤ 4 * u * Real.exp (3 * u) - Real.exp (4 * u) + 1 := by
     have h0 : (0 : ℝ) ∈ Set.Icc (0 : ℝ) 1 := ⟨le_rfl, by norm_num⟩
     have hu' : u ∈ Set.Icc (0 : ℝ) 1 := ⟨le_of_lt hu0, hu1⟩
@@ -9931,7 +7961,6 @@ theorem gammaKernel_nonneg_le_quarter {z : ℝ} (hz0 : 0 < z) (hz2 : z ≤ 2) :
       ring
     rw [halg, le_div_iff₀ hden]
     linarith
-
   have hup1 : u / Real.sinh u ≤ 1 := by
     rw [div_le_one hsinh_pos]
     exact Real.self_le_sinh_iff.mpr (le_of_lt hu0)
@@ -9949,64 +7978,15 @@ theorem gammaKernel_nonneg_le_quarter {z : ℝ} (hz0 : 0 < z) (hz2 : z ≤ 2) :
       rw [hid]
       nlinarith
     exact (mul_le_mul_iff_of_pos_left h4).mp this
-
 end Y7Tail
-
-
-#print axioms Y7Tail.mass_legSum
-#print axioms Y7Tail.normSq_sRescaled
-#print axioms Y7Tail.norm_sq_sRescaled_integral
-#print axioms Y7Tail.polarFormRescaled_le_mass
-#print axioms Y7Tail.archFormRescaled_legSum_tail_ge
-#print axioms Y7Tail.potentialFormRescaled_nonneg
-#print axioms Y7Tail.four_mul_gammaKernel
-#print axioms Y7Tail.gammaKernel_nonneg_le_quarter
-
 end
-
 end Inline_Y7_TailBounds
-
-
-
 section Inline_Y7_A2
-
 noncomputable section
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 set_option maxHeartbeats 2000000
-
-
 open MeasureTheory
 open scoped BigOperators ENNReal
-
 namespace Y7A2
-
-
-
 lemma memLp_two_of_continuous' {f : ℝ → ℂ} (hf : Continuous f) :
     MemLp f 2 (volume.restrict (Set.Ioo (-1 : ℝ) 1)) := by
   have hcont : Continuous (fun x : ℝ => ‖f x‖ ^ 2) := hf.norm.pow 2
@@ -10014,7 +7994,6 @@ lemma memLp_two_of_continuous' {f : ℝ → ℂ} (hf : Continuous f) :
     hcont.integrableOn_Icc
   exact (memLp_two_iff_integrable_sq_norm hf.measurable.aestronglyMeasurable).mpr
     (hint.mono_set Set.Ioo_subset_Icc_self)
-
 lemma l2_integral_mul_le' {f g : ℝ → ℂ}
     (hf : MemLp f 2 (volume.restrict (Set.Ioo (-1 : ℝ) 1)))
     (hg : MemLp g 2 (volume.restrict (Set.Ioo (-1 : ℝ) 1))) :
@@ -10028,10 +8007,6 @@ lemma l2_integral_mul_le' {f g : ℝ → ℂ}
   simp_rw [Real.rpow_two] at h
   rw [← Real.sqrt_eq_rpow, ← Real.sqrt_eq_rpow] at h
   simpa using h
-
-
-
-
 lemma gammaKernelRescaled_mem_Icc {a z : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
     (hz0 : 0 ≤ z) (hz2 : z ≤ 2) :
     0 ≤ RHLean.gammaKernelRescaled a z ∧ RHLean.gammaKernelRescaled a z ≤ a / 4 := by
@@ -10048,9 +8023,6 @@ lemma gammaKernelRescaled_mem_Icc {a z : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
     · exact mul_nonneg ha0 h.1
     · have := mul_le_mul_of_nonneg_left h.2 ha0
       linarith
-
-
-
 private lemma gamma_pointwise_le {a : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
     {g : ℝ → ℂ} {x y : ℝ} (hx : x ∈ Set.Ioo (-1 : ℝ) 1) (hy : y ∈ Set.Ioo (-1 : ℝ) 1) :
     ‖RHLean.gammaKernelRescaled a ‖x - y‖ * (g x * star (g y)).re‖
@@ -10066,8 +8038,6 @@ private lemma gamma_pointwise_le {a : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
   refine mul_le_mul hkn ?_ (abs_nonneg _) (by positivity)
   have h : |(g x * star (g y)).re| ≤ ‖g x * star (g y)‖ := Complex.abs_re_le_norm _
   rwa [norm_mul, norm_star] at h
-
-
 private lemma gamma_pointwise_le_const {a : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
     {g : ℝ → ℂ} {B' : ℝ} (hB'0 : 0 ≤ B')
     (hB'ub : ∀ x ∈ Set.Ioo (-1 : ℝ) 1, ‖g x‖ ≤ B')
@@ -10077,12 +8047,6 @@ private lemma gamma_pointwise_le_const {a : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
   refine le_trans (gamma_pointwise_le ha0 ha1 hp.1 hp.2) ?_
   apply mul_le_mul_of_nonneg_left _ (by positivity)
   exact mul_le_mul (hB'ub p.1 hp.1) (hB'ub p.2 hp.2) (norm_nonneg _) hB'0
-
-
-
-
-
-
 theorem gammaFormRescaled_abs_le_mass {a : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
     {g : ℝ → ℂ} (hg : Continuous g) :
     |RHLean.gammaFormRescaled a g|
@@ -10223,33 +8187,19 @@ theorem gammaFormRescaled_abs_le_mass {a : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
           mul_le_mul_of_nonneg_left hL2 (by positivity)
       _ = (a / 2) * (∫ x, ‖g x‖ ^ 2 ∂μ) := by ring
   simpa only [hμ] using hmain
-
 end Y7A2
-
 namespace Y7A2
-
-
-
-
-
-
 noncomputable def shiftZ (a : ℝ) (g : ℝ → ℂ) : ℝ :=
   ∑ n ∈ RHLean.arithSupport a, RHLean.arithCoeff n *
     ((∫ x in Set.Ioo (-1) (1 - RHLean.shiftLengthRescaled a n),
         g x * star (g (x + RHLean.shiftLengthRescaled a n)) ∂volume)
       + (∫ x in Set.Ioo (-1 + RHLean.shiftLengthRescaled a n) 1,
         g x * star (g (x - RHLean.shiftLengthRescaled a n)) ∂volume)).re
-
-
 theorem shiftZ_eq (a : ℝ) (g : ℝ → ℂ) :
     shiftZ a g = RHLean.shiftFormRescaled a g := rfl
-
-
 private lemma integral_ofReal_re_set {F : ℝ → ℝ} {D : Set ℝ} :
     (∫ x in D, (((F x : ℝ) : ℂ))).re = ∫ x in D, F x := by
   norm_cast
-
-
 private lemma shift_term_re (s : Finset ℕ) (x : ℕ → ℝ) (r : ℝ) (D : Set ℝ) :
     (∫ y in D, Y7Op.legSum x s y * star (Y7Op.legSum x s (y + r))).re
       = ∫ y in D, (∑ m ∈ s, x m * (Y7Legendre.phi m).eval y) *
@@ -10271,8 +8221,6 @@ private lemma shift_term_re (s : Finset ℕ) (x : ℕ → ℝ) (r : ℝ) (D : Se
     push_cast
     ring
   rw [hpt, integral_ofReal_re_set]
-
-
 private lemma integral_Ioo_shift {F : ℝ → ℝ} {c d r : ℝ} (hcd : c ≤ d) :
     (∫ x in Set.Ioo (c + r) (d + r), F (x - r)) = ∫ y in Set.Ioo c d, F y := by
   have h1 : (∫ x in Set.Ioo (c + r) (d + r), F (x - r))
@@ -10284,17 +8232,11 @@ private lemma integral_Ioo_shift {F : ℝ → ℝ} {c d r : ℝ} (hcd : c ≤ d)
   rw [h1, h2]
   simpa only [sub_eq_add_neg, add_assoc, add_neg_cancel, add_zero] using
     (intervalIntegral.integral_comp_add_right (a := c + r) (b := d + r) (f := F) (-r))
-
-
-
-
 private def U (s : Finset ℕ) (x : ℕ → ℝ) : ℝ → ℝ :=
   fun y => ∑ n ∈ s, x n * (Y7Legendre.phi n).eval y
-
 private lemma legSum_eq_ofReal (s : Finset ℕ) (x : ℕ → ℝ) (y : ℝ) :
     Y7Op.legSum x s y = (U s x y : ℂ) := by
   simp only [Y7Op.legSum, Y7Matrix.phiC, U, Complex.ofReal_sum, Complex.ofReal_mul]
-
 private lemma legSum_prod_eq (s : Finset ℕ) (x : ℕ → ℝ) (r y : ℝ) :
     Y7Op.legSum x s y * star (Y7Op.legSum x s (y + r))
       = ((U s x y * U s x (y + r) : ℝ) : ℂ) := by
@@ -10302,13 +8244,9 @@ private lemma legSum_prod_eq (s : Finset ℕ) (x : ℕ → ℝ) (r y : ℝ) :
   simp only [Complex.star_def, Complex.conj_ofReal]
   push_cast
   ring
-
 private lemma continuous_U (s : Finset ℕ) (x : ℕ → ℝ) : Continuous (U s x) := by
   unfold U
   fun_prop
-
-
-
 private lemma shift_term_eq (s : Finset ℕ) (x : ℕ → ℝ) {r : ℝ} (hrp : 0 < r) (hrl : r < 2) :
     ((∫ y in Set.Ioo (-1) (1 - r),
         Y7Op.legSum x s y * star (Y7Op.legSum x s (y + r)))
@@ -10342,9 +8280,6 @@ private lemma shift_term_eq (s : Finset ℕ) (x : ℕ → ℝ) {r : ℝ} (hrp : 
     simpa only [sub_add_cancel, mul_comm] using h
   rw [Complex.add_re, hplus, hminus, hshift]
   ring
-
-
-
 private lemma shift_term_abs_le (s : Finset ℕ) (x : ℕ → ℝ) {r : ℝ}
     (hrp : 0 < r) (hrl : r < 2) :
     |2 * ∫ y in Set.Ioo (-1) (1 - r), U s x y * U s x (y + r)|
@@ -10389,19 +8324,6 @@ private lemma shift_term_abs_le (s : Finset ℕ) (x : ℕ → ℝ) {r : ℝ}
     intro y
     nlinarith [sq_nonneg (U s x y + U s x (y + r))]
   exact abs_le.mpr ⟨hlower, hupper⟩
-
-
-
-
-
-
-
-
-
-
-
-
-
 private lemma shift_budget_terms (r c : ℕ → ℝ) (y : ℝ)
     (hy1 : -1 < y) (hy2 : y < 1)
     (hr2 : r 2 < 1) (hr3 : 1 < r 3) (hr4 : 1 < r 4) (hr5 : 1 < r 5) (hr6 : 1 < r 6)
@@ -10428,9 +8350,6 @@ private lemma shift_budget_terms (r c : ℕ → ℝ) (y : ℝ)
   simp only [hA, hB]
   split_ifs with h2a h2b h3a h3b h4a h4b h5a h5b h6a h6b <;>
     linarith [hc2, hc6, hc20, hc30, hc40, hc50]
-
-
-
 private lemma shift_sum_eq_integral (s : Finset ℕ) (x : ℕ → ℝ) (r c : ℕ → ℝ)
     (hrp : ∀ k ∈ ({2, 3, 4, 5, 6} : Finset ℕ), 0 < r k)
     (hrl : ∀ k ∈ ({2, 3, 4, 5, 6} : Finset ℕ), r k < 2) :
@@ -10513,10 +8432,6 @@ private lemma shift_sum_eq_integral (s : Finset ℕ) (x : ℕ → ℝ) (r c : �
     (f := fun k y => c k * ((if y ∈ Set.Ioo (-1) (1 - r k) then U s x y ^ 2 else 0)
       + (if y ∈ Set.Ioo (-1 + r k) 1 then U s x y ^ 2 else 0)))
     (fun k hk => hIk k hk)]
-
-
-
-
 theorem shiftZ_legSum_abs_le (s : Finset ℕ) (x : ℕ → ℝ) :
     |shiftZ (RHLean.endpoint 7) (Y7Op.legSum x s)|
       ≤ (RHLean.arithCoeff 2 + RHLean.arithCoeff 3 + RHLean.arithCoeff 4
@@ -10761,16 +8676,10 @@ theorem shiftZ_legSum_abs_le (s : Finset ℕ) (x : ℕ → ℝ) :
             filter_upwards with y
             rw [legSum_eq_ofReal s x y, Complex.sq_norm, Complex.normSq_ofReal]
             ring
-
-
-
-
-
 noncomputable def localizedFormRescaledZ (a : ℝ) (g : ℝ → ℂ) : ℝ :=
   RHLean.archFormRescaled g + RHLean.c0 a * (∫ x in Set.Ioo (-1 : ℝ) 1, ‖g x‖ ^ 2)
     + RHLean.potentialFormRescaled g - RHLean.gammaFormRescaled a g
     - RHLean.polarFormRescaled a g - shiftZ a g
-
 private lemma memLp_two_of_legSum (s : Finset ℕ) (x : ℕ → ℝ) :
     MemLp (Y7Op.legSum x s) 2 (volume.restrict (Set.Ioo (-1 : ℝ) 1)) := by
   have hcont : Continuous (Y7Op.legSum x s) := by
@@ -10783,12 +8692,6 @@ private lemma memLp_two_of_legSum (s : Finset ℕ) (x : ℕ → ℝ) :
     h2.integrableOn_Icc
   exact (memLp_two_iff_integrable_sq_norm hcont.measurable.aestronglyMeasurable).mpr
     (hint.mono_set Set.Ioo_subset_Icc_self)
-
-
-
-
-
-
 theorem localizedFormRescaledZ_legSum_tail_floor (j : ℕ) (s : Finset ℕ) (x : ℕ → ℝ)
     (hs : ∀ m ∈ s, 2 * j + 1 ≤ m) :
     Y7Matrix.tailFloor 0 j * (∫ y in Set.Ioo (-1 : ℝ) 1, ‖Y7Op.legSum x s y‖ ^ 2)
@@ -10824,13 +8727,8 @@ theorem localizedFormRescaledZ_legSum_tail_floor (j : ℕ) (s : Finset ℕ) (x :
   unfold Y7Matrix.tailFloor localizedFormRescaledZ
   rw [← hM]
   linarith
-
-
-
 theorem localizedFormRescaledZ_eq (a : ℝ) (g : ℝ → ℂ) :
     localizedFormRescaledZ a g = RHLean.localizedFormRescaled a g := rfl
-
-
 lemma diag_sum (s : Finset ℕ) (x : ℕ → ℝ) (f : ℕ → ℝ) :
     (∑ m ∈ s, ∑ n ∈ s, x m * x n * (if m = n then f m else 0))
       = ∑ m ∈ s, f m * x m ^ 2 := by
@@ -10843,21 +8741,10 @@ lemma diag_sum (s : Finset ℕ) (x : ℕ → ℝ) (f : ℕ → ℝ) :
     rw [if_neg (Ne.symm hnm), mul_zero]
   · intro hm'
     exact absurd hm hm'
-
 lemma two_mul_div_two_add_one {m : ℕ} (hm : Odd m) : 2 * ((m - 1) / 2) + 1 = m := by
   obtain ⟨k, rfl⟩ := hm
   have h : 2 * k + 1 - 1 = 2 * k := by omega
   rw [h, Nat.mul_div_right k (by norm_num)]
-
-
-
-
-
-
-
-
-
-
 theorem localizedFormRescaledZ_legSum_floor (s : Finset ℕ) (x : ℕ → ℝ)
     (hs : ∀ m ∈ s, Odd m) :
     (∑ m ∈ s, Y7Matrix.tailFloor 0 ((m - 1) / 2) * x m ^ 2)
@@ -10879,7 +8766,6 @@ theorem localizedFormRescaledZ_legSum_floor (s : Finset ℕ) (x : ℕ → ℝ)
     exact continuous_const.mul (Complex.continuous_ofReal.comp (Y7Legendre.phi n).continuous)
   have hmass : (∫ y in Set.Ioo (-1 : ℝ) 1, ‖Y7Op.legSum x s y‖ ^ 2)
       = ∑ m ∈ s, x m ^ 2 := Y7Tail.mass_legSum s x
-
   have harch := Y7Arch.archDiagonalRep s x
   have hc0 := Y7Op.c0Rep (RHLean.endpoint 7) s x
   have hc0diag : (∑ m ∈ s, ∑ n ∈ s,
@@ -10897,14 +8783,12 @@ theorem localizedFormRescaledZ_legSum_floor (s : Finset ℕ) (x : ℕ → ℝ)
       intro n hn
       by_cases h : m = n <;> simp [h]]
     exact diag_sum s x (fun _ => RHLean.c0 (RHLean.endpoint 7))
-
   have hV := Y7Tail.potentialFormRescaled_nonneg (Y7Op.legSum x s)
   have hG := (abs_le.mp
     (Y7A2.gammaFormRescaled_abs_le_mass ha0 ha1 hcont)).2
   have hP := Y7Tail.polarFormRescaled_le_mass (RHLean.endpoint 7) ha0
     (Y7Op.legSum x s) (memLp_two_of_legSum s x)
   have hS := (abs_le.mp (Y7A2.shiftZ_legSum_abs_le s x)).2
-
   have hST : (∑ m ∈ s, Y7Matrix.tailFloor 0 ((m - 1) / 2) * x m ^ 2)
       = (∑ m ∈ s, Y7Matrix.harmonicR m * x m ^ 2)
         + (∑ m ∈ s, RHLean.c0 (RHLean.endpoint 7) * x m ^ 2)
@@ -10957,13 +8841,6 @@ theorem localizedFormRescaledZ_legSum_floor (s : Finset ℕ) (x : ℕ → ℝ)
   unfold localizedFormRescaledZ
   rw [harch, hc0, diag_sum s x (fun m => Y7Matrix.harmonicR m), hc0diag, hST]
   linarith [hb, hV]
-
-
-
-
-
-
-
 theorem rescaledOperatorM_block_nonneg_of_tail (j : ℕ)
     (hj : 0 ≤ Y7Matrix.tailFloor 0 j)
     (s : Finset ℕ) (x : ℕ → ℝ) (hs : ∀ m ∈ s, Odd m)
@@ -10984,45 +8861,14 @@ theorem rescaledOperatorM_block_nonneg_of_tail (j : ℕ)
       Y7Chain.tailFloor_mono 0 hle
     exact mul_nonneg (le_trans hj h1) (sq_nonneg _)
   linarith
-
 end Y7A2
-
 end
-
 end Inline_Y7_A2
-
-
-
-
 section Inline_Y7_A3
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open Matrix
 open scoped BigOperators
-
 namespace Y7A3
-
-
-
 theorem posSemidef_finset_quadform_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]
     (M : Matrix ι ι ℝ) (h : M.PosSemidef) (t : Finset ι) (v : ι → ℝ) :
     0 ≤ ∑ i ∈ t, ∑ j ∈ t, v i * v j * M i j := by
@@ -11038,12 +8884,6 @@ theorem posSemidef_finset_quadform_nonneg {ι : Type*} [Fintype ι] [DecidableEq
         intro i hi
         rw [← Finset.sum_attach]]
   simpa only [Finset.mul_sum, Matrix.submatrix_apply, mul_assoc, mul_left_comm, mul_comm] using hnil
-
-
-
-
-
-
 theorem finalMatrix_quadform_nonneg {n : Type*} [Fintype n] [DecidableEq n]
     (AU WL Scrit Corr : Matrix (Fin 7) (Fin 7) ℝ) (θ : ℝ)
     (hAUsym : AU.IsSymm) (hWLsym : WL.IsSymm)
@@ -11063,63 +8903,14 @@ theorem finalMatrix_quadform_nonneg {n : Type*} [Fintype n] [DecidableEq n]
   posSemidef_finset_quadform_nonneg _
     (Y7Density.finalMatrix_block_posSemidef AU WL Scrit Corr θ hAUsym hWLsym
       hScritsym hCorrsym hAU hWL hScrit hCorr hθ A B d hd hSc) t v
-
 end Y7A3
-
-
-#print axioms Y7A3.posSemidef_finset_quadform_nonneg
-#print axioms Y7A3.finalMatrix_quadform_nonneg
-
 end
-
 end Inline_Y7_A3
-
-
-
 section Inline_Y7_A3Cert
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 noncomputable section
-
 open Matrix
 open scoped BigOperators
-
 namespace Y7A3Cert
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 structure Certificate (a : ℝ) where
   KPP : Matrix (Fin 100) (Fin 100) ℝ
   K2PP : Matrix (Fin 100) (Fin 100) ℝ
@@ -11155,20 +8946,10 @@ structure Certificate (a : ℝ) where
           ((Matrix.fromBlocks A Bm Bm.conjTranspose (Matrix.diagonal d))
             *ᵥ (coord s x hs))
         ≤ ∑ m ∈ s, ∑ n ∈ s, x m * x n * Y7Op.rescaledOperatorM a m n
-
-
-
-
 theorem gram_posSemidef {a : ℝ} (h : Certificate a) :
     (h.K2PP - h.KPP.conjTranspose * h.KPP
       - h.Bcrit.conjTranspose * h.Bcrit).PosSemidef :=
   Y7Parseval.parseval_remainder_posSemidef h.K2PP h.KPP h.Bcrit h.C h.hParseval
-
-
-
-
-
-
 theorem matrixBlocksPos_of_certificate {a : ℝ} (h : Certificate a) :
     Y7Density.MatrixBlocksPos a := by
   intro s x hs
@@ -11182,56 +8963,25 @@ theorem matrixBlocksPos_of_certificate {a : ℝ} (h : Certificate a) :
         *ᵥ (h.coord s x hs)) := by
     simpa only [star_trivial] using hPSD.dotProduct_mulVec_nonneg (h.coord s x hs)
   exact le_trans hnn (h.hdom s x hs)
-
-
-
 theorem polynomialPositivity_of_certificate (h : Certificate (RHLean.endpoint 7)) :
     Y7Density.PolynomialPositivity (RHLean.endpoint 7) :=
   Y7Density.polynomialPositivity_of_matrixBlocks
     Y7Density.formMatrixRep_endpoint_seven (matrixBlocksPos_of_certificate h)
-
-
-
 theorem localPSDRescaled_of_certificate (h : Certificate (RHLean.endpoint 7))
     (hdens : Y7Density.LegendreDensity (RHLean.endpoint 7)) :
     RHLean.LocalPSDRescaled (RHLean.endpoint 7) :=
   Y7Density.localPSDRescaled_of_polynomialPositivity
     (polynomialPositivity_of_certificate h) hdens
-
 end Y7A3Cert
-
-
-#print axioms Y7A3Cert.gram_posSemidef
-#print axioms Y7A3Cert.matrixBlocksPos_of_certificate
-#print axioms Y7A3Cert.polynomialPositivity_of_certificate
-#print axioms Y7A3Cert.localPSDRescaled_of_certificate
-
 end
-
 end Inline_Y7_A3Cert
-
-
-
-
-
-
-
-
-
-
 section Inline_Y7KernelAction
-
 noncomputable section
-
 open MeasureTheory Polynomial
-
 namespace Y7KernelAction
-
-
 noncomputable def polyPrim (p : Polynomial ℝ) : Polynomial ℝ :=
   ∑ i ∈ Finset.range (p.natDegree + 1),
     Polynomial.C (p.coeff i / (i + 1)) * Polynomial.X ^ (i + 1)
-
 lemma polyPrim_derivative (p : Polynomial ℝ) : (polyPrim p).derivative = p := by
   unfold polyPrim
   rw [Polynomial.derivative_sum]
@@ -11247,12 +8997,9 @@ lemma polyPrim_derivative (p : Polynomial ℝ) : (polyPrim p).derivative = p := 
     field_simp
   rw [Finset.sum_congr rfl h]
   exact (Polynomial.as_sum_range_C_mul_X_pow p).symm
-
 lemma polyPrim_eval_zero (p : Polynomial ℝ) : (polyPrim p).eval 0 = 0 := by
   unfold polyPrim
   simp [Polynomial.eval_finsetSum]
-
-
 lemma integral_poly_eq (p : Polynomial ℝ) (a b : ℝ) :
     (∫ x in a..b, p.eval x) = (polyPrim p).eval b - (polyPrim p).eval a := by
   have hderiv : ∀ x ∈ Set.uIcc a b,
@@ -11263,19 +9010,14 @@ lemma integral_poly_eq (p : Polynomial ℝ) (a b : ℝ) :
   have hint : IntervalIntegrable (fun x => p.eval x) volume a b :=
     (Polynomial.continuous p).intervalIntegrable _ _
   exact intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint
-
-
 noncomputable def primAt (c : ℝ) (p : Polynomial ℝ) : Polynomial ℝ :=
   polyPrim p - Polynomial.C ((polyPrim p).eval c)
-
 lemma primAt_derivative (c : ℝ) (p : Polynomial ℝ) : (primAt c p).derivative = p := by
   unfold primAt
   rw [Polynomial.derivative_sub, Polynomial.derivative_C, polyPrim_derivative, sub_zero]
-
 lemma primAt_eval_self (c : ℝ) (p : Polynomial ℝ) : (primAt c p).eval c = 0 := by
   unfold primAt
   simp
-
 lemma primAt_eval (c x : ℝ) (p : Polynomial ℝ) :
     (primAt c p).eval x = ∫ y in c..x, p.eval y := by
   have hderiv : ∀ t ∈ Set.uIcc c x,
@@ -11288,8 +9030,6 @@ lemma primAt_eval (c x : ℝ) (p : Polynomial ℝ) :
   have h := intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint
   rw [h, primAt_eval_self]
   ring
-
-
 lemma primAt_one_eval (x : ℝ) (p : Polynomial ℝ) :
     (primAt 1 p).eval x = - ∫ y in x..1, p.eval y := by
   have h := primAt_eval 1 x p
@@ -11300,9 +9040,6 @@ lemma primAt_one_eval (x : ℝ) (p : Polynomial ℝ) :
       ((Polynomial.continuous p).intervalIntegrable _ _)]
     simp
   linarith
-
-
-
 noncomputable def kernelTerm (m : ℕ) (p : Polynomial ℝ) : Polynomial ℝ :=
   (∑ k ∈ Finset.range (m + 1),
       Polynomial.C (((m.choose k : ℕ) : ℝ) * (-1) ^ (m - k)) * Polynomial.X ^ k *
@@ -11310,9 +9047,6 @@ noncomputable def kernelTerm (m : ℕ) (p : Polynomial ℝ) : Polynomial ℝ :=
     + (∑ k ∈ Finset.range (m + 1),
         Polynomial.C (-(((m.choose k : ℕ) : ℝ) * (-1) ^ (m - k))) *
           Polynomial.X ^ (m - k) * primAt 1 (Polynomial.X ^ k * p))
-
-
-
 theorem kernelTerm_spec (m : ℕ) (p : Polynomial ℝ) {x : ℝ} (hx : x ∈ Set.Icc (-1 : ℝ) 1) :
     (kernelTerm m p).eval x = ∫ y in (-1 : ℝ)..1, |x - y| ^ m * p.eval y := by
   have hsplit : (∫ y in (-1 : ℝ)..1, |x - y| ^ m * p.eval y)
@@ -11405,20 +9139,13 @@ theorem kernelTerm_spec (m : ℕ) (p : Polynomial ℝ) {x : ℝ} (hx : x ∈ Set
   · apply Finset.sum_congr rfl
     intro k hk
     simp only [Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X]
-
   · apply Finset.sum_congr rfl
     intro k hk
     simp only [Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X]
     ring
-
-
-
-
 noncomputable def gammaAction (M : ℕ) (a : ℝ) (p : Polynomial ℝ) : Polynomial ℝ :=
   ∑ k ∈ Finset.range (M + 1),
     Polynomial.C (((Y7Chain.rhoCoeff k : ℚ) : ℝ) * a ^ k) * kernelTerm k p
-
-
 lemma rhoTrunc_eval_mul (M : ℕ) (a x : ℝ) (p : Polynomial ℝ) (y : ℝ) :
     (Y7Density.rhoTrunc M).eval (a * |x - y|) * p.eval y
       = ∑ k ∈ Finset.range (M + 1),
@@ -11430,9 +9157,6 @@ lemma rhoTrunc_eval_mul (M : ℕ) (a x : ℝ) (p : Polynomial ℝ) (y : ℝ) :
   simp only [Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X]
   rw [mul_pow]
   ring
-
-
-
 theorem gammaAction_spec (M : ℕ) (a : ℝ) (p : Polynomial ℝ) {x : ℝ}
     (hx : x ∈ Set.Icc (-1 : ℝ) 1) :
     (gammaAction M a p).eval x =
@@ -11453,15 +9177,9 @@ theorem gammaAction_spec (M : ℕ) (a : ℝ) (p : Polynomial ℝ) {x : ℝ}
       ← kernelTerm_spec k p hx]
   · intro k hk
     exact (Continuous.intervalIntegrable (by fun_prop) _ _)
-
-
-
 noncomputable def gammaModelMatrix (M : ℕ) (a : ℝ) (m n : ℕ) : ℝ :=
   ∫ x in (-1 : ℝ)..1,
     (Y7Legendre.legP m).eval x * (gammaAction M a (Y7Legendre.legP n)).eval x
-
-
-
 theorem gammaModelMatrix_spec (M : ℕ) (a : ℝ) (m n : ℕ) :
     gammaModelMatrix M a m n =
       ∫ x in (-1 : ℝ)..1, ∫ y in (-1 : ℝ)..1,
@@ -11483,39 +9201,13 @@ theorem gammaModelMatrix_spec (M : ℕ) (a : ℝ) (m n : ℕ) :
     intro y hy
     ring]
   rw [intervalIntegral.integral_const_mul]
-
 end Y7KernelAction
-
-#print axioms Y7KernelAction.kernelTerm_spec
-#print axioms Y7KernelAction.gammaAction_spec
-#print axioms Y7KernelAction.gammaModelMatrix_spec
-
-
-#print axioms Y7KernelAction.kernelTerm_spec
-#print axioms Y7KernelAction.gammaAction_spec
-#print axioms Y7KernelAction.gammaModelMatrix_spec
-
 end
-
 end Inline_Y7KernelAction
-
-
-
-
-
-
-
-
-
-
 section Inline_Y7ModelOne
-
 noncomputable section
-
 open MeasureTheory
-
 namespace Y7ModelOne
-
 theorem gammaModelMatrix_phi (M : ℕ) (a : ℝ) (m n : ℕ) :
     (Real.sqrt ((2 * (m : ℝ) + 1) / 2) * Real.sqrt ((2 * (n : ℝ) + 1) / 2)) *
         Y7KernelAction.gammaModelMatrix M a m n
@@ -11559,7 +9251,6 @@ theorem gammaModelMatrix_phi (M : ℕ) (a : ℝ) (m n : ℕ) :
       ring]
     rw [intervalIntegral.integral_const_mul]]
   rw [intervalIntegral.integral_const_mul]
-
 theorem polarInnerApprox_eq (a : ℝ) (n : ℕ) :
     Y7Approx.polarInnerApprox a (Y7Matrix.phiC n)
       = (((Real.sqrt ((2 * (n : ℝ) + 1) / 2)) *
@@ -11591,16 +9282,13 @@ theorem polarInnerApprox_eq (a : ℝ) (n : ℕ) :
   intro x hx
   beta_reduce
   ring
-
 noncomputable def polarMomentModel (a : ℝ) (n : ℕ) : ℝ :=
   Real.sqrt ((2 * (n : ℝ) + 1) / 2) *
     ∫ x in (-1 : ℝ)..1, Y7Chain.sinhTaylorFun a x 100 *
       (Y7Legendre.legP n).eval x
-
 theorem polarInnerApprox_eq_polarMomentModel (a : ℝ) (n : ℕ) :
     Y7Approx.polarInnerApprox a (Y7Matrix.phiC n) = ((polarMomentModel a n : ℝ) : ℂ) :=
   polarInnerApprox_eq a n
-
 theorem polarMomentModel_eq_sum (a : ℝ) (n : ℕ) :
     polarMomentModel a n =
       Real.sqrt ((2 * (n : ℝ) + 1) / 2) *
@@ -11641,57 +9329,24 @@ theorem polarMomentModel_eq_sum (a : ℝ) (n : ℕ) :
       rw [show a * x / 2 = (a / 2) * x from by ring, mul_pow]]
     ring]
   rw [intervalIntegral.integral_const_mul]
-
 end Y7ModelOne
-
-#print axioms Y7ModelOne.gammaModelMatrix_phi
-#print axioms Y7ModelOne.polarInnerApprox_eq
-
-
-#print axioms Y7ModelOne.gammaModelMatrix_phi
-#print axioms Y7ModelOne.polarInnerApprox_eq
-#print axioms Y7ModelOne.polarMomentModel_eq_sum
-
 end
-
 end Inline_Y7ModelOne
-
-
-
-
-
-
-
-
-
 section Inline_Y7KPP
-
 noncomputable section
-
 open MeasureTheory
-
 namespace Y7KPP
-
-
-
 noncomputable def gammaModelM (a : ℝ) (m n : ℕ) : ℝ :=
   Real.sqrt ((2 * (m : ℝ) + 1) / 2) * Real.sqrt ((2 * (n : ℝ) + 1) / 2) *
     Y7KernelAction.gammaModelMatrix 240 a m n
-
-
 theorem gammaModelM_spec (a : ℝ) (m n : ℕ) :
     gammaModelM a m n =
       ∫ x in (-1 : ℝ)..1, ∫ y in (-1 : ℝ)..1,
         (Y7Density.rhoTrunc 240).eval (a * |x - y|) *
           ((Y7Legendre.phi m).eval x * (Y7Legendre.phi n).eval y) :=
   Y7ModelOne.gammaModelMatrix_phi 240 a m n
-
-
-
 noncomputable def polarModelM (a : ℝ) (m n : ℕ) : ℝ :=
   2 * a * (Y7ModelOne.polarMomentModel a m * Y7ModelOne.polarMomentModel a n)
-
-
 noncomputable def modelM (a : ℝ) (m n : ℕ) : ℝ :=
   (if m = n then Y7Matrix.harmonicR m else 0)
     + RHLean.c0 a * (if m = n then 1 else 0)
@@ -11699,18 +9354,12 @@ noncomputable def modelM (a : ℝ) (m n : ℕ) : ℝ :=
     - gammaModelM a m n
     - polarModelM a m n
     - Y7Op.shiftOperatorMatrix a m n
-
-
-
-
 noncomputable def KPP (a : ℝ) : Matrix (Fin 100) (Fin 100) ℝ :=
   fun i j =>
     Y7Matrix.potentialMatrix (2 * (i : ℕ) + 1) (2 * (j : ℕ) + 1)
       - gammaModelM a (2 * (i : ℕ) + 1) (2 * (j : ℕ) + 1)
       - polarModelM a (2 * (i : ℕ) + 1) (2 * (j : ℕ) + 1)
       - Y7Op.shiftOperatorMatrix a (2 * (i : ℕ) + 1) (2 * (j : ℕ) + 1)
-
-
 theorem KPP_eq_modelM (a : ℝ) (i j : Fin 100) :
     KPP a i j = modelM a (2 * (i : ℕ) + 1) (2 * (j : ℕ) + 1)
       - ((if (2 * (i : ℕ) + 1) = (2 * (j : ℕ) + 1) then
@@ -11718,16 +9367,11 @@ theorem KPP_eq_modelM (a : ℝ) (i j : Fin 100) :
           + RHLean.c0 a * (if (2 * (i : ℕ) + 1) = (2 * (j : ℕ) + 1) then 1 else 0)) := by
   unfold KPP modelM
   ring
-
-
 theorem polarModelM_rank_one (a : ℝ) (m n : ℕ) :
     polarModelM a m n = 2 * a * Y7ModelOne.polarMomentModel a m *
       Y7ModelOne.polarMomentModel a n := by
   unfold polarModelM
   ring
-
-
-
 theorem modelM_polar_form (a : ℝ) (s : Finset ℕ) (x : ℕ → ℝ) :
     (∑ m ∈ s, ∑ n ∈ s, x m * x n * polarModelM a m n)
       = 2 * a * (∑ m ∈ s, x m * Y7ModelOne.polarMomentModel a m) ^ 2 := by
@@ -11752,11 +9396,6 @@ theorem modelM_polar_form (a : ℝ) (s : Finset ℕ) (x : ℕ → ℝ) :
         rw [Finset.mul_sum]
     _ = 2 * a * (∑ m ∈ s, x m * Y7ModelOne.polarMomentModel a m) ^ 2 := by
         rw [sq]
-
-
-
-
-
 theorem modelFormRep (a : ℝ) (s : Finset ℕ) (x : ℕ → ℝ) :
     (∑ m ∈ s, ∑ n ∈ s, x m * x n * modelM a m n)
       = RHLean.archFormRescaled (Y7Op.legSum x s)
@@ -11776,45 +9415,18 @@ theorem modelFormRep (a : ℝ) (s : Finset ℕ) (x : ℕ → ℝ) :
     simp only [mul_add, mul_sub, Finset.sum_add_distrib, Finset.sum_sub_distrib]
   rw [hmain, ← Y7Arch.archDiagonalRep s x, ← Y7Op.c0Rep a s x,
     ← Y7Op.potentialRep s x, modelM_polar_form a s x, ← Y7Op.shiftRep a s x]
-
 end Y7KPP
-
-#print axioms Y7KPP.gammaModelM_spec
-
-
-#print axioms Y7KPP.gammaModelM_spec
-#print axioms Y7KPP.modelFormRep
-
 end
-
 end Inline_Y7KPP
-
-
-
-
-
-
-
-
-
-
-
 section Inline_Y7K2
-
 noncomputable section
-
 open MeasureTheory Polynomial
-
 namespace Y7K2
-
 variable (a : ℝ)
-
-
 noncomputable def sPoly : Polynomial ℝ :=
   ∑ d ∈ Finset.range 100,
     Polynomial.C ((a / 2) ^ (2 * d + 1) / (((2 * d + 1).factorial : ℕ) : ℝ)) *
       Polynomial.X ^ (2 * d + 1)
-
 lemma sPoly_eval (x : ℝ) :
     (sPoly a).eval x = Y7Chain.sinhTaylorFun a x 100 := by
   unfold sPoly Y7Chain.sinhTaylorFun
@@ -11825,14 +9437,9 @@ lemma sPoly_eval (x : ℝ) :
   rw [show (a * x / 2) ^ (2 * d + 1) = (a / 2) ^ (2 * d + 1) * x ^ (2 * d + 1) from by
     rw [show a * x / 2 = (a / 2) * x from by ring, mul_pow]]
   ring
-
-
-
 noncomputable def gammaActionPhi (j : ℕ) : Polynomial ℝ :=
   Polynomial.C (Real.sqrt ((2 * (j : ℝ) + 1) / 2)) *
     Y7KernelAction.gammaAction 240 a (Y7Legendre.legP j)
-
-
 theorem gammaActionPhi_eval (j : ℕ) {x : ℝ} (hx : x ∈ Set.Icc (-1 : ℝ) 1) :
     (gammaActionPhi a j).eval x =
       ∫ y in (-1 : ℝ)..1,
@@ -11848,70 +9455,31 @@ theorem gammaActionPhi_eval (j : ℕ) {x : ℝ} (hx : x ∈ Set.Icc (-1 : ℝ) 1
   beta_reduce
   simp only [Polynomial.eval_mul, Polynomial.eval_C]
   ring
-
-
-
 noncomputable def shiftAction (j : ℕ) (x : ℝ) : ℝ :=
   ∑ k ∈ RHLean.arithSupport a, RHLean.arithCoeff k *
     ((if x < 1 - RHLean.shiftLengthRescaled a k then
         (Y7Legendre.phi j).eval (x + RHLean.shiftLengthRescaled a k) else 0)
       + (if -1 + RHLean.shiftLengthRescaled a k < x then
         (Y7Legendre.phi j).eval (x - RHLean.shiftLengthRescaled a k) else 0))
-
-
-
 noncomputable def K0Action (j : ℕ) (x : ℝ) : ℝ :=
   RHLean.rescaledPotential x * (Y7Legendre.phi j).eval x
     - (gammaActionPhi a j).eval x
     - 2 * a * Y7ModelOne.polarMomentModel a j * Y7Chain.sinhTaylorFun a x 100
     - shiftAction a j x
-
-
-
 noncomputable def K2PP : Matrix (Fin 100) (Fin 100) ℝ :=
   fun i j => ∫ x in Set.Ioo (-1 : ℝ) 1,
     K0Action a (2 * (i : ℕ) + 1) x * K0Action a (2 * (j : ℕ) + 1) x
-
-
-
 noncomputable def B : Matrix (Fin 100) (Fin 50) ℝ :=
   fun i j => Y7KPP.modelM a (2 * (i : ℕ) + 1) (2 * (100 + (j : ℕ)) + 1)
-
-
-
 noncomputable def BC (Q : Matrix (Fin 100) (Fin 7) ℝ) : Matrix (Fin 4850) (Fin 7) ℝ :=
   fun i k => ∑ m : Fin 100,
     Q m k * Y7KPP.modelM a (2 * (m : ℕ) + 1) (2 * (150 + (i : ℕ)) + 1)
-
 end Y7K2
-
-#print axioms Y7K2.sPoly_eval
-
-
-#print axioms Y7K2.sPoly_eval
-#print axioms Y7K2.gammaActionPhi_eval
-
 end
-
 end Inline_Y7K2
-
-
-
-
-
-
-
-
-
 section Inline_Y7QRTR
-
 noncomputable section
-
 namespace Y7QRTR
-
-
-
-
 def Q : Matrix (Fin 100) (Fin 7) ℝ :=
   !![-0.31987498096756535519128791670674985006950841699705854931220, 0.41812070465393555641459406616207552751727970839635434437989, -0.44182904266321915789672338519792460452768895313720304786019, 0.42736340420376609551221975402073544391145839590149186887013, -0.38375328345349381982514792958558045919603508581919638899413, -0.39628742717423959192405916093373183458701198463536265677844, -0.11011569113846659053876575246230780090599977724877998451661;
       0.57732200410464073299053283742675853146477858605273243555874, -0.44708869775440874887186864719696004379655160070073081876026, 0.12360945928829651242627865759706441811674489221521839086092, 0.10677529337187177642594857894357133122961621341792991280472, -0.35113628536870001671107163546048298636236876291111147224681, -0.48646239819514357696657154181172443503117342701029139354399, -0.13709880871865331372019589567608237270179680359167314907384;
@@ -12013,7 +9581,6 @@ def Q : Matrix (Fin 100) (Fin 7) ℝ :=
       0, 0, 0, 0, 0, 0, 0;
       0, 0, 0, 0, 0, 0, 0;
       0, 0, 0, 0, 0, 0, 0]
-
 def R : Matrix (Fin 100) (Fin 93) ℝ :=
   !![0.018473537215956844400000000000000000000, 0.055188620252188624900000000000000000000, -0.011755678449901626700000000000000000000, -0.067339889275544490000000000000000000000, 0.070689570882719460200000000000000000000, 0.018737879165421189600000000000000000000, -0.003906801325747250030000000000000000000, -0.062548151550413919100000000000000000000, 0.075112712082410076900000000000000000000, -0.046304035740076729400000000000000000000, 0.013466793414954388000000000000000000000, 0.001113628792952988830000000000000000000, 0.006506303162222742790000000000000000000, 0.009355307319686628070000000000000000000, -0.029839181171188642500000000000000000000, 0.017892990737147142900000000000000000000, 0.006335856876740565520000000000000000000, -0.000440625951360250605000000000000000000, -0.005432362643359568350000000000000000000, -0.000549266448362299730000000000000000000, 0.006878350940288909320000000000000000000, -0.003876421010732288880000000000000000000, -0.003420229669806643630000000000000000000, 0.009374577273693049380000000000000000000, -5.53371362896169235000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e-5, -0.011390505087735543200000000000000000000, 0.008734068968298909150000000000000000000, 0.001336578267001109100000000000000000000, 0.003406138521782093190000000000000000000, -0.016091717456951228800000000000000000000, 0.020633504501117203700000000000000000000, -0.011689969687896565800000000000000000000, 0.004142370412259964270000000000000000000, -0.003263791866456271140000000000000000000, 0.000701442708812568573000000000000000000, 0.009912549575968005590000000000000000000, -0.015296092598100809200000000000000000000, 0.009911603127686076720000000000000000000, -0.000894624065325325558000000000000000000, -0.000926231078851062740000000000000000000, -0.002438042791920349680000000000000000000, 0.004749434298927008440000000000000000000, -0.002466381644504190600000000000000000000, 0.001849594394647592360000000000000000000, -0.003883693618944519900000000000000000000, 0.004448950182336718770000000000000000000, -0.000710599966153929014000000000000000000, -0.001401001363054824080000000000000000000, -0.000781203231643260083000000000000000000, 0.003487541922558411430000000000000000000, -0.000376586098253149149000000000000000000, -0.006155006456799494260000000000000000000, 0.007935582412151942840000000000000000000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
       -0.053420416463800329800000000000000000000, 0.115945553977541499000000000000000000000, -0.037227836449239666600000000000000000000, -0.069249846387177238500000000000000000000, 0.111074412481602838000000000000000000000, 0.009366168560149389780000000000000000000, -0.006941527142464618510000000000000000000, -0.086468087794872139400000000000000000000, 0.101514255001140224000000000000000000000, -0.055657976611026199800000000000000000000, 0.005666499072932967150000000000000000000, 0.010167265957532286100000000000000000000, 0.019878724313352729600000000000000000000, -0.013547799961829075700000000000000000000, -0.022165716996706021800000000000000000000, 0.020513409220489751300000000000000000000, 0.009201292878505101800000000000000000000, -0.005212043444599456610000000000000000000, -0.001894728050382101960000000000000000000, -0.002622873587239892520000000000000000000, 0.005825694082946095490000000000000000000, 0.001617425120805530750000000000000000000, -0.012093690149016487300000000000000000000, 0.019013701702355854900000000000000000000, -0.004025269620199271000000000000000000000, -0.014787336970879113100000000000000000000, 0.013094243316570341300000000000000000000, 0.000621994930308813663000000000000000000, 0.005253077620412566030000000000000000000, -0.022626937458841669300000000000000000000, 0.028914674777291340300000000000000000000, -0.016548449416710242500000000000000000000, 0.005923444817097433050000000000000000000, -0.004612206706164841650000000000000000000, 0.001038475864274242530000000000000000000, 0.013447781211225549900000000000000000000, -0.020916774146257526000000000000000000000, 0.013588387226880532100000000000000000000, -0.001158676617009919700000000000000000000, -0.001616129598052502920000000000000000000, -0.002965134518160492290000000000000000000, 0.006432558414027111750000000000000000000, -0.003763931896370106920000000000000000000, 0.003004171431449270770000000000000000000, -0.005616847201756054900000000000000000000, 0.006248899210380235400000000000000000000, -0.001227048695588757060000000000000000000, -0.001699039809359696080000000000000000000, -0.001076872903226979520000000000000000000, 0.004604157769227724270000000000000000000, -0.000534919187292946471000000000000000000, -0.008119408628768240430000000000000000000, 0.010495975836773143200000000000000000000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
@@ -12115,7 +9682,6 @@ def R : Matrix (Fin 100) (Fin 93) ℝ :=
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1.000000000000000000000000000000000000000, 0, 0;
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1.000000000000000000000000000000000000000, 0;
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1.000000000000000000000000000000000000000]
-
 def TR : Matrix (Fin 93) (Fin 93) ℝ :=
   !![0.10353547927438601400000000000, -0.06130498556834416970000000000, 0.08421188707942263430000000000, -0.07660838901244507170000000000, 0.04157876425929784430000000000, -0.03538561122791252650000000000, -6.74583504316374064000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e-5, 0.00890242072033611484000000000, -0.01733573652902747550000000000, 0.07734531745208278460000000000, -0.00424377909519059546000000000, -0.02626098864379983880000000000, 0.02311087804763893930000000000, -0.00814681124580363819000000000, -0.01289677378722057540000000000, 0.11176346195601731500000000000, 0.01205778930288413380000000000, -0.43107837483625877100000000000, -0.01485593490031934110000000000, 0.00801674111180066158000000000, 0.00343841548015951393000000000, 0.00026969894828680023200000000, 0.20388008672064092400000000000, -0.00042102259645421447800000000, -0.02130862863624088250000000000, 0.00942985244495276979000000000, 0.00226966763584891080000000000, 0.00169943151776252963000000000, -0.09724612815599713300000000000, -0.04275432591968730820000000000, 0.02232516297103645870000000000, 0.01090454233806538960000000000, -0.00716420555153790030000000000, -0.00209485433672027205000000000, -0.02718911497525616440000000000, -0.05565846531960337570000000000, -0.24957516408441823800000000000, 0.20958236440274841100000000000, 0.00229105095497424312000000000, -0.02680203384451033260000000000, -0.10435370533545559900000000000, 0.01865278567294082960000000000, 0.00254583616127742772000000000, 0.01349250480784138820000000000, 0.01211326775732921890000000000, 0.00992296460607983155000000000, -0.00023674001054789167500000000, -0.01654199273264960610000000000, -0.00128673534290397388000000000, -0.00908919317189370128000000000, 0.01451930002219738860000000000, 0.00777355639377992191000000000, 0.00012511432343470537800000000, 0.00423237602304441917000000000, 0.00143017681575826000000000000, 0.01862625331219307230000000000, -0.07536347358165183810000000000, -0.12683461922299713000000000000, 0.01262396225844792700000000000, 0.02896897302832867480000000000, 0.00683512490462319898000000000, 0.01470066069652059030000000000, -0.06620071437855283570000000000, -0.02874139296398587830000000000, -0.01505563281878065370000000000, 0.05102740515873280950000000000, 0.00212763005573371033000000000, 0.03689185144806100130000000000, -0.01008928162687953640000000000, -0.03491428475119492950000000000, -0.00417883515321101733000000000, -0.00720734622569446128000000000, 0.06255614853438512530000000000, 0.00383373186422251424000000000, -0.05166221835005518210000000000, 0.00552568617926154151000000000, 0.01240230193523856120000000000, 0.00720961456384626356000000000, -0.02654517269194115250000000000, -0.00125236037674024739000000000, -0.00656526525949745112000000000, 0.02037749611469759360000000000, -0.00729531267092731976000000000, 0.03810373103853544750000000000, -0.01055758921592489000000000000, 0.03433884367906067660000000000, -0.00437668129883700234000000000, 0.01371987383177742170000000000, -0.02090328062632317020000000000, 0.00731566479794030795000000000, -0.01376528035655200270000000000, 0.01522193704784817640000000000, 0.00985726384262766188000000000;
       0.12408635356643957200000000000, -0.08155233847654011490000000000, -0.01533925856227053020000000000, -0.09567609745660535240000000000, 0.04975711534610141600000000000, -0.04755684704011292620000000000, -0.02617149036667858540000000000, 0.10391747862927913600000000000, 0.01513945664212072540000000000, -0.01544164711499565470000000000, 0.01118557195048130310000000000, 0.13942112685817412100000000000, 0.00795194384189352489000000000, -0.01227224304612179770000000000, -0.00994203044727322120000000000, 0.08653377307796045190000000000, -0.04543188940676550630000000000, -0.16047565588000867200000000000, 0.04230566329069224830000000000, -0.00959797636391999075000000000, 0.07447062636416248990000000000, -0.03858300448507277080000000000, 0.05064355644975770260000000000, 0.01742834369120222280000000000, -0.03025816248058174270000000000, -0.06450561549811510700000000000, -0.01716878063972166950000000000, -0.00402484702859823209000000000, -0.07865047196774324620000000000, -0.03706796931260736280000000000, -0.01548541544275646410000000000, -0.24923413000253466500000000000, -0.02078842204134361340000000000, -0.01376519077866547240000000000, -0.04056430633447370010000000000, -0.03864801945974917500000000000, 0.23779384325573005300000000000, -0.32847066498107435600000000000, -0.09445132498883807020000000000, -0.04998422640891179990000000000, -0.05523869099247488010000000000, 0.04808564182655863250000000000, -0.06427838364856675040000000000, 0.02976221742133811080000000000, 0.01762055192336506320000000000, 0.02641496174811776980000000000, 0.01746418497502002370000000000, 0.00998041263481762135000000000, 0.02374281960313448170000000000, -0.02662098620673107940000000000, 0.04812301372143392570000000000, 0.00586584477492269919000000000, 0.05312205516324518960000000000, -0.04263534012128959020000000000, 0.03572033586150637210000000000, -0.00138066956578919930000000000, -0.02842839808006993390000000000, -0.03453212587890536200000000000, 0.01134068609102409360000000000, 0.02379487578246489150000000000, 0.03113636961798145130000000000, -0.01165333106460272540000000000, -0.03627811529167536410000000000, 0.00121797345505634418000000000, -0.00858326993688151782000000000, 0.04040797555191382590000000000, 0.00380507174211917485000000000, 0.04494309640978310510000000000, -0.01125114486690493610000000000, -0.00096997666274574727700000000, -0.00485552909735757592000000000, -0.01250543347384723040000000000, 0.06281039418369811780000000000, 0.00405779941562466918000000000, -0.07269492021029518030000000000, 0.01075013201554977930000000000, 0.02014093661772396390000000000, 0.02400336226235249770000000000, -0.02765752297609339050000000000, 8.13121091350368333000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e-5, -0.00209866449504458961000000000, 0.02277290136791781240000000000, -0.01414559119293929900000000000, 0.05246588556238415000000000000, -0.01305687489363866610000000000, 0.05038889749585136880000000000, -0.00289928609698631703000000000, 0.01864372364602981740000000000, -0.03412916060542074000000000000, 0.01175299897370070570000000000, -0.02368856518947104130000000000, 0.02325920679632301900000000000, 0.01839582265292974070000000000;
@@ -12211,7 +9777,5 @@ def TR : Matrix (Fin 93) (Fin 93) ℝ :=
       0.05278224571071053750000000000, -0.26654718262623744400000000000, -0.02769105152646038000000000000, -0.01049040348873050980000000000, 0.01584051831631110710000000000, 0.11137351400622870500000000000, -0.00233927671008881191000000000, 0.04043175704394696280000000000, -0.11071785895653948900000000000, -0.05647818871349382510000000000, 0.09652073388658687080000000000, -0.03505380821535076380000000000, -0.01733326810124800540000000000, 0.06961989052311641500000000000, 0.04556350891397517590000000000, 0.00083667965960093344600000000, -0.00157014279161702590000000000, 0.00036734749733646315500000000, -0.00017645746692397982200000000, -0.05700067325667747260000000000, -0.01577800106247509090000000000, 0.04854095920682958280000000000, -0.00636446256471180118000000000, 0.01864421149025453220000000000, -0.05614092711184320850000000000, -0.15440706591259492600000000000, 0.12107003647868888600000000000, 0.09965997554505307000000000000, -0.02582147440265024700000000000, 0.08959346501275712580000000000, -0.05207412168182508350000000000, 0.02833763738123497990000000000, -0.00366984179539371451000000000, -0.09236148937250907020000000000, 0.03015220132533055420000000000, 0.03289970839677731910000000000, -0.01226192392829691080000000000, 4.2172880317464969800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e-5, -0.01434608759564624800000000000, 0.00171380018585986387000000000, -0.00155651527595840485000000000, 0.11067000018637417100000000000, 0.08935046341861331560000000000, 0.15999685641704961000000000000, -0.02952894046248524810000000000, 0.16038355360294318000000000000, 0.03414477177399018880000000000, 0.00496492758047802334000000000, -0.04737652913281212300000000000, 0.02179659187194065570000000000, -0.05242994370635176840000000000, 0.08931022271885111220000000000, 0.00561249809760723441000000000, -0.06638568874757869160000000000, -0.11790088735357012700000000000, -0.01197135262190437280000000000, 0.01983052533716699040000000000, -0.04003876347935918930000000000, -0.15374877665624217500000000000, -0.06571071427647216800000000000, 0.03677035097057054780000000000, 0.06368385945981606950000000000, 0.06522244772001102590000000000, -0.00391902811105868283000000000, -0.15547945910553581700000000000, -0.07211532013627702800000000000, 0.00504003143472558143000000000, -0.00275676810271187605000000000, -0.06057245346251018130000000000, 0.02882461775684688750000000000, -0.05827820526157718310000000000, -0.00175002485055751741000000000, 0.02069649426606804190000000000, -0.00564240786604496610000000000, -0.01717217704510076020000000000, -0.01065118470948823830000000000, 0.01168162272841472350000000000, -0.00535650546037120916000000000, -0.00620470725823652793000000000, -0.00835429830238950712000000000, -0.02973481868416498130000000000, -0.01643536780526770600000000000, -0.00402964593311323262000000000, -0.03109494681402546340000000000, 0.09337498459687559870000000000, 0.04648149971710603680000000000, -0.05901717171015827960000000000, -0.09007163063746553840000000000, -0.01448835006457462920000000000, 0.00808216523209968549000000000, -0.00767875672689479361000000000, 0.01788918874796623790000000000, -0.02340124510226642560000000000;
       0.05440628717336409150000000000, -0.24250792746766539100000000000, -0.02042950219692037450000000000, -0.04777458330849455180000000000, 0.03811905632878308940000000000, 0.18942177781327432200000000000, 0.15853885057294919700000000000, 0.05640557493402017370000000000, 0.04466470420377625230000000000, 0.00096337365171885705600000000, -0.06319074943878839890000000000, 0.02687962929475650950000000000, -0.00495216619201187171000000000, 0.06056627201353513570000000000, 0.04244115084674937590000000000, 0.04228204471223794000000000000, -0.12246491198221207100000000000, 0.01689083268321099960000000000, 0.04090449006954621770000000000, -0.09222773715722461240000000000, -0.07436925903773057570000000000, 0.03039329073131502930000000000, 0.01238334820182475200000000000, -0.02457080946184436380000000000, 0.04000246270059416850000000000, 0.07444779977189219800000000000, -0.01099287221833553620000000000, 0.41243113889033000700000000000, 0.01657322067724744520000000000, -0.00559357808486608647000000000, 0.00034942012568921871600000000, 0.00082374618311959791900000000, 0.00393346943672335560000000000, 0.12051632379607621300000000000, -0.03310671843997930320000000000, -0.00645005316163086481000000000, -0.00118899475963757145000000000, -0.00340004541870590673000000000, -0.00993091699545873251000000000, 0.02683005300815714460000000000, -0.00744146286888887690000000000, -0.02745959740910505760000000000, -0.02694070122513754150000000000, -0.03641570750182644700000000000, 0.04131016481137200070000000000, -0.05456870767004245310000000000, 0.00667838953105251258000000000, -0.01815160079402619930000000000, 0.00333059953268222304000000000, -0.00949712408403819569000000000, 0.08252483700589897940000000000, -0.00799635579337029320000000000, -0.07454277004106873990000000000, 0.01120902130206564120000000000, 0.06007838120225972990000000000, 0.06420030356320668980000000000, 0.00313024085130256431000000000, -0.00432224590399793353000000000, -0.09970641213625812400000000000, 0.02380828744618460750000000000, -0.07511034715815073650000000000, 0.02688237462651334870000000000, 0.05365055223522607190000000000, 0.02614076364547877900000000000, 0.01320526256856529610000000000, 0.02867814919527940720000000000, 0.00370986471119965407000000000, 0.00925937406757771329000000000, -0.02303950336581452390000000000, -0.01530074270932316010000000000, 0.02912509885210357720000000000, 0.03720390402360222730000000000, -0.02053828838046705890000000000, -0.00047513360986678324700000000, 0.01290516803363665930000000000, 0.03284648375857024400000000000, -0.02311138102600035840000000000, 0.10199412565003808400000000000, -0.07100447858736443070000000000, -0.06350049102797880600000000000, -0.06172904447220962240000000000, -0.01565784821710606080000000000, 0.05090847640037330510000000000, -0.00800412895962544085000000000, -0.02699945732287782620000000000, -0.02770220526707476570000000000, 0.04522881767345825890000000000, 0.07538959840989363500000000000, 0.01505997630617845680000000000, -0.00910677749458987940000000000, -0.04418972948102065780000000000, -0.01127626328903072290000000000, -0.03640673887890118890000000000]
 end Y7QRTR
-
 end
-
 end Inline_Y7QRTR

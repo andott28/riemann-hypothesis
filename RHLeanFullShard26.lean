@@ -1,6 +1,4 @@
 import RHLeanFullShard25
-
-
 set_option maxHeartbeats 2000000
 set_option maxHeartbeats 800000
 set_option maxHeartbeats 1000000
@@ -46,42 +44,20 @@ set_option maxRecDepth 10000
 set_option maxRecDepth 10000
 set_option maxRecDepth 10000
 set_option maxRecDepth 10000
-
 section Inline_GateII_HBoxData
-
-
-
-
-
-
-
-
-
-
-
 set_option maxHeartbeats 0
 set_option maxRecDepth 1000000
-
 namespace RHLean.GateII.HBoxData
-
 open RHLean.GateII.HBoxBase
 open RHLean.GateII.HBoxDataChunk
-
 def P : ℕ := 150000
 def B : ℕ := 151
 def moduli : List ℕ := [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151]
-
 def kP : ℕ := 1191841
-
 def NP : ℕ := 32
-
 def roughPred (n : ℕ) : Bool := moduli.all (fun q => decide (n % q ≠ 0))
-
-
-
 def boxP : List ℕ :=
   (List.range (P + 1)).filter (fun n => 0 < n && (n ≤ B || roughPred n))
-
 def boxes : List HBox :=
   boxChunk_0
   ++ boxChunk_1
@@ -92,7 +68,6 @@ def boxes : List HBox :=
   ++ boxChunk_6
   ++ boxChunk_7
   ++ boxChunk_8
-
 def vList : List ℕ := [
   0,
   1441412356800,
@@ -16220,24 +16195,16 @@ def vList : List ℕ := [
   6316,
   6314,
 ]
-
 def Vtotal : ℕ := 2797352245868
-
 set_option maxRecDepth 1000000 in
 set_option maxHeartbeats 0 in
 theorem boxes_p : boxes.map (fun b => b.p) = boxP := by
   decide
-
 set_option maxRecDepth 1000000 in
 theorem boxes_v : boxes.map (fun b => b.v) = vList := by
   decide
-
 set_option maxRecDepth 1000000 in
 theorem vList_sum : vList.sum = Vtotal := by
   decide
-
 end RHLean.GateII.HBoxData
-
-
-
 end Inline_GateII_HBoxData

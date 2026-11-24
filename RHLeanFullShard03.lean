@@ -1,6 +1,4 @@
 import RHLeanFullShard02
-
-
 set_option maxHeartbeats 2000000
 set_option maxHeartbeats 800000
 set_option maxHeartbeats 1000000
@@ -11,24 +9,17 @@ set_option maxHeartbeats 8000000
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 2000000
 set_option maxHeartbeats 2000000
-
 section Inline_Y7Bessel
-
 noncomputable section
-
 open MeasureTheory
 open scoped BigOperators ENNReal
-
 namespace Y7Bessel
-
 abbrev mu : Measure ℝ := volume.restrict (Set.Ioo (-1 : ℝ) 1)
 abbrev E : Type := Lp ℂ 2 mu
-
 instance : IsFiniteMeasure mu := by
   constructor
   rw [Measure.restrict_apply MeasurableSet.univ, Set.univ_inter]
   exact measure_Ioo_lt_top
-
 lemma memLp_phiC (n : ℕ) : MemLp (Y7Matrix.phiC n) 2 mu := by
   have hcont : Continuous (Y7Matrix.phiC n) := by
     unfold Y7Matrix.phiC
@@ -38,23 +29,19 @@ lemma memLp_phiC (n : ℕ) : MemLp (Y7Matrix.phiC n) 2 mu := by
     h2.integrableOn_Icc
   exact (memLp_two_iff_integrable_sq_norm hcont.measurable.aestronglyMeasurable).mpr
     (hint.mono_set Set.Ioo_subset_Icc_self)
-
 noncomputable def phiLp (n : ℕ) : E := (memLp_phiC n).toLp (Y7Matrix.phiC n)
-
 lemma inner_toLp {f g : ℝ → ℂ} (hf : MemLp f 2 mu) (hg : MemLp g 2 mu) :
     inner ℂ (hf.toLp f) (hg.toLp g) = ∫ x, inner ℂ (f x) (g x) ∂mu := by
   rw [MeasureTheory.L2.inner_def]
   apply integral_congr_ae
   filter_upwards [hf.coeFn_toLp, hg.coeFn_toLp] with x hx hy
   rw [hx, hy]
-
 lemma integral_phi_mul_phi_Ioo' (m n : ℕ) :
     (∫ y in Set.Ioo (-1 : ℝ) 1, (Y7Legendre.phi m).eval y * (Y7Legendre.phi n).eval y) =
       if m = n then 1 else 0 := by
   rw [← MeasureTheory.integral_Ioc_eq_integral_Ioo,
     ← intervalIntegral.integral_of_le (by norm_num : (-1 : ℝ) ≤ 1)]
   exact Y7Rodrigues.integral_phi_mul_phi_eq_ite m n
-
 lemma inner_phiLp (m n : ℕ) :
     inner ℂ (phiLp m) (phiLp n) = if m = n then 1 else 0 := by
   rw [phiLp, phiLp, inner_toLp (memLp_phiC m) (memLp_phiC n)]
@@ -70,8 +57,6 @@ lemma inner_phiLp (m n : ℕ) :
       (f := fun x => (Y7Legendre.phi m).eval x * (Y7Legendre.phi n).eval x)
   rw [hcast, integral_phi_mul_phi_Ioo']
   by_cases h : m = n <;> simp [h]
-
-
 theorem phiLp_orthonormal : Orthonormal ℂ phiLp := by
   refine ⟨?_, ?_⟩
   · intro n
@@ -88,49 +73,22 @@ theorem phiLp_orthonormal : Orthonormal ℂ phiLp := by
   · intro m n hmn
     rw [inner_phiLp m n]
     simp [hmn]
-
-
 theorem bessel {s : Finset ℕ} (f : E) :
     ∑ n ∈ s, ‖inner ℂ (phiLp n) f‖ ^ 2 ≤ ‖f‖ ^ 2 :=
   phiLp_orthonormal.sum_inner_products_le f
-
 end Y7Bessel
-
-#print axioms Y7Bessel.phiLp_orthonormal
-
-
-#print axioms Y7Bessel.phiLp_orthonormal
-#print axioms Y7Bessel.bessel
-
 end
-
 end Inline_Y7Bessel
-
-
-
-
-
-
-
-
-
 section Inline_Y7Parseval
-
 noncomputable section
-
 open MeasureTheory
 open scoped BigOperators ENNReal
-
 namespace Y7Parseval
-
 abbrev mu : Measure ℝ := volume.restrict (Set.Ioo (-1 : ℝ) 1)
-
 lemma measurable_rescaledPotential :
     Measurable (fun x : ℝ => RHLean.rescaledPotential x) := by
   unfold RHLean.rescaledPotential
   fun_prop
-
-
 lemma exists_bound_phi (i : ℕ) :
     ∃ C : ℝ, ∀ x ∈ Set.Icc (-1 : ℝ) 1, ‖(Y7Legendre.phi i).eval x‖ ≤ C := by
   have hcont : Continuous (Y7Matrix.phiC i) := by
@@ -141,8 +99,6 @@ lemma exists_bound_phi (i : ℕ) :
   refine ⟨C, fun x hx => ?_⟩
   have := hC x hx
   simpa [Y7Matrix.phiC, Complex.norm_real] using this
-
-
 lemma memLp_V : MemLp (fun x : ℝ => RHLean.rescaledPotential x) 2 mu := by
   rw [memLp_two_iff_integrable_sq_norm
     (measurable_rescaledPotential.aestronglyMeasurable)]
@@ -155,8 +111,6 @@ lemma memLp_V : MemLp (fun x : ℝ => RHLean.rescaledPotential x) 2 mu := by
     rw [Real.norm_eq_abs, sq_abs]
   exact (integrableOn_Ioc_iff_integrableOn_Ioo).mp
     ((intervalIntegrable_iff_integrableOn_Ioc_of_le (by norm_num : (-1 : ℝ) ≤ 1)).mp hV2n)
-
-
 lemma memLp_V_phi (j : ℕ) :
     MemLp (fun x : ℝ => RHLean.rescaledPotential x * (Y7Legendre.phi j).eval x) 2 mu := by
   have hmeas : AEStronglyMeasurable
@@ -189,17 +143,12 @@ lemma memLp_V_phi (j : ℕ) :
   calc RHLean.rescaledPotential x ^ 2 * ‖(Y7Legendre.phi j).eval x‖ ^ 2
       ≤ RHLean.rescaledPotential x ^ 2 * C ^ 2 := mul_le_mul_of_nonneg_left h2 h3
     _ = C ^ 2 * RHLean.rescaledPotential x ^ 2 := by ring
-
-
-
 lemma memLp_poly (p : Polynomial ℝ) : MemLp (fun x : ℝ => p.eval x) 2 mu := by
   have hcont : Continuous (fun x : ℝ => p.eval x) := p.continuous
   rw [memLp_two_iff_integrable_sq_norm hcont.measurable.aestronglyMeasurable]
   have hint : IntegrableOn (fun x : ℝ => ‖p.eval x‖ ^ 2) (Set.Icc (-1 : ℝ) 1) :=
     ((hcont.norm.pow 2)).integrableOn_Icc
   exact hint.mono_set Set.Ioo_subset_Icc_self
-
-
 lemma memLp_sinhTaylor (a : ℝ) :
     MemLp (fun x : ℝ => Y7Chain.sinhTaylorFun a x 100) 2 mu := by
   have hcont : Continuous (fun x : ℝ => Y7Chain.sinhTaylorFun a x 100) := by
@@ -209,8 +158,6 @@ lemma memLp_sinhTaylor (a : ℝ) :
   have hint : IntegrableOn (fun x : ℝ => ‖Y7Chain.sinhTaylorFun a x 100‖ ^ 2)
       (Set.Icc (-1 : ℝ) 1) := (hcont.norm.pow 2).integrableOn_Icc
   exact hint.mono_set Set.Ioo_subset_Icc_self
-
-
 lemma exists_bound_phi_ext (j : ℕ) :
     ∃ C : ℝ, ∀ y ∈ Set.Icc (-1 : ℝ) 3, ‖(Y7Legendre.phi j).eval y‖ ≤ C := by
   have hcont : Continuous (fun y : ℝ => (Y7Legendre.phi j).eval y) :=
@@ -218,8 +165,6 @@ lemma exists_bound_phi_ext (j : ℕ) :
   obtain ⟨C, hC⟩ := (isCompact_Icc (a := (-1 : ℝ)) (b := 3)).exists_bound_of_continuousOn
     hcont.continuousOn
   exact ⟨C, hC⟩
-
-
 lemma exists_bound_shiftAction {a : ℝ} (ha : 0 < a) (j : ℕ) :
     ∃ C : ℝ, ∀ x ∈ Set.Ioo (-1 : ℝ) 1, ‖Y7K2.shiftAction a j x‖ ≤ C := by
   obtain ⟨B, hB⟩ := exists_bound_phi_ext j
@@ -286,9 +231,6 @@ lemma exists_bound_shiftAction {a : ℝ} (ha : 0 < a) (j : ℕ) :
     _ = 2 * (∑ k ∈ RHLean.arithSupport a, ‖RHLean.arithCoeff k‖) * B := by
         rw [← Finset.sum_mul]
         ring
-
-
-
 lemma measurable_shiftAction (a : ℝ) (j : ℕ) :
     Measurable (fun x : ℝ => Y7K2.shiftAction a j x) := by
   unfold Y7K2.shiftAction
@@ -302,8 +244,6 @@ lemma measurable_shiftAction (a : ℝ) (j : ℕ) :
   · apply Measurable.ite (measurableSet_lt measurable_const measurable_id)
     · fun_prop
     · exact measurable_const
-
-
 lemma memLp_shiftAction {a : ℝ} (ha : 0 < a) (j : ℕ) :
     MemLp (fun x : ℝ => Y7K2.shiftAction a j x) 2 mu := by
   have hmeas : AEStronglyMeasurable (fun x : ℝ => Y7K2.shiftAction a j x) mu :=
@@ -312,8 +252,6 @@ lemma memLp_shiftAction {a : ℝ} (ha : 0 < a) (j : ℕ) :
   exact MemLp.of_bound hmeas C (by
     filter_upwards [ae_restrict_mem measurableSet_Ioo] with x hx
     exact hC x hx)
-
-
 lemma memLp_K0Action {a : ℝ} (ha : 0 < a) (j : ℕ) :
     MemLp (fun x : ℝ => Y7K2.K0Action a j x) 2 mu := by
   have h1 : MemLp (fun x : ℝ => RHLean.rescaledPotential x * (Y7Legendre.phi j).eval x) 2 mu :=
@@ -327,41 +265,14 @@ lemma memLp_K0Action {a : ℝ} (ha : 0 < a) (j : ℕ) :
     memLp_shiftAction ha j
   unfold Y7K2.K0Action
   exact ((h1.sub h2).sub h3).sub h4
-
 end Y7Parseval
-
-
-#print axioms Y7Parseval.memLp_V
-#print axioms Y7Parseval.memLp_V_phi
-
-
-#print axioms Y7Parseval.memLp_V
-#print axioms Y7Parseval.memLp_V_phi
-#print axioms Y7Parseval.memLp_K0Action
-
 end
-
 end Inline_Y7Parseval
-
-
-
-
-
-
-
-
-
-
 section Inline_Y7MatElem
-
 noncomputable section
-
 open MeasureTheory
 open scoped BigOperators ENNReal
-
 namespace Y7MatElem
-
-
 lemma integral_V_part (n j : ℕ) :
     (∫ x in Set.Ioo (-1 : ℝ) 1,
         (Y7Legendre.phi n).eval x *
@@ -371,8 +282,6 @@ lemma integral_V_part (n j : ℕ) :
   apply integral_congr_ae
   filter_upwards with x
   ring
-
-
 lemma integral_gamma_part (a : ℝ) (n j : ℕ) :
     (∫ x in Set.Ioo (-1 : ℝ) 1,
         (Y7Legendre.phi n).eval x * (Y7K2.gammaActionPhi a j).eval x)
@@ -393,8 +302,6 @@ lemma integral_gamma_part (a : ℝ) (n j : ℕ) :
   intro y hy
   beta_reduce
   ring
-
-
 lemma integral_phi_sinhTaylor (a : ℝ) (n : ℕ) :
     (∫ x in Set.Ioo (-1 : ℝ) 1,
         (Y7Legendre.phi n).eval x * Y7Chain.sinhTaylorFun a x 100)
@@ -428,8 +335,6 @@ lemma integral_phi_sinhTaylor (a : ℝ) (n : ℕ) :
         filter_upwards with x
         ring]
   rw [h3, Y7ModelOne.polarMomentModel]
-
-
 lemma integral_polar_part (a : ℝ) (n j : ℕ) :
     (∫ x in Set.Ioo (-1 : ℝ) 1,
         (Y7Legendre.phi n).eval x *
@@ -447,8 +352,6 @@ lemma integral_polar_part (a : ℝ) (n j : ℕ) :
         ring]
   rw [integral_phi_sinhTaylor, Y7KPP.polarModelM]
   ring
-
-
 lemma setIntegral_shift_plus (n j : ℕ) {r : ℝ} (hr : 0 ≤ r) (hr2 : r ≤ 2) :
     (∫ x in Set.Ioo (-1 : ℝ) 1, (Y7Legendre.phi n).eval x *
         (if x < 1 - r then (Y7Legendre.phi j).eval (x + r) else 0))
@@ -488,8 +391,6 @@ lemma setIntegral_shift_plus (n j : ℕ) {r : ℝ} (hr : 0 ≤ r) (hr2 : r ≤ 2
     ring]
   rw [intervalIntegral.integral_const_mul]
   rfl
-
-
 lemma setIntegral_shift_minus (n j : ℕ) {r : ℝ} (hr : 0 ≤ r) (hr2 : r ≤ 2) :
     (∫ x in Set.Ioo (-1 : ℝ) 1, (Y7Legendre.phi n).eval x *
         (if -1 + r < x then (Y7Legendre.phi j).eval (x - r) else 0))
@@ -529,11 +430,6 @@ lemma setIntegral_shift_minus (n j : ℕ) {r : ℝ} (hr : 0 ≤ r) (hr2 : r ≤ 
     ring]
   rw [intervalIntegral.integral_const_mul]
   rfl
-
-
-
-
-
 lemma integral_shift_part {a : ℝ} (ha : 0 < a) (n j : ℕ) :
     (∫ x in Set.Ioo (-1 : ℝ) 1, (Y7Legendre.phi n).eval x * Y7K2.shiftAction a j x)
       = Y7Op.shiftOperatorMatrix a n j := by
@@ -679,42 +575,20 @@ lemma integral_shift_part {a : ℝ} (ha : 0 < a) (n j : ℕ) :
               (mul_le_mul h1 (le_refl _) (norm_nonneg _) hBnn) hsum (by positivity)
               (by positivity)
         _ = ‖RHLean.arithCoeff k‖ * (Bn * Bj + Bn * Bj) := by ring
-
-
-#print axioms Y7MatElem.integral_gamma_part
-#print axioms Y7MatElem.integral_shift_part
-
 end Y7MatElem
-
 end
-
 end Inline_Y7MatElem
-
-
-
-
-
-
-
-
-
 section Inline_Y7ParsevalB
-
 noncomputable section
-
 open MeasureTheory
 open scoped BigOperators ENNReal
-
 namespace Y7ParsevalB
-
 abbrev mu : Measure ℝ := volume.restrict (Set.Ioo (-1 : ℝ) 1)
-
 lemma exists_bound_poly (p : Polynomial ℝ) :
     ∃ C : ℝ, ∀ x ∈ Set.Icc (-1 : ℝ) 1, ‖p.eval x‖ ≤ C := by
   obtain ⟨C, hC⟩ := (isCompact_Icc (a := (-1 : ℝ)) (b := 1)).exists_bound_of_continuousOn
     p.continuous.continuousOn
   exact ⟨C, hC⟩
-
 lemma integrable_V_piece (n j : ℕ) :
     Integrable (fun x : ℝ => (Y7Legendre.phi n).eval x *
       (RHLean.rescaledPotential x * (Y7Legendre.phi j).eval x)) mu := by
@@ -736,7 +610,6 @@ lemma integrable_V_piece (n j : ℕ) :
     have h1 : ‖(Y7Legendre.phi n).eval x‖ ≤ C := hC x hx'
     rw [norm_mul]
     exact mul_le_mul_of_nonneg_right h1 (norm_nonneg _)
-
 lemma integrable_phi_mul_poly (n : ℕ) (p : Polynomial ℝ) :
     Integrable (fun x : ℝ => (Y7Legendre.phi n).eval x * p.eval x) mu := by
   obtain ⟨C1, hC1⟩ := Y7Parseval.exists_bound_phi n
@@ -749,16 +622,13 @@ lemma integrable_phi_mul_poly (n : ℕ) (p : Polynomial ℝ) :
     have hx' : x ∈ Set.Icc (-1 : ℝ) 1 := Set.Ioo_subset_Icc_self hx
     rw [norm_mul]
     exact mul_le_mul (hC1 x hx') (hC2 x hx') (norm_nonneg _) (le_trans (norm_nonneg _) (hC1 x hx'))
-
 lemma integrable_gamma_piece (a : ℝ) (n j : ℕ) :
     Integrable (fun x : ℝ => (Y7Legendre.phi n).eval x * (Y7K2.gammaActionPhi a j).eval x) mu :=
   integrable_phi_mul_poly n _
-
 noncomputable def sPoly (a : ℝ) : Polynomial ℝ :=
   ∑ d ∈ Finset.range 100,
     Polynomial.C ((a / 2) ^ (2 * d + 1) / (((2 * d + 1).factorial : ℕ) : ℝ)) *
       Polynomial.X ^ (2 * d + 1)
-
 lemma sPoly_eval (a : ℝ) (x : ℝ) :
     (sPoly a).eval x = Y7Chain.sinhTaylorFun a x 100 := by
   unfold sPoly Y7Chain.sinhTaylorFun
@@ -769,7 +639,6 @@ lemma sPoly_eval (a : ℝ) (x : ℝ) :
   rw [show (a * x / 2) ^ (2 * d + 1) = (a / 2) ^ (2 * d + 1) * x ^ (2 * d + 1) from by
     rw [show a * x / 2 = (a / 2) * x from by ring, mul_pow]]
   rw [div_mul_eq_mul_div]
-
 lemma integrable_polar_piece (a : ℝ) (n j : ℕ) :
     Integrable (fun x : ℝ => (Y7Legendre.phi n).eval x *
       (2 * a * Y7ModelOne.polarMomentModel a j * Y7Chain.sinhTaylorFun a x 100)) mu := by
@@ -781,7 +650,6 @@ lemma integrable_polar_piece (a : ℝ) (n j : ℕ) :
     simp only [Polynomial.eval_mul, Polynomial.eval_C]
     rw [sPoly_eval a x]]
   exact integrable_phi_mul_poly n _
-
 lemma integrable_shift_piece {a : ℝ} (ha : 0 < a) (n j : ℕ) :
     Integrable (fun x : ℝ => (Y7Legendre.phi n).eval x * Y7K2.shiftAction a j x) mu := by
   obtain ⟨C1, hC1⟩ := Y7Parseval.exists_bound_phi n
@@ -794,9 +662,6 @@ lemma integrable_shift_piece {a : ℝ} (ha : 0 < a) (n j : ℕ) :
     rw [norm_mul]
     exact mul_le_mul (hC1 x (Set.Ioo_subset_Icc_self hx)) (hC2 x hx) (norm_nonneg _)
       (le_trans (norm_nonneg _) (hC1 x (Set.Ioo_subset_Icc_self hx)))
-
-
-
 lemma integral_K0Action {a : ℝ} (ha : 0 < a) (n j : ℕ) :
     (∫ x in Set.Ioo (-1 : ℝ) 1, (Y7Legendre.phi n).eval x * Y7K2.K0Action a j x)
       = Y7KPP.modelM a n j
@@ -835,45 +700,20 @@ lemma integral_K0Action {a : ℝ} (ha : 0 < a) (n j : ℕ) :
     Y7MatElem.integral_polar_part, Y7MatElem.integral_shift_part ha]
   unfold Y7KPP.modelM
   ring
-
 end Y7ParsevalB
-
-#print axioms Y7ParsevalB.integrable_V_piece
-#print axioms Y7ParsevalB.integrable_gamma_piece
-#print axioms Y7ParsevalB.integrable_shift_piece
-
-
-#print axioms Y7ParsevalB.integral_K0Action
-
 end
-
 end Inline_Y7ParsevalB
-
-
-
-
-
-
-
-
 section Inline_Y7ParsevalC
-
 noncomputable section
-
 open MeasureTheory
 open scoped BigOperators ENNReal InnerProductSpace Matrix
-
 namespace Y7ParsevalC
-
 abbrev mu : Measure ℝ := volume.restrict (Set.Ioo (-1 : ℝ) 1)
-
 lemma memLp_K0ActionC {a : ℝ} (ha : 0 < a) (j : ℕ) :
     MemLp (fun x : ℝ => ((Y7K2.K0Action a j x : ℝ) : ℂ)) 2 mu :=
   (Y7Parseval.memLp_K0Action ha j).ofReal
-
 noncomputable def actionLp {a : ℝ} (ha : 0 < a) (j : ℕ) : Y7Bessel.E :=
   (memLp_K0ActionC ha j).toLp (fun x => ((Y7K2.K0Action a j x : ℝ) : ℂ))
-
 lemma inner_phiLp_actionLp {a : ℝ} (ha : 0 < a) (n j : ℕ) :
     inner ℂ (Y7Bessel.phiLp n) (actionLp ha j)
       = ((Y7KPP.modelM a n j - ((if n = j then Y7Matrix.harmonicR n else 0)
@@ -896,7 +736,6 @@ lemma inner_phiLp_actionLp {a : ℝ} (ha : 0 < a) (n j : ℕ) :
   rw [hcast]
   congr 1
   exact Y7ParsevalB.integral_K0Action ha n j
-
 lemma inner_actionLp {a : ℝ} (ha : 0 < a) (i j : Fin 100) :
     inner ℂ (actionLp ha (2 * (i : ℕ) + 1)) (actionLp ha (2 * (j : ℕ) + 1))
       = ((Y7K2.K2PP a i j : ℝ) : ℂ) := by
@@ -921,34 +760,23 @@ lemma inner_actionLp {a : ℝ} (ha : 0 < a) (i j : Fin 100) :
         Y7K2.K0Action a (2 * (j : ℕ) + 1) x)
   rw [hcast]
   congr 1
-
-
-
 noncomputable def coeff (a : ℝ) (n j : ℕ) : ℝ :=
   Y7KPP.modelM a n j - ((if n = j then Y7Matrix.harmonicR n else 0)
     + RHLean.c0 a * (if n = j then 1 else 0))
-
 lemma coeff_KPP (a : ℝ) (i j : Fin 100) :
     coeff a (2 * (i : ℕ) + 1) (2 * (j : ℕ) + 1) = Y7KPP.KPP a i j := by
   unfold coeff
   rw [Y7KPP.KPP_eq_modelM]
-
-
-
 noncomputable def Bcrit (a : ℝ) : Matrix (Fin 50) (Fin 100) ℝ :=
   fun m j => Y7KPP.modelM a (2 * (100 + (m : ℕ)) + 1) (2 * (j : ℕ) + 1)
-
 lemma coeff_Bcrit (a : ℝ) (m : Fin 50) (j : Fin 100) :
     coeff a (2 * (100 + (m : ℕ)) + 1) (2 * (j : ℕ) + 1) = Bcrit a m j := by
   unfold coeff Bcrit
   have h : ¬ (100 + (m : ℕ) = (j : ℕ)) := by
     have := j.isLt; omega
   simp [h]
-
-
 noncomputable def testLp {a : ℝ} (ha : 0 < a) (y : Fin 100 → ℝ) : Y7Bessel.E :=
   ∑ j : Fin 100, ((y j : ℝ) : ℂ) • actionLp ha (2 * (j : ℕ) + 1)
-
 lemma inner_phiLp_testLp {a : ℝ} (ha : 0 < a) (y : Fin 100 → ℝ) (n : ℕ) :
     inner ℂ (Y7Bessel.phiLp n) (testLp ha y)
       = ((∑ j : Fin 100, y j * coeff a n (2 * (j : ℕ) + 1) : ℝ) : ℂ) := by
@@ -959,14 +787,12 @@ lemma inner_phiLp_testLp {a : ℝ} (ha : 0 < a) (y : Fin 100 → ℝ) (n : ℕ) 
   apply Finset.sum_congr rfl
   intro j hj
   ring
-
 lemma K2PP_comm (a : ℝ) (i j : Fin 100) :
     Y7K2.K2PP a i j = Y7K2.K2PP a j i := by
   unfold Y7K2.K2PP
   apply integral_congr_ae
   filter_upwards with x
   ring
-
 lemma norm_sq_testLp {a : ℝ} (ha : 0 < a) (y : Fin 100 → ℝ) :
     ‖testLp ha y‖ ^ 2 = ∑ i : Fin 100, ∑ j : Fin 100,
       y i * y j * Y7K2.K2PP a i j := by
@@ -990,10 +816,6 @@ lemma norm_sq_testLp {a : ℝ} (ha : 0 < a) (y : Fin 100 → ℝ) :
     rfl
   rw [h] at h2
   exact Complex.ofReal_inj.mp h2
-
-
-
-
 lemma bessel_quadratic {a : ℝ} (ha : 0 < a) (y : Fin 100 → ℝ) :
     (∑ i : Fin 100, (∑ j : Fin 100, y j * Y7KPP.KPP a i j) ^ 2)
       + (∑ m : Fin 50, (∑ j : Fin 100, y j * Bcrit a m j) ^ 2)
@@ -1037,14 +859,9 @@ lemma bessel_quadratic {a : ℝ} (ha : 0 < a) (y : Fin 100 → ℝ) :
   · intro x _ y _ hxy
     simp only at hxy
     exact Fin.ext (by omega)
-
-
 lemma K2PP_isSymm (a : ℝ) : (Y7K2.K2PP a).IsSymm := by
   ext i j
   exact (K2PP_comm a i j).symm
-
-
-
 lemma K2PP_quadform (a : ℝ) (y : Fin 100 → ℝ) :
     y ⬝ᵥ (Y7K2.K2PP a *ᵥ y)
       = ∑ i : Fin 100, ∑ j : Fin 100, y i * y j * Y7K2.K2PP a i j := by
@@ -1056,8 +873,6 @@ lemma K2PP_quadform (a : ℝ) (y : Fin 100 → ℝ) :
   apply Finset.sum_congr rfl
   intro j hj
   ring
-
-
 lemma KPPtKPP_quadform (a : ℝ) (y : Fin 100 → ℝ) :
     y ⬝ᵥ (((Y7KPP.KPP a)ᵀ * Y7KPP.KPP a) *ᵥ y)
       = ∑ k : Fin 100, (∑ i : Fin 100, y i * Y7KPP.KPP a k i) ^ 2 := by
@@ -1074,8 +889,6 @@ lemma KPPtKPP_quadform (a : ℝ) (y : Fin 100 → ℝ) :
     intro i hi
     ring
   rw [h]
-
-
 lemma BcrittBcrit_quadform (a : ℝ) (y : Fin 100 → ℝ) :
     y ⬝ᵥ (((Bcrit a)ᵀ * Bcrit a) *ᵥ y)
       = ∑ m : Fin 50, (∑ j : Fin 100, y j * Bcrit a m j) ^ 2 := by
@@ -1092,17 +905,12 @@ lemma BcrittBcrit_quadform (a : ℝ) (y : Fin 100 → ℝ) :
     intro j hj
     ring
   rw [h]
-
-
 lemma BcrittBcrit_symm (a : ℝ) : ((Bcrit a)ᵀ * Bcrit a).IsSymm := by
   ext i j
   simp only [Matrix.transpose_apply, Matrix.mul_apply]
   apply Finset.sum_congr rfl
   intro k hk
   ring
-
-
-
 theorem GRes_posSemidef {a : ℝ} (ha : 0 < a) :
     (Y7K2.K2PP a - (Y7KPP.KPP a)ᵀ * Y7KPP.KPP a - (Bcrit a)ᵀ * Bcrit a).PosSemidef := by
   have hsym : (Y7K2.K2PP a - (Y7KPP.KPP a)ᵀ * Y7KPP.KPP a
@@ -1117,81 +925,23 @@ theorem GRes_posSemidef {a : ℝ} (ha : 0 < a) :
   rw [dotProduct_sub, dotProduct_sub]
   rw [K2PP_quadform, KPPtKPP_quadform, BcrittBcrit_quadform]
   linarith [bessel_quadratic ha y]
-
 end Y7ParsevalC
-
-#print axioms Y7ParsevalC.GRes_posSemidef
-
-
-#print axioms Y7ParsevalC.GRes_posSemidef
-
-
-#print axioms Y7ParsevalC.GRes_posSemidef
-
-
-#print axioms Y7ParsevalC.bessel_quadratic
-
-
-#print axioms Y7ParsevalC.bessel_quadratic
-
-
-#print axioms Y7ParsevalC.coeff_KPP
-#print axioms Y7ParsevalC.coeff_Bcrit
-#print axioms Y7ParsevalC.inner_phiLp_testLp
-#print axioms Y7ParsevalC.norm_sq_testLp
-
-
-#print axioms Y7ParsevalC.inner_phiLp_actionLp
-
-
-#print axioms Y7ParsevalC.bessel_quadratic
-#print axioms Y7ParsevalC.GRes_posSemidef
-
 end
-
 end Inline_Y7ParsevalC
-
-
-
-
-
-
-
-
-
 namespace RHLean
-
-
-
 structure RHResiduals where
   bridge : WeilBridge
   y7 : Y7OperatorTarget
   gateII : GateIIOperatorStep
-
-
 theorem riemannHypothesis_of_residuals (R : RHResiduals) : RiemannHypothesis :=
   rh_full_proof R.bridge R.y7 R.gateII
-
 end RHLean
-
 namespace RHLean.GateII.Tail
-
-
-
 theorem ThetaRel : ∀ t : ℝ, (RHLean.GateII.SA.X0 : ℝ) ≤ t →
     |Chebyshev.theta t - t| ≤ (13 / 100 : ℝ) * t :=
   theta_abs_le_thirteen_hundredths
-
 end RHLean.GateII.Tail
-
 namespace Y7Target
-
-
-
-
-
-
-
 theorem riemannHypothesis_of_polynomialPositivity
     (hbridge : GateIIIBridge)
     (hpos : Y7Density.PolynomialPositivity (RHLean.endpoint 7))
@@ -1205,55 +955,11 @@ theorem riemannHypothesis_of_polynomialPositivity
     RiemannHypothesis :=
   rh_of_Y7PhysicalTarget hbridge
     (Y7Density.y7PhysicalTarget_of_polynomialPositivity hpos) hII
-
 end Y7Target
-
-
-
-#print axioms Y7Density.rho_coeff_consistency
-#print axioms Y7Density.taylorCoeff_gammaExt_eq_rhoCoeff
-#print axioms Y7Density.gammaTaylorRemainderLeaf_240
-#print axioms Y7Density.gammaTaylorRemainderLeaf_240_epsilonGamma
-#print axioms Y7Density.realPartDensity_endpoint_seven
-#print axioms Y7Density.y7PhysicalTarget_of_polynomialPositivity
-#print axioms Y7Density.polynomialPositivity_of_matrixBlocks
-#print axioms Y7Density.eval_phi_neg
-#print axioms Y7Density.exists_legSum_eq_eval_odd
-#print axioms RHLean.GateII.Tail.theta_abs_le_thirteen_hundredths
-#print axioms RHLean.GateII.Tail.ThetaRel
-#print axioms RHLean.GateII.Tail.FprimeX0Bound_of_rows
-#print axioms RHLean.GateII.Localized.collar_norm_eq
-#print axioms RHLean.GateII.Localized.collarCancellation_of_bridge
-#print axioms RHLean.riemannHypothesis_of_residuals
-#print axioms Y7Target.riemannHypothesis_of_polynomialPositivity
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 section Inline_FprimeData
-
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 2000000
-
-
-
-
 namespace RHLean.GateII.Tail
-
 def GateII_LogRowsFull_0 : List LogRow := [
   { p := 5, a := 160933, b := 100000, k := 1, N := 8, lom := 184832409458596937, t := 1 },
   { p := 7, a := 194581, b := 100000, k := 1, N := 8, lom := 172312756754232834, t := 2 },
@@ -5256,13 +4962,8 @@ def GateII_LogRowsFull_0 : List LogRow := [
   { p := 37831, a := 1054078, b := 100000, k := 10, N := 8, lom := 250296218467848, t := 12610 },
   { p := 37847, a := 1054120, b := 100000, k := 10, N := 8, lom := 250201387121974, t := 12615 },
 ]
-
 end RHLean.GateII.Tail
-
-
-
 namespace RHLean.GateII.Tail
-
 def GateII_LogRowsFull_1 : List LogRow := [
   { p := 37853, a := 1054136, b := 100000, k := 10, N := 8, lom := 250165911399883, t := 12617 },
   { p := 37861, a := 1054157, b := 100000, k := 10, N := 8, lom := 250118540798438, t := 12620 },
@@ -9265,13 +8966,8 @@ def GateII_LogRowsFull_1 : List LogRow := [
   { p := 81817, a := 1131214, b := 100000, k := 11, N := 8, lom := 125069761583149, t := 27272 },
   { p := 81839, a := 1131240, b := 100000, k := 11, N := 8, lom := 125039288317668, t := 27279 },
 ]
-
 end RHLean.GateII.Tail
-
-
-
 namespace RHLean.GateII.Tail
-
 def GateII_LogRowsFull_2 : List LogRow := [
   { p := 81847, a := 1131250, b := 100000, k := 11, N := 8, lom := 125028277228743, t := 27282 },
   { p := 81853, a := 1131258, b := 100000, k := 11, N := 8, lom := 125020080853730, t := 27284 },
@@ -13274,13 +12970,8 @@ def GateII_LogRowsFull_2 : List LogRow := [
   { p := 128201, a := 1176125, b := 100000, k := 11, N := 8, lom := 83291050942542, t := 42733 },
   { p := 128203, a := 1176127, b := 100000, k := 11, N := 8, lom := 83289906259787, t := 42734 },
 ]
-
 end RHLean.GateII.Tail
-
-
-
 namespace RHLean.GateII.Tail
-
 def GateII_LogRowsFull_3 : List LogRow := [
   { p := 128213, a := 1176134, b := 100000, k := 11, N := 8, lom := 83283951381006, t := 42737 },
   { p := 128221, a := 1176141, b := 100000, k := 11, N := 8, lom := 83279296407052, t := 42740 },
@@ -17283,6 +16974,5 @@ def GateII_LogRowsFull_3 : List LogRow := [
   { p := 176087, a := 1207863, b := 100000, k := 12, N := 8, lom := 62427936454312, t := 58695 },
   { p := 176089, a := 1207864, b := 100000, k := 12, N := 8, lom := 62427283734977, t := 58696 },
 ]
-
 end RHLean.GateII.Tail
 end Inline_FprimeData

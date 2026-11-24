@@ -1,6 +1,4 @@
 import RHLeanFullShard12
-
-
 set_option maxHeartbeats 2000000
 set_option maxHeartbeats 800000
 set_option maxHeartbeats 1000000
@@ -13,13 +11,8 @@ set_option maxHeartbeats 2000000
 set_option maxHeartbeats 2000000
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 2000000
-
 section Inline_FprimeData
-
-
-
 namespace RHLean.GateII.Tail
-
 def GateII_LogRowsFull_40 : List LogRow := [
   { p := 2160617, a := 1458580, b := 100000, k := 14, N := 8, lom := 6240288914519, t := 720205 },
   { p := 2160619, a := 1458580, b := 100000, k := 14, N := 8, lom := 6240283138129, t := 720206 },
@@ -4022,13 +4015,8 @@ def GateII_LogRowsFull_40 : List LogRow := [
   { p := 2219647, a := 1461275, b := 100000, k := 14, N := 8, lom := 6086404946632, t := 739882 },
   { p := 2219671, a := 1461276, b := 100000, k := 14, N := 8, lom := 6086343617407, t := 739890 },
 ]
-
 end RHLean.GateII.Tail
-
-
-
 namespace RHLean.GateII.Tail
-
 def GateII_LogRowsFull_41 : List LogRow := [
   { p := 2219681, a := 1461277, b := 100000, k := 14, N := 8, lom := 6086320676984, t := 739893 },
   { p := 2219683, a := 1461277, b := 100000, k := 14, N := 8, lom := 6086315193030, t := 739894 },
@@ -8031,13 +8019,8 @@ def GateII_LogRowsFull_41 : List LogRow := [
   { p := 2277571, a := 1463852, b := 100000, k := 14, N := 8, lom := 5942863635390, t := 759190 },
   { p := 2277607, a := 1463853, b := 100000, k := 14, N := 8, lom := 5942774067748, t := 759202 },
 ]
-
 end RHLean.GateII.Tail
-
-
-
 namespace RHLean.GateII.Tail
-
 def GateII_LogRowsFull_42 : List LogRow := [
   { p := 2277617, a := 1463854, b := 100000, k := 14, N := 8, lom := 5942752341295, t := 759205 },
   { p := 2277619, a := 1463854, b := 100000, k := 14, N := 8, lom := 5942747122905, t := 759206 },
@@ -12040,13 +12023,8 @@ def GateII_LogRowsFull_42 : List LogRow := [
   { p := 2336863, a := 1466421, b := 100000, k := 14, N := 8, lom := 5803009502346, t := 778954 },
   { p := 2336881, a := 1466422, b := 100000, k := 14, N := 8, lom := 5802969059214, t := 778960 },
 ]
-
 end RHLean.GateII.Tail
-
-
-
 namespace RHLean.GateII.Tail
-
 def GateII_LogRowsFull_43 : List LogRow := [
   { p := 2336897, a := 1466423, b := 100000, k := 14, N := 8, lom := 5802933583060, t := 778965 },
   { p := 2336903, a := 1466423, b := 100000, k := 14, N := 8, lom := 5802918684024, t := 778967 },
@@ -16049,6 +16027,5 @@ def GateII_LogRowsFull_43 : List LogRow := [
   { p := 2395871, a := 1468915, b := 100000, k := 14, N := 8, lom := 5670437690613, t := 798623 },
   { p := 2395873, a := 1468915, b := 100000, k := 14, N := 8, lom := 5670432957108, t := 798624 },
 ]
-
 end RHLean.GateII.Tail
 end Inline_FprimeData
